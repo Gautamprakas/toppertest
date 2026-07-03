@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO Meta -->
+  <title>TopperTest – Free Government Exam Typing Practice by ASI Sandeep</title>
+  <meta name="description" content="Practice Hindi Mangal & English Typing Tests for SSC, UP Police, High Court and other government exams. Real exam passages, timer-based tests, instant WPM & accuracy calculation." />
+  <meta name="keywords" content="government exam typing practice, hindi typing test, SSC typing, UP Police typing, High Court typing, mangal font typing, online typing test, free typing practice" />
+  <meta name="author" content="ASI Sandeep – TopperTest.com" />
+  <link rel="canonical" href="https://toppertest.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title"       content="TopperTest – Government Exam Typing Practice" />
+  <meta property="og:description" content="Free Hindi & English typing tests for SSC, UP Police, High Court. Real exam passages with WPM & accuracy." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://toppertest.com" />
+  <meta property="og:image"       content="https://toppertest.com/assets/og-image.png" />
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TopperTest",
+    "url": "https://toppertest.com",
+    "description": "Government Exam Typing Practice Platform",
+    "author": { "@type": "Person", "name": "ASI Sandeep" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .exam-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .exam-card  { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border-top: 4px solid var(--primary); transition: transform .2s, box-shadow .2s; cursor: pointer; }
+    .exam-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+    .exam-card .exam-icon { font-size: 32px; margin-bottom: 10px; }
+    .exam-card h3 { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .exam-card p  { font-size: 12px; color: var(--muted); }
+    .exam-card .exam-lang { margin-top: 10px; }
+    .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+    .how-step  { text-align: center; padding: 24px 16px; }
+    .how-step .num { width: 52px; height: 52px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-family: var(--font-head); }
+    .how-step h3 { font-size: 16px; color: var(--primary); margin-bottom: 8px; }
+    .how-step p  { font-size: 13px; color: var(--muted); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .feature-item { background: var(--card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .feature-item .fi-icon { font-size: 36px; margin-bottom: 12px; }
+    .feature-item h3 { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .feature-item p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    section { padding: 64px 32px; }
+    section.bg-white { background: var(--card); }
+    .section-header { text-align: center; margin-bottom: 40px; }
+    .section-header h2 { font-size: 28px; color: var(--primary); }
+    .section-header p  { color: var(--muted); margin-top: 8px; }
+    .yt-section { background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); color: #fff; text-align: center; padding: 48px 32px; }
+    .yt-section h2 { font-size: 28px; margin-bottom: 12px; }
+    .yt-section p  { opacity: .9; margin-bottom: 24px; }
+    .yt-btn { background: #fff; color: #cc0000; font-weight: 700; padding: 12px 28px; border-radius: 8px; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div>
+      <div class="brand-text">⌨️ TopperTest</div>
+      <div class="brand-sub">by ASI Sandeep</div>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/pages/exams.html">Exams</a></li>
+    <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
+    <li id="nav-right"></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────────── -->
+<section class="hero">
+  <h1>TopperTest – <span>Free Government Exam</span><br>Typing Practice by ASI Sandeep</h1>
+  <p>Practice Hindi Mangal &amp; English Typing Tests for SSC, UP Police, High Court and Other Government Exams. Real exam passages, timer-based tests, instant WPM &amp; accuracy.</p>
+  <div class="hero-btns">
+    <a href="/pages/exams.html" class="btn btn-accent btn-lg">⌨️ Start Free Typing Test</a>
+    <a href="/pages/register.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:#fff;">Register Free</a>
+  </div>
+  <div style="margin-top:40px; display:flex; gap:40px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;">
+    <div style="text-align:center;">
+      <div style="font-size:36px;font-weight:800;font-family:var(--font-head);color:var(--accent);" id="stat-passages">...</div>
+      <div style="font-size:13px;opacity:.8;margin-top:4px;">Total Passages</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:36px;font-weight:800;font-family:var(--font-head);color:var(--accent);" id="stat-exams">...</div>
+      <div style="font-size:13px;opacity:.8;margin-top:4px;">Exams Covered</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:36px;font-weight:800;font-family:var(--font-head);color:var(--accent);" id="stat-students">...</div>
+      <div style="font-size:13px;opacity:.8;margin-top:4px;">Registered Students</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:36px;font-weight:800;font-family:var(--font-head);color:var(--accent);" id="stat-tests">...</div>
+      <div style="font-size:13px;opacity:.8;margin-top:4px;">Tests Taken</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Exams ──────────────────────────────────────────────── -->
+<section>
+  <div class="section-header">
+    <h2>Practice for <span style="color:var(--accent-dark)">All Government Exams</span></h2>
+    <p>Select your exam and start typing practice with real exam-based passages</p>
+  </div>
+  <div class="exam-cards" id="exam-list">
+    <div style="text-align:center;padding:40px;grid-column:1/-1;"><div class="spinner" style="margin:auto;"></div></div>
+  </div>
+  <div class="text-center mt-3">
+    <a href="/pages/exams.html" class="btn btn-primary">View All Exams →</a>
+  </div>
+</section>
+
+<!-- ── How It Works ───────────────────────────────────────── -->
+<section class="bg-white">
+  <div class="section-header">
+    <h2>How It Works</h2>
+    <p>Start your typing practice in 4 simple steps</p>
+  </div>
+  <div class="how-steps">
+    <div class="how-step"><div class="num">1</div><h3>Select Exam</h3><p>Choose from UP Police, SSC, High Court, DSSSB and more.</p></div>
+    <div class="how-step"><div class="num">2</div><h3>Choose Language</h3><p>Hindi Mangal or English – as per your exam requirement.</p></div>
+    <div class="how-step"><div class="num">3</div><h3>Pick Passage</h3><p>Select by date and difficulty – Easy, Medium or Hard.</p></div>
+    <div class="how-step"><div class="num">4</div><h3>Type & Analyse</h3><p>Get instant WPM, accuracy and error report with graph.</p></div>
+  </div>
+</section>
+
+<!-- ── Features ───────────────────────────────────────────── -->
+<section>
+  <div class="section-header">
+    <h2>Why Choose <span style="color:var(--accent-dark)">TopperTest?</span></h2>
+    <p>Designed specifically for government exam aspirants by ASI Sandeep</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-item"><div class="fi-icon">⏱️</div><h3>Real Exam Timer</h3><p>Practice with actual exam durations. Timer auto-submits the test when time is up.</p></div>
+    <div class="feature-item"><div class="fi-icon">📊</div><h3>Instant WPM & Accuracy</h3><p>Get real-time WPM, accuracy percentage and error count as you type.</p></div>
+    <div class="feature-item"><div class="fi-icon">🗓️</div><h3>Date-wise Passages</h3><p>Practice with previous year passages organized by exam date and shift.</p></div>
+    <div class="feature-item"><div class="fi-icon">📈</div><h3>Performance Analytics</h3><p>Track your improvement over time with detailed graphs and history.</p></div>
+    <div class="feature-item"><div class="fi-icon">🏆</div><h3>Leaderboard</h3><p>Compete with students across India. See where you rank in your exam category.</p></div>
+    <div class="feature-item"><div class="fi-icon">🔒</div><h3>Anti-Cheat Security</h3><p>No copy-paste, no right-click, tab-switch detection for genuine practice.</p></div>
+  </div>
+</section>
+
+<!-- ── YouTube Section ────────────────────────────────────── -->
+<section class="yt-section">
+  <h2>📺 Learn Typing Tips on YouTube</h2>
+  <p>ASI Sandeep's YouTube channel has free video lessons on Hindi typing, Mangal font setup, keyboard shortcuts and exam strategies.</p>
+  <a href="https://www.youtube.com/@UPPBlogs" target="_blank" class="yt-btn">▶ Watch on YouTube</a>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer>
+  <p>© 2024 <strong style="color:#fff;">TopperTest.com</strong> by <strong style="color:var(--accent);">ASI Sandeep</strong>. All rights reserved.</p>
+  <p style="margin-top:8px;">
+    <a href="/pages/exams.html">Exams</a> · 
+    <a href="/pages/leaderboard.html">Leaderboard</a> · 
+    <a href="/pages/login.html">Login</a> · 
+    <a href="/pages/register.html">Register</a>
+  </p>
+  <p style="margin-top:12px; font-size:12px;">Free Government Exam Typing Practice | SSC | UP Police | High Court | DSSSB | TopperTest</p>
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+  // Load stats
+  fetch('/api/stats').then(r => r.json()).then(d => {
+    document.getElementById('stat-passages').textContent = d.total_passages?.toLocaleString() || '500+';
+    document.getElementById('stat-exams').textContent    = d.exams_covered?.toLocaleString()  || '8+';
+    document.getElementById('stat-students').textContent = d.students?.toLocaleString()        || '10,000+';
+    document.getElementById('stat-tests').textContent    = d.tests_taken?.toLocaleString()     || '50,000+';
+  }).catch(() => {
+    document.getElementById('stat-passages').textContent = '500+';
+    document.getElementById('stat-exams').textContent    = '8+';
+    document.getElementById('stat-students').textContent = '10,000+';
+    document.getElementById('stat-tests').textContent    = '50,000+';
+  });
+
+  // Load exams
+  const icons = { UP_POLICE_ASI:'🚔', SSC_CHSL:'📝', SSC_CGL_DEO:'💻', HIGH_COURT:'⚖️', DSSSB:'🏛️', JR_ASSISTANT:'📋', STENO:'✍️', RAJ_HC:'⚖️' };
+  fetch('/api/exams').then(r => r.json()).then(exams => {
+    const list = document.getElementById('exam-list');
+    list.innerHTML = exams.map(e => `
+      <div class="exam-card" onclick="window.location='/pages/select-exam.html?exam=${e.id}'">
+        <div class="exam-icon">${icons[e.exam_code] || '📄'}</div>
+        <h3>${e.exam_name}</h3>
+        <p>${e.description || ''}</p>
+        <div class="exam-lang mt-1">
+          <span class="badge badge-${e.language === 'hindi' ? 'hindi' : 'english'}">${e.language === 'hindi' ? '🔤 Hindi' : e.language === 'english' ? '🔤 English' : '🔤 Hindi & English'}</span>
+          <span class="badge" style="background:#f0fdf4;color:#166534;margin-left:4px;">⏱ ${e.duration_minutes} min</span>
+        </div>
+      </div>`).join('');
+  }).catch(() => {
+    document.getElementById('exam-list').innerHTML = '<p class="text-muted text-center" style="grid-column:1/-1;padding:40px;">Could not load exams. Please try again.</p>';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Typing – TopperTest</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    .live-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+
+    /* Status badges */
+    .status-pill {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;
+      text-transform:uppercase; letter-spacing:.5px;
+    }
+    .sp-scheduled { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+    .sp-active    { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+    .sp-ongoing   { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
+    .sp-ended     { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
+    .sp-results_released { background:#faf5ff; color:#7e22ce; border:1px solid #e9d5ff; }
+
+    .live-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+    .ld-active  { background:#22c55e; animation:pulse 1.2s infinite; }
+    .ld-sched   { background:#3b82f6; }
+    .ld-ended   { background:#94a3b8; }
+    .ld-results { background:#a855f7; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+    /* Live exam card */
+    .live-card {
+      background:#fff; border-radius:16px; border:1px solid #e2e8f0;
+      box-shadow:0 2px 12px rgba(0,0,0,.06); overflow:hidden;
+      transition:transform .2s, box-shadow .2s;
+    }
+    .live-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+    .live-card.active-card { border:2px solid #22c55e; box-shadow:0 4px 20px rgba(34,197,94,.2); }
+    .live-card.sched-card  { border:2px solid #3b82f6; }
+
+    .lc-header {
+      padding:16px 20px 12px; display:flex; align-items:flex-start;
+      justify-content:space-between; gap:8px;
+    }
+    .lc-header h3 { font-size:16px; font-weight:700; color:#1e293b; margin:0; line-height:1.4; }
+    .lc-body  { padding:0 20px 16px; }
+    .lc-meta  { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .lc-meta-row { display:flex; align-items:center; gap:8px; font-size:13px; color:#64748b; }
+    .lc-meta-row strong { color:#374151; }
+    .lc-footer { padding:14px 20px; border-top:1px solid #f1f5f9; }
+
+    /* Countdown */
+    .countdown-wrap { background:#f8fafc; border-radius:10px; padding:12px 16px; margin-bottom:14px; text-align:center; }
+    .countdown-label { font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+    .countdown-timer { font-size:28px; font-weight:800; font-family:'Baloo 2',sans-serif; color:#1a3c6e; line-height:1.2; }
+    .countdown-timer.urgent { color:#ef4444; animation:blink .8s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.4} }
+
+    .btn-join {
+      width:100%; padding:12px; border-radius:10px; border:none; cursor:pointer;
+      font-size:15px; font-weight:700; transition:all .2s; font-family:'Hind',sans-serif;
+    }
+    .btn-join.can-join    { background:#22c55e; color:#fff; }
+    .btn-join.can-join:hover { background:#16a34a; transform:translateY(-1px); }
+    .btn-join.cant-join   { background:#e2e8f0; color:#94a3b8; cursor:not-allowed; }
+    .btn-join.view-result { background:#7e22ce; color:#fff; }
+    .btn-join.view-result:hover { background:#6b21a8; }
+
+    /* Tabs */
+    .filter-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+    .ftab {
+      padding:7px 16px; border-radius:20px; border:1px solid #e2e8f0;
+      font-size:13px; font-weight:600; cursor:pointer; background:#fff;
+      color:#64748b; transition:all .2s;
+    }
+    .ftab.active { background:#1a3c6e; color:#fff; border-color:#1a3c6e; }
+
+    /* Results modal */
+    .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:#fff;border-radius:16px;width:100%;max-width:700px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25); }
+    .modal-header { background:#7e22ce;color:#fff;padding:20px 28px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1; }
+    .modal-header h3 { color:#fff;margin:0;font-size:18px; }
+    .modal-close { background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer; }
+    .modal-body { padding:24px; }
+
+    .rank-table { width:100%;border-collapse:collapse;font-size:14px; }
+    .rank-table th { background:#f8fafc;padding:10px 14px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;border-bottom:2px solid #e2e8f0; }
+    .rank-table td { padding:12px 14px;border-bottom:1px solid #f1f5f9; }
+    .rank-table tr:hover td { background:#fafbff; }
+    .rank-1 td { background:#fffbeb; }
+    .rank-2 td { background:#f8fafc; }
+    .rank-3 td { background:#fdf4ff; }
+    .rank-badge { display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:800;font-size:12px; }
+    .rb-1 { background:#fbbf24;color:#78350f; }
+    .rb-2 { background:#94a3b8;color:#fff; }
+    .rb-3 { background:#c2803a;color:#fff; }
+    .rb-n { background:#f1f5f9;color:#64748b; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a>
+  </div>
+  <div id="nav-right"></div>
+</nav>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Main Menu</div>
+    <ul class="sidebar-menu">
+      <li><a href="/pages/live-exam.html" class="active"><span class="icon">🔴</span> Live Typing</a></li>
+      <li><a href="/pages/select-exam.html"><span class="icon">⌨️</span> Quick Test</a></li>
+      <li><a href="/pages/dashboard.html"><span class="icon">📊</span> Dashboard</a></li>
+      <li><a href="/pages/history.html"><span class="icon">📅</span> History</a></li>
+      <li><a href="/pages/leaderboard.html"><span class="icon">🏆</span> Leaderboard</a></li>
+    </ul>
+    <div class="sidebar-section">Account</div>
+    <ul class="sidebar-menu">
+      <li><a href="#" onclick="Auth.logout()"><span class="icon">🚪</span> Logout</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="d-flex align-center justify-between mb-3" style="flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="section-title" style="margin:0;">🔴 Live <span>Typing Exams</span></h1>
+        <p style="color:var(--muted);font-size:14px;margin-top:4px;">Join scheduled typing tests in real time</p>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="loadLiveExams()">🔄 Refresh</button>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="filterExams('all',this)">All</button>
+      <button class="ftab" onclick="filterExams('active',this)">🟢 Live Now</button>
+      <button class="ftab" onclick="filterExams('scheduled',this)">🔵 Upcoming</button>
+      <button class="ftab" onclick="filterExams('ended',this)">⚫ Ended</button>
+      <button class="ftab" onclick="filterExams('results_released',this)">🟣 Results Out</button>
+    </div>
+
+    <div id="live-grid" class="live-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">
+        <div class="spinner" style="margin:auto;margin-bottom:16px;"></div>
+        Loading live exams...
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Results Modal -->
+<div class="modal-overlay" id="results-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🏆 Live Exam Results</h3>
+      <button class="modal-close" onclick="document.getElementById('results-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="results-modal-body">Loading...</div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+if (!requireLogin()) throw '';
+
+let allExams = [];
+let activeFilter = 'all';
+let refreshInterval = null;
+
+async function loadLiveExams() {
+  try {
+    allExams = await apiFetch('/live-exams');
+    renderExams();
+    // Auto-refresh every 15s so active/countdown stays current
+    clearInterval(refreshInterval);
+    refreshInterval = setInterval(renderExams, 15000);
+  } catch(e) {
+    document.getElementById('live-grid').innerHTML =
+      `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--danger);">❌ ${e.message}</div>`;
+  }
+}
+
+function filterExams(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderExams();
+}
+
+function renderExams() {
+  let exams = allExams.map(le => ({
+    ...le,
+    computed_status: computeStatus(le)
+  }));
+
+  if (activeFilter !== 'all') {
+    exams = exams.filter(le => le.computed_status === activeFilter);
+  }
+
+  const grid = document.getElementById('live-grid');
+  if (!exams.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">
+      <div style="font-size:48px;margin-bottom:12px;">📭</div>
+      <strong>No exams in this category</strong>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = exams.map(le => renderCard(le)).join('');
+}
+
+function computeStatus(le) {
+  const now     = Date.now();
+  const start   = new Date(le.scheduled_at).getTime();
+  const joinEnd = start + le.join_window_mins * 60000;
+  const hardEnd = start + (le.join_window_mins + le.duration_minutes) * 60000 + 300000;
+  if (le.results_released) return 'results_released';
+  if (now < start)    return 'scheduled';
+  if (now <= joinEnd) return 'active';
+  if (now <= hardEnd) return 'ongoing';
+  return 'ended';
+}
+
+function renderCard(le) {
+  const s = le.computed_status;
+  const now   = Date.now();
+  const start = new Date(le.scheduled_at).getTime();
+
+  let statusHtml = '';
+  let countdownHtml = '';
+  let btnHtml = '';
+
+  if (s === 'scheduled') {
+    const diff = start - now;
+    statusHtml = `<span class="status-pill sp-scheduled"><span class="live-dot ld-sched"></span>Upcoming</span>`;
+    countdownHtml = `<div class="countdown-wrap">
+      <div class="countdown-label">Opens in</div>
+      <div class="countdown-timer" id="cd-${le.id}">${fmtCountdown(diff)}</div>
+    </div>`;
+    btnHtml = `<button class="btn-join cant-join" disabled>⏳ Not Started Yet</button>`;
+    // Start live countdown
+    setTimeout(() => startCountdown(le.id, start, 'opens'), 100);
+
+  } else if (s === 'active') {
+    const joinEnd = start + le.join_window_mins * 60000;
+    const diff = joinEnd - now;
+    statusHtml = `<span class="status-pill sp-active"><span class="live-dot ld-active"></span>LIVE NOW</span>`;
+    countdownHtml = `<div class="countdown-wrap" style="background:#f0fdf4;border:1px solid #bbf7d0;">
+      <div class="countdown-label" style="color:#16a34a;">Join window closes in</div>
+      <div class="countdown-timer" style="color:#15803d;" id="cd-${le.id}">${fmtCountdown(diff)}</div>
+    </div>`;
+    btnHtml = `<button class="btn-join can-join" onclick="joinExam(${le.id})">🚀 Join Live Exam Now</button>`;
+    setTimeout(() => startCountdown(le.id, joinEnd, 'join_closes'), 100);
+
+  } else if (s === 'ongoing') {
+    statusHtml = `<span class="status-pill sp-ongoing"><span class="live-dot ld-active" style="background:#f97316;"></span>Ongoing</span>`;
+    countdownHtml = `<div class="countdown-wrap" style="background:#fff7ed;border:1px solid #fed7aa;">
+      <div class="countdown-label" style="color:#c2410c;">Exam in progress</div>
+      <div class="countdown-timer" style="color:#c2410c;">In Progress</div>
+    </div>`;
+    btnHtml = `<button class="btn-join cant-join" disabled>🔒 Join Window Closed</button>`;
+
+  } else if (s === 'ended') {
+    statusHtml = `<span class="status-pill sp-ended"><span class="live-dot ld-ended"></span>Ended</span>`;
+    countdownHtml = `<div class="countdown-wrap"><div class="countdown-label">Status</div>
+      <div style="font-size:15px;font-weight:700;color:#64748b;margin-top:2px;">⏳ Awaiting Results</div>
+    </div>`;
+    btnHtml = `<button class="btn-join cant-join" disabled>📊 Results Pending</button>`;
+
+  } else if (s === 'results_released') {
+    statusHtml = `<span class="status-pill sp-results_released"><span class="live-dot ld-results"></span>Results Out</span>`;
+    countdownHtml = `<div class="countdown-wrap" style="background:#faf5ff;border:1px solid #e9d5ff;">
+      <div class="countdown-label" style="color:#7e22ce;">Results Available</div>
+      <div style="font-size:15px;font-weight:700;color:#7e22ce;margin-top:2px;">🏆 View Leaderboard</div>
+    </div>`;
+    btnHtml = `<button class="btn-join view-result" onclick="viewResults(${le.id})">🏆 View Results</button>`;
+  }
+
+  const cardClass = s === 'active' ? 'live-card active-card' : s === 'scheduled' ? 'live-card sched-card' : 'live-card';
+  const dt = new Date(le.scheduled_at);
+  const dtStr = dt.toLocaleString('en-IN', { timeZone:'Asia/Kolkata', day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+
+  return `<div class="${cardClass}">
+    <div class="lc-header">
+      <h3>${escHtml(le.title)}</h3>
+      ${statusHtml}
+    </div>
+    <div class="lc-body">
+      ${countdownHtml}
+      <div class="lc-meta">
+        <div class="lc-meta-row">📋 <strong>${escHtml(le.exam_name)}</strong></div>
+        <div class="lc-meta-row">📅 <strong>${dtStr}</strong></div>
+        <div class="lc-meta-row">⏱️ Duration: <strong>${le.duration_minutes} min</strong> &nbsp;|&nbsp; Join window: <strong>${le.join_window_mins} min</strong></div>
+        <div class="lc-meta-row">📝 <strong>${escHtml(le.passage_title||'Passage #'+le.passage_id)}</strong> · ${le.word_count||0} words</div>
+        <div class="lc-meta-row">👥 <strong>${le.attempt_count||0}</strong> participants</div>
+      </div>
+    </div>
+    <div class="lc-footer">${btnHtml}</div>
+  </div>`;
+}
+
+function fmtCountdown(ms) {
+  if (ms <= 0) return '00:00';
+  const totalSecs = Math.floor(ms / 1000);
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+const countdownTimers = {};
+function startCountdown(id, targetTs, type) {
+  clearInterval(countdownTimers[id]);
+  countdownTimers[id] = setInterval(() => {
+    const el = document.getElementById(`cd-${id}`);
+    if (!el) { clearInterval(countdownTimers[id]); return; }
+    const diff = targetTs - Date.now();
+    if (diff <= 0) {
+      clearInterval(countdownTimers[id]);
+      loadLiveExams(); // reload to update card state
+      return;
+    }
+    el.textContent = fmtCountdown(diff);
+    el.classList.toggle('urgent', diff < 60000);
+  }, 1000);
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function joinExam(liveExamId) {
+  try {
+    showToast('Joining exam...', 'info');
+    const data = await apiFetch(`/live-exams/${liveExamId}/join`, { method: 'POST' });
+    // Store session same as normal test + live_exam_id
+    sessionStorage.setItem('tt_session', JSON.stringify(data));
+    window.location.href = '/pages/typing-test.html';
+  } catch(err) {
+    const msg = err.message || 'Failed to join';
+    if (msg.includes('already_submitted')) {
+      showToast('You already submitted this exam.', 'warning');
+    } else if (msg.includes('join_window_closed')) {
+      showToast('Join window has closed.', 'error');
+    } else {
+      showToast('Error: ' + msg, 'error');
+    }
+  }
+}
+
+async function viewResults(liveExamId) {
+  document.getElementById('results-modal').classList.add('open');
+  document.getElementById('results-modal-body').innerHTML = '<div class="spinner" style="margin:auto;"></div>';
+  try {
+    const data = await apiFetch(`/live-exams/${liveExamId}/results`);
+    const le = data.live_exam;
+    const rows = data.results;
+    const dtStr = new Date(le.scheduled_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
+
+    let html = `<div style="margin-bottom:20px;">
+      <h3 style="font-size:18px;font-weight:700;">${escHtml(le.title)}</h3>
+      <p style="color:var(--muted);font-size:13px;margin-top:4px;">📅 ${dtStr} &nbsp;|&nbsp; ⏱️ ${le.duration_minutes} min &nbsp;|&nbsp; 👥 ${rows.length} participants</p>
+    </div>`;
+
+    if (!rows.length) {
+      html += '<p style="text-align:center;color:var(--muted);padding:32px;">No submissions yet.</p>';
+    } else {
+      const medals = ['🥇','🥈','🥉'];
+      html += `<table class="rank-table">
+        <thead><tr><th>#</th><th>Student</th><th>WPM</th><th>Accuracy</th><th>Correct</th><th>Errors</th><th>Time</th></tr></thead>
+        <tbody>
+        ${rows.map((r,i) => {
+          const rankClass = i<3 ? `rank-${i+1}` : '';
+          const rbClass   = i<3 ? `rb-${i+1}` : 'rb-n';
+          const medal     = i<3 ? medals[i] : '';
+          const wpm     = r.wpm ? parseFloat(r.wpm).toFixed(1) : '—';
+          const acc     = r.accuracy ? parseFloat(r.accuracy).toFixed(1)+'%' : '—';
+          const correct = r.correct_words ?? '—';
+          const errors  = r.errors ?? '—';
+          const timeTxt = r.time_taken ? `${Math.floor(r.time_taken/60)}:${String(r.time_taken%60).padStart(2,'0')}` : '—';
+          return `<tr class="${rankClass}">
+            <td><span class="rank-badge ${rbClass}">${medal||r.rank}</span></td>
+            <td><strong>${escHtml(r.student_name)}</strong></td>
+            <td><strong style="color:var(--primary);font-size:16px;">${wpm}</strong></td>
+            <td style="color:var(--success);">${acc}</td>
+            <td>${correct}</td>
+            <td style="color:var(--danger);">${errors}</td>
+            <td style="color:var(--muted);">${timeTxt}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>`;
+    }
+    document.getElementById('results-modal-body').innerHTML = html;
+  } catch(e) {
+    document.getElementById('results-modal-body').innerHTML =
+      `<p style="color:var(--danger);text-align:center;padding:32px;">❌ ${e.message}</p>`;
+  }
+}
+
+loadLiveExams();
+</script>
+</body>
+</html>

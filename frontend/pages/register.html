@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register Free – TopperTest Government Typing Practice</title>
+  <meta name="description" content="Create a free account on TopperTest to track your typing progress, access all exam passages and compete on the leaderboard." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); min-height: 100vh; display: flex; flex-direction: column; }
+    .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
+    .auth-card { background: #fff; border-radius: 16px; padding: 40px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .auth-logo { text-align: center; margin-bottom: 24px; }
+    .auth-logo h1 { font-size: 24px; color: var(--primary); }
+    .auth-logo p  { color: var(--muted); font-size: 13px; }
+    .benefits { background: #f0f9ff; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; }
+    .benefits li { padding: 3px 0; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
+  <div id="nav-right"></div>
+</nav>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>⌨️ TopperTest</h1>
+      <p>Free Government Exam Typing Practice by ASI Sandeep</p>
+    </div>
+    <ul class="benefits" style="list-style:none;">
+      <li>✅ Free access to all exam passages</li>
+      <li>✅ Track your WPM & accuracy history</li>
+      <li>✅ Compete on national leaderboard</li>
+      <li>✅ Performance analytics & graphs</li>
+    </ul>
+    <h2 style="font-size:18px;margin-bottom:16px;color:var(--primary);">Create Free Account</h2>
+    <div id="alert-box"></div>
+
+    <div class="form-group">
+      <label class="form-label">Full Name *</label>
+      <input type="text" id="name" class="form-control" placeholder="Your full name" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address *</label>
+      <input type="email" id="email" class="form-control" placeholder="your@email.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mobile Number</label>
+      <input type="tel" id="phone" class="form-control" placeholder="10-digit mobile number" maxlength="10" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password * <span style="font-size:11px;color:var(--muted);">(min 6 characters)</span></label>
+      <input type="password" id="password" class="form-control" placeholder="Create a strong password" />
+    </div>
+
+    <button class="btn btn-accent btn-block btn-lg mt-2" id="reg-btn" onclick="doRegister()">🚀 Register Free</button>
+
+    <p class="text-center mt-3" style="font-size:13px;color:var(--muted);">
+      Already have an account? <a href="/pages/login.html" style="font-weight:700;">Login here</a>
+    </p>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  if (Auth.isLoggedIn()) window.location.href = '/pages/dashboard.html';
+
+  async function doRegister() {
+    const btn  = document.getElementById('reg-btn');
+    const name = document.getElementById('name').value.trim();
+    const email= document.getElementById('email').value.trim();
+    const phone= document.getElementById('phone').value.trim();
+    const pass = document.getElementById('password').value;
+    const box  = document.getElementById('alert-box');
+
+    if (!name || !email || !pass) { box.innerHTML = '<div class="alert alert-error">⚠️ Please fill all required fields.</div>'; return; }
+    if (pass.length < 6)          { box.innerHTML = '<div class="alert alert-error">⚠️ Password must be at least 6 characters.</div>'; return; }
+
+    btn.disabled = true; btn.textContent = 'Creating account...';
+    try {
+      const data = await apiFetch('/register', { method: 'POST', body: JSON.stringify({ name, email, password: pass, phone }) });
+      Auth.setToken(data.token);
+      Auth.setUser(data.user);
+      showToast('Account created! Welcome to TopperTest 🎉', 'success');
+      setTimeout(() => window.location.href = '/pages/dashboard.html', 800);
+    } catch (err) {
+      box.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+      btn.disabled = false; btn.textContent = '🚀 Register Free';
+    }
+  }
+</script>
+</body>
+</html>

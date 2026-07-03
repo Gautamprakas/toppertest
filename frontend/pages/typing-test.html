@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Test – TopperTest</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { min-height:100vh; background:#f0f0f0; font-family:'Hind',sans-serif; }
+
+    /* ── 1. TITLE BAR ─────────────────────────────────────── */
+    .title-bar {
+      background:#1a1a6e;
+      height:46px; padding:0 60px;
+      display:flex; align-items:center; justify-content:center;
+      position:sticky; top:0; z-index:200;
+    }
+    .title-bar-center {
+      font-size:16px; font-weight:700; color:#fff;
+      letter-spacing:.2px; text-align:center;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    /* ── 2. SUBTITLE BAR ──────────────────────────────────── */
+    .subtitle-bar {
+      background:#e8e8e8; border-bottom:1px solid #d0d0d0;
+      padding:6px 16px 6px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .subtitle-text { font-size:13px; font-weight:600; color:#333; }
+    .sb-close-btn {
+      width:34px; height:34px; border-radius:50%;
+      background:#555; border:none;
+      color:#fff; font-size:16px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; transition:background .15s;
+    }
+    .sb-close-btn:hover { background:#333; }
+
+    /* ── 3. CONTROLS BAR ──────────────────────────────────── */
+    .controls-bar {
+      background:#fff; border-bottom:1px solid #e0e0e0;
+      padding:8px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .controls-left { display:flex; align-items:center; gap:8px; }
+    .controls-right { display:flex; align-items:center; gap:20px; }
+
+    .ctrl-icon-btn {
+      width:36px; height:36px; border-radius:6px;
+      background:#f5f5f5; border:1px solid #ddd;
+      display:flex; align-items:center; justify-content:center;
+      font-size:15px; cursor:pointer; color:#444; transition:background .15s;
+    }
+    .ctrl-icon-btn:hover { background:#ede7f6; border-color:#9575cd; }
+
+    .font-ctrl { display:flex; align-items:center; gap:3px; }
+    .font-btn {
+      padding:5px 12px; border-radius:5px;
+      background:#f5f5f5; border:1px solid #ddd;
+      font-weight:700; color:#444; cursor:pointer;
+      font-family:serif; font-size:13px; transition:all .15s; line-height:1;
+    }
+    .font-btn:hover  { background:#ede7f6; border-color:#9575cd; }
+    .font-btn.active { background:#3f3fa0; color:#fff; border-color:#3f3fa0; }
+
+    /* timer */
+    .timer-block { text-align:right; line-height:1.2; }
+    .timer-label { font-size:11px; color:#555; font-weight:600; display:block; }
+    .timer-val {
+      font-size:22px; font-weight:900; color:#1a1a6e;
+      font-family:'Baloo 2', monospace; display:block;
+    }
+    .timer-val.urgent { color:#d32f2f; animation:tblink 1s infinite; }
+    @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* avatar */
+    .user-block { text-align:center; }
+    .user-avatar {
+      width:48px; height:48px; border-radius:50%;
+      background:#3f3fa0; border:2px solid #7986cb;
+      display:flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:800; color:#fff;
+      margin:0 auto 2px; overflow:hidden;
+    }
+    .user-name { font-size:11px; font-weight:800; color:#1a1a6e; text-transform:uppercase; letter-spacing:.5px; }
+
+    /* ── 4. MAIN CONTAINER ────────────────────────────────── */
+    .test-body {
+      max-width:100%; padding:10px 8px 0;
+      background:#f0f0f0;
+    }
+
+    /* The bordered container wrapping passage + typing */
+    .test-container {
+      border:2px solid #b0b0b0;
+      border-radius:0;
+      overflow:hidden;
+      background:#fff;
+      width:100%;
+    }
+
+    /* ── 5. PASSAGE BOX ───────────────────────────────────── */
+    .passage-text {
+      padding-left:8px; padding-right:8px;
+      padding-top:10px; padding-bottom:10px;
+      height:370px; width:100%;
+      border-width:0 0 1px 0; border-style:solid; border-color:#b0b0b0;
+      overflow-y:auto;
+      user-select:none; -webkit-user-select:none;
+      white-space:pre-wrap;
+      text-align:justify; text-justify:inter-word;
+      font-size:1.125rem; line-height:1.406rem;
+      font-family:"Times New Roman", Times, serif;
+      color:black; background:#fff;
+      scrollbar-width:thin; scrollbar-color:#bbb #f5f5f5;
+      box-sizing:border-box;
+    }
+    .passage-text::-webkit-scrollbar { width:6px; }
+    .passage-text::-webkit-scrollbar-track { background:#f5f5f5; }
+    .passage-text::-webkit-scrollbar-thumb { background:#bbb; border-radius:3px; }
+
+    /* word highlights */
+    .passage-text .w { display:inline; border-radius:2px; padding:0 1px; }
+    .passage-text .w.correct { background:#c8e6c9; color:#1b5e20; }
+    .passage-text .w.wrong   { background:#ffcdd2; color:#b71c1c; text-decoration:underline wavy #ef5350; }
+    .passage-text .w.missed  { background:#fff9c4; color:#f57f17; }
+    .passage-text .w.current { background:#bbdefb; color:#0d47a1; outline:2px solid #1976d2; outline-offset:1px; }
+
+    /* ── 6. TYPING BOX ────────────────────────────────────── */
+    .typing-box {
+      background:#b8f040;
+      position:relative; min-height:130px;
+    }
+    textarea#typing-input {
+      padding-left:8px; padding-right:8px;
+      padding-top:10px; padding-bottom:10px;
+      width:100%; min-height:140px;
+      border-width:1px; border-style:solid; border-color:rgb(0,0,0);
+      border-top:none;
+      outline:none; background:transparent;
+      overflow-y:auto;
+      white-space:pre-wrap;
+      text-align:justify; text-justify:inter-word;
+      font-size:1.125rem; line-height:1.406rem;
+      font-family:"Times New Roman", Times, serif;
+      color:black;
+      resize:none; caret-color:#000;
+      box-sizing:border-box;
+    }
+    .typing-footer {
+      position:absolute; bottom:6px; right:12px;
+      font-size:11px; color:#4a6e10; font-weight:600;
+    }
+
+    /* ── 7. ACTION BUTTONS ────────────────────────────────── */
+    .action-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px; background:#f5f5f5;
+      border-top:1px solid #ddd;
+    }
+    .btn-cancel {
+      background:#e53935; color:#fff; border:none;
+      padding:10px 28px; border-radius:6px;
+      font-size:14px; font-weight:700; cursor:pointer; transition:background .2s;
+    }
+    .btn-cancel:hover { background:#c62828; }
+    .btn-submit {
+      background:#1a1a6e; color:#fff; border:none;
+      padding:10px 32px; border-radius:6px;
+      font-size:14px; font-weight:700; cursor:pointer; transition:background .2s;
+    }
+    .btn-submit:hover:not(:disabled) { background:#2e2ea0; }
+    .btn-submit:disabled { opacity:.55; cursor:not-allowed; }
+
+    /* ── 8. SETTINGS GEAR ─────────────────────────────────── */
+    .settings-gear {
+      position:fixed; bottom:20px; right:20px;
+      width:44px; height:44px; border-radius:50%;
+      background:#6a1b9a; color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; cursor:pointer; z-index:100;
+      box-shadow:0 3px 10px rgba(0,0,0,.3);
+    }
+
+    /* ── 9. FULLSCREEN OVERLAY ────────────────────────────── */
+    #fs-overlay {
+      position:fixed; inset:0; background:rgba(26,26,110,.9);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      z-index:9998; backdrop-filter:blur(4px);
+    }
+    #fs-overlay h2 { color:#fff; font-size:24px; margin:0 0 10px; }
+    #fs-overlay p  { color:#c5cae9; font-size:14px; margin:0 0 22px; }
+    #fs-overlay .fs-ov-btn {
+      background:#b8f040; color:#1b5e20; border:none;
+      padding:12px 32px; border-radius:8px;
+      font-size:17px; font-weight:800; cursor:pointer;
+    }
+    #fs-overlay .fs-skip { color:#9fa8da; font-size:13px; margin-top:14px; text-decoration:underline; cursor:pointer; }
+
+    /* ── 10. MISC ─────────────────────────────────────────── */
+    .tab-warn { position:fixed;top:0;left:0;right:0;background:#d32f2f;color:#fff;text-align:center;padding:10px;font-weight:700;font-size:14px;z-index:9999;display:none; }
+    #page-loading { display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#f0f0f0; }
+
+    /* ── 11. PERFORMANCE DASHBOARD ────────────────────────── */
+    #result-page { display:none; min-height:100vh; background:#fff; }
+    .rd-header { background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 32px;display:flex;align-items:center;justify-content:space-between; }
+    .rd-header h1 { font-size:24px;font-weight:800;color:#1e293b; }
+    .rd-meta { padding:18px 32px;border-bottom:1px solid #e2e8f0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px; }
+    .rd-meta-item { font-size:13px;color:#374151; }
+    .rd-meta-item strong { color:#111827; }
+    .rd-stats { padding:20px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px; }
+    @media(max-width:900px){ .rd-stats{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .rd-stats{grid-template-columns:1fr;} }
+    .rd-card { border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .rd-card .card-label { font-size:12px;color:#64748b;font-weight:500;margin-bottom:4px; }
+    .rd-card .card-value { font-size:26px;font-weight:800;font-family:'Baloo 2',sans-serif;color:#111827; }
+    .rd-card .card-value.green { color:#059669; }
+    .rd-card .card-value.red   { color:#ef4444; }
+    .rd-card .card-value.blue  { color:#2563eb; }
+    .rd-card .card-value.amber { color:#d97706; }
+    .rd-card .card-value.qualified     { color:#059669; }
+    .rd-card .card-value.not-qualified { color:#ef4444; }
+    .rd-card-icon { font-size:26px;opacity:.45; }
+    .rd-qualify-bar { margin:0 32px 16px;padding:12px 20px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:13px;color:#1e40af;display:flex;align-items:center;gap:10px; }
+    .rd-comparison { padding:0 32px 32px; }
+    .rd-comparison-header { display:flex;align-items:center;gap:12px;margin-bottom:16px; }
+    .rd-comparison-header h3 { font-size:16px;font-weight:700;color:#1e293b; }
+    .comparison-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    @media(max-width:600px){ .comparison-grid{grid-template-columns:1fr;} }
+    .comp-panel { border:1px solid #e2e8f0;border-radius:8px;overflow:hidden; }
+    .comp-panel-header { padding:10px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
+    .comp-panel.original .comp-panel-header { background:#fee2e2;color:#991b1b; }
+    .comp-panel.typed    .comp-panel-header { background:#dcfce7;color:#166534; }
+    .comp-text { padding:14px 16px;font-family:'Courier New',Consolas,monospace;font-size:13px;line-height:1.7;background:#fafafa;max-height:500px;overflow-y:auto; }
+    .rd-actions { padding:16px 32px 32px;display:flex;gap:12px;flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+
+<div class="tab-warn" id="tab-warn">⚠️ Tab switch detected! Stay on this window during the test.</div>
+
+<!-- Loading -->
+<div id="page-loading">
+  <div class="spinner" style="width:44px;height:44px;border-width:5px;"></div>
+  <p style="margin-top:14px;color:#64748b;font-size:14px;">Loading your test...</p>
+</div>
+
+<!-- Fullscreen overlay — shown until user clicks -->
+<div id="fs-overlay" style="display:none;">
+  <h2>⛶ Ready to start?</h2>
+  <p>Click below to enter fullscreen and begin your exam</p>
+  <button class="fs-ov-btn" onclick="startFullscreenAndTest()">Enter Fullscreen &amp; Start</button>
+  <span class="fs-skip" onclick="dismissFsOverlay()">Continue without fullscreen</span>
+</div>
+
+<!-- ═══ TYPING TEST UI ═══════════════════════════════════ -->
+<div id="test-ui" style="display:none;">
+
+  <!-- 1. Title bar: dark navy, centered test name only -->
+  <div class="title-bar">
+    <div class="title-bar-center" id="exam-title-text">Typing Test</div>
+  </div>
+
+  <!-- 2. Subtitle bar: exam name left + close button centered -->
+  <div class="subtitle-bar">
+    <div class="subtitle-text" id="ic-exam">Typing Exam</div>
+    <button class="sb-close-btn" onclick="confirmCancel()" title="Close">✕</button>
+    <div style="width:1px; visibility:hidden;"></div>
+  </div>
+
+  <!-- 3. Controls bar: icons | font | timer | avatar -->
+  <div class="controls-bar">
+    <div class="controls-left">
+      <button class="ctrl-icon-btn" onclick="toggleMute()" title="Mute">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+      </button>
+      <button class="ctrl-icon-btn" title="Menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="font-ctrl">
+        <button class="font-btn" onclick="setFontSize('decrease')" id="fnt-sm">A-</button>
+        <button class="font-btn active" onclick="setFontSize('reset')" id="fnt-md">A</button>
+        <button class="font-btn" onclick="setFontSize('increase')" id="fnt-lg">A+</button>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div class="timer-block">
+        <span class="timer-label">Time left:-</span>
+        <span class="timer-val" id="timer">15:00</span>
+      </div>
+      <div class="user-block">
+        <div class="user-avatar" id="user-avatar">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+        </div>
+        <div class="user-name" id="user-badge-name">USER</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Main test container: bordered box containing passage + typing -->
+  <div class="test-body">
+    <div class="test-container">
+
+      <!-- Passage: white bg, black serif text, justified -->
+      <div class="passage-text" id="passage-text">Loading...</div>
+
+      <!-- Typing area: lime green bg, black text -->
+      <div class="typing-box" id="typing-wrap">
+        <textarea id="typing-input"
+          placeholder=""
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </textarea>
+        <div class="typing-footer" id="ks-label">Keystrokes: 0</div>
+      </div>
+
+    </div><!-- .test-container -->
+
+    <!-- Action row -->
+    <div class="action-row">
+      <button class="btn-cancel" onclick="confirmCancel()">Cancel</button>
+      <button class="btn-submit" id="submit-btn" onclick="confirmSubmit()">Submit</button>
+    </div>
+
+    <!-- Hidden live-stat spans (JS updates these, not visible in this theme) -->
+    <div style="display:none;">
+      <span id="ls-wpm">0</span><span id="ls-acc">100%</span>
+      <span id="ls-err">0</span><span id="ls-typed">0</span><span id="ls-correct">0</span>
+      <span id="ks-label-bar">0</span>
+      <div id="prog-fill"></div><span id="prog-pct">0%</span>
+    </div>
+  </div><!-- .test-body -->
+
+  <!-- Purple settings gear fixed bottom-right -->
+  <div class="settings-gear" title="Settings">⚙</div>
+
+</div><!-- #test-ui -->
+
+<!-- ═══ PERFORMANCE DASHBOARD ════════════════════════════ -->
+<div id="result-page">
+
+  <div class="rd-header">
+    <h1>📊 Performance Dashboard</h1>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="/pages/select-exam.html" class="btn btn-primary">⌨️ Try Another Test</a>
+      <a href="/pages/history.html"     class="btn btn-outline">📅 History</a>
+      <a href="/pages/dashboard.html"   class="btn btn-outline">🏠 Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Meta info -->
+  <div class="rd-meta">
+    <div class="rd-meta-item"><strong>Exam Title:</strong> <span id="rd-exam-title">-</span></div>
+    <div class="rd-meta-item"><strong>Total Words Given:</strong> <span id="rd-total-words-given">-</span></div>
+    <div class="rd-meta-item"><strong>Typing Date:</strong> <span id="rd-date">-</span></div>
+    <div class="rd-meta-item"><strong>Passage Title:</strong> <span id="rd-passage-title">-</span></div>
+    <div class="rd-meta-item"><strong>Time Duration:</strong> <span id="rd-duration">-</span></div>
+    <div class="rd-meta-item"><strong>Time Taken:</strong> <span id="rd-time-taken">-</span></div>
+  </div>
+
+  <!-- Stats cards grid -->
+  <div class="rd-stats">
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Total Words Typed</div>
+        <div class="card-value" id="rd-typed">0</div>
+      </div>
+      <div class="rd-card-icon">⌨️</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Full Mistake</div>
+        <div class="card-value red" id="rd-full-mistake">0</div>
+      </div>
+      <div class="rd-card-icon">⊗</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Half Mistake</div>
+        <div class="card-value amber" id="rd-half-mistake">0</div>
+      </div>
+      <div class="rd-card-icon">⚠️</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Net Wrong Words</div>
+        <div class="card-value red" id="rd-net-wrong">0</div>
+      </div>
+      <div class="rd-card-icon">✕</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Omissions</div>
+        <div class="card-value amber" id="rd-omissions">0</div>
+      </div>
+      <div class="rd-card-icon">▷|</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Extra Spaces</div>
+        <div class="card-value" id="rd-extra-spaces">0</div>
+      </div>
+      <div class="rd-card-icon">␣</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Backspace Count</div>
+        <div class="card-value" id="rd-backspaces">0</div>
+      </div>
+      <div class="rd-card-icon">⌫</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Correct Words</div>
+        <div class="card-value green" id="rd-correct">0</div>
+      </div>
+      <div class="rd-card-icon">✓</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Gross Speed (min. 30)</div>
+        <div class="card-value blue" id="rd-gross-speed">0.00</div>
+      </div>
+      <div class="rd-card-icon">🕐</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Net Speed (wpm)</div>
+        <div class="card-value blue" id="rd-net-speed">0.00</div>
+      </div>
+      <div class="rd-card-icon">⚡</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Accuracy %</div>
+        <div class="card-value green" id="rd-accuracy">0.00 %</div>
+      </div>
+      <div class="rd-card-icon">🎯</div>
+    </div>
+    <div class="rd-card">
+      <div class="rd-card-left">
+        <div class="card-label">Status</div>
+        <div class="card-value not-qualified" id="rd-status">Not Qualified</div>
+      </div>
+      <div class="rd-card-icon">🎯</div>
+    </div>
+  </div>
+
+  <!-- Qualify note -->
+  <div class="rd-qualify-bar" id="rd-qualify-bar">
+    <span>ℹ️</span>
+    <span id="rd-qualify-msg">Minimum words required to qualify. Calculation of Accuracy % = ( correct / total ) * 100.</span>
+  </div>
+
+  <!-- Detailed Comparison -->
+  <div class="rd-comparison">
+    <div class="rd-comparison-header">
+      <h3>🔍 Detailed Comparison</h3>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748b;cursor:pointer;">
+        <input type="checkbox" id="show-comparison" checked onchange="toggleComparison()" style="cursor:pointer;" />
+        Show Side-by-Side
+      </label>
+    </div>
+    <div id="comparison-wrap">
+      <div class="comparison-grid">
+        <div class="comp-panel original">
+          <div class="comp-panel-header">📄 Original Passage</div>
+          <div class="comp-text" id="comp-original"></div>
+        </div>
+        <div class="comp-panel typed">
+          <div class="comp-panel-header">✍️ Your Typed Text</div>
+          <div class="comp-text" id="comp-typed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+
+if (!requireLogin()) throw '';
+
+const session = JSON.parse(sessionStorage.getItem('tt_session') || 'null');
+if (!session) {
+  alert('No active test session. Please start from the exam selection page.');
+  location.href = '/pages/select-exam.html'; throw '';
+}
+
+// ── State ──────────────────────────────────────────────────
+const user        = Auth.getUser();
+let passageWords  = [];     // original words array
+let rawPassage    = '';     // original text
+let totalSecs     = 0;
+let timeLeft      = 0;
+let timerHandle   = null;
+let keystrokes    = 0;
+let backspaceCount= 0;
+let submitted     = false;
+let currentFontSize = 18;
+let passageData   = null;
+let highlightingEnabled = true;  // controlled by exam setting
+
+// DOM
+const timerEl  = document.getElementById('timer');
+const inputEl  = document.getElementById('typing-input');
+const passageEl= document.getElementById('passage-text');
+const progFill = document.getElementById('prog-fill');
+const progPct  = document.getElementById('prog-pct');
+
+// Safe DOM setter — never throws if element is missing
+function setTxt(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+function setHtml(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = val;
+}
+function setCls(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.className = val;
+}
+function setStyle(id, prop, val) {
+  const el = document.getElementById(id);
+  if (el) el.style[prop] = val;
+}
+
+// ── Normalise a word for comparison (strip punctuation edge cases) ──
+// This fixes highlighting for words with \" \' etc.
+function normaliseWord(w) {
+  // Remove surrounding backslash-quotes that appear in stored text
+  return w.replace(/\\["']/g, '"').replace(/\\/g, '');
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+
+function toggleMute() { /* sound stub */ }
+
+// ── Fullscreen overlay ─────────────────────────────────────
+function showFsOverlay() {
+  setStyle('fs-overlay', 'display', 'flex');
+}
+function dismissFsOverlay() {
+  setStyle('fs-overlay', 'display', 'none');
+  setStyle('test-ui', 'display', 'block');
+  inputEl.focus();
+  startTimer();
+}
+function startFullscreenAndTest() {
+  const el = document.documentElement;
+  try {
+    if (el.requestFullscreen)            el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.mozRequestFullScreen)    el.mozRequestFullScreen();
+  } catch(e) {}
+  dismissFsOverlay();
+}
+
+// ── Fullscreen ─────────────────────────────────────────────
+function enterFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen)       el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if (el.mozRequestFullScreen)    el.mozRequestFullScreen();
+}
+function exitFullscreen() {
+  if (document.exitFullscreen)         document.exitFullscreen();
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  else if (document.mozCancelFullScreen)  document.mozCancelFullScreen();
+}
+function toggleFullscreen() {
+  const isFull = document.fullscreenElement || document.webkitFullscreenElement;
+  isFull ? exitFullscreen() : enterFullscreen();
+}
+document.addEventListener('fullscreenchange', () => {
+  const isFull = !!document.fullscreenElement;
+  const btn    = document.getElementById('fs-btn');
+  const prompt = document.getElementById('fs-prompt');
+  if (btn)    { btn.title = isFull ? 'Exit Fullscreen' : 'Enter Fullscreen'; btn.textContent = isFull ? '⊡' : '⛶'; }
+  if (prompt) prompt.style.display = isFull ? 'none' : 'flex'; // hide banner when in fullscreen
+});
+
+// ── Font Size ──────────────────────────────────────────────
+// Default font size in px (matches 1.125rem at 16px root = 18px)
+const DEFAULT_FONT_PX = 18;
+const MIN_FONT_PX     = 12;
+const MAX_FONT_PX     = 28;
+
+function applyFontSize(px) {
+  currentFontSize = px;
+  // Apply as rem equivalent (1rem = 16px baseline)
+  const rem = (px / 16).toFixed(4) + 'rem';
+  const lh  = (px * 1.406 / 16).toFixed(4) + 'rem';
+  if (passageEl) {
+    passageEl.style.fontSize   = rem;
+    passageEl.style.lineHeight = lh;
+  }
+  if (inputEl) {
+    inputEl.style.fontSize   = rem;
+    inputEl.style.lineHeight = lh;
+  }
+}
+
+function setFontSize(action) {
+  if (action === 'increase') {
+    if (currentFontSize < MAX_FONT_PX) applyFontSize(currentFontSize + 1);
+  } else if (action === 'decrease') {
+    if (currentFontSize > MIN_FONT_PX) applyFontSize(currentFontSize - 1);
+  } else if (action === 'reset') {
+    applyFontSize(DEFAULT_FONT_PX);
+  }
+}
+
+// ── Load Passage ───────────────────────────────────────────
+(async () => {
+  try {
+    const p = await apiFetch(`/passages/${session.passage_id}`);
+    passageData = p;
+    rawPassage  = p.passage_text;
+    totalSecs   = (session.duration_minutes || p.duration_minutes) * 60;
+    timeLeft    = totalSecs;
+
+    // Build word array — normalise for matching
+    passageWords = rawPassage.trim().split(/\s+/).filter(Boolean);
+    const rawPassageAllWords = passageWords.length; // store before truncation
+
+    // ── Populate new ARTyping theme elements ──────────────
+    const userName = (user.name || user.email || 'USER');
+    const shortName = userName.split(' ')[0].substring(0,8).toUpperCase();
+    // Avatar circle + name label
+    const avatarEl   = document.getElementById('user-avatar');
+    const badgeNameEl= document.getElementById('user-badge-name');
+    if (avatarEl)    avatarEl.textContent    = shortName.substring(0,6);
+    if (badgeNameEl) badgeNameEl.textContent = shortName;
+    // Subtitle bar = exam name
+    const subbarEl = document.getElementById('ic-exam');
+    if (subbarEl) subbarEl.textContent = p.exam_name || 'Typing Exam';
+    // Title bar = passage title
+    const titleEl = document.getElementById('exam-title-text');
+    if (titleEl) titleEl.textContent =
+      'Typing Test Id ' + (session.session_id || p.id) + ' - ' + (p.title || 'Test');
+
+    // ── Use word_limit + highlighting from session (returned by start-test) ──
+    // session.word_limit is now returned directly from the backend
+    highlightingEnabled = session.enable_highlighting != 0;
+    const examWordLimit = (session.word_limit && session.word_limit > 0)
+      ? session.word_limit
+      : passageWords.length;
+
+    // ── CRITICAL: Truncate passage to exam's word_limit ──────
+    // Only the first word_limit words are shown and used for scoring.
+    // E.g. UP Police ASI Hindi = 250 words, English = 510 words
+    if (passageWords.length > examWordLimit) {
+      passageWords = passageWords.slice(0, examWordLimit);
+      rawPassage   = passageWords.join(' ');
+    }
+
+    // Show word limit clearly
+    const limitLabel = session.word_limit && session.word_limit < rawPassageAllWords
+      ? `Word Limit: ${passageWords.length}`
+      : `${passageWords.length} words`;
+    // word count shown in title (no passage-wc element in new theme)
+
+    // Render passage — if highlighting OFF, render as plain text
+    if (highlightingEnabled) {
+      passageEl.innerHTML = passageWords.map((w, i) =>
+        `<span class="w" id="pw-${i}">${escHtml(normaliseWord(w))}</span> `
+      ).join('');
+      document.getElementById('pw-0')?.classList.add('current');
+    } else {
+      passageEl.style.userSelect = 'text';
+      passageEl.innerHTML = `<p style="white-space:pre-wrap;line-height:1.9;">${escHtml(rawPassage)}</p>`;
+    }
+
+    // Show UI
+    setStyle('page-loading', 'display', 'none');
+    inputEl.value = ''; // ensure empty
+    // Show fullscreen overlay — timer starts AFTER user clicks
+    showFsOverlay();
+
+  } catch(err) {
+    alert('Failed to load passage: ' + err.message);
+    location.href = '/pages/select-exam.html';
+  }
+})();
+
+// ── Timer ──────────────────────────────────────────────────
+function startTimer() {
+  renderTimer();
+  timerHandle = setInterval(() => {
+    timeLeft--;
+    renderTimer();
+    if (timeLeft <= 0) { clearInterval(timerHandle); submitTest(true); }
+  }, 1000);
+}
+function renderTimer() {
+  const m = String(Math.floor(Math.max(timeLeft,0)/60)).padStart(2,'0');
+  const s = String(Math.max(timeLeft,0)%60).padStart(2,'0');
+  if (timerEl) {
+    timerEl.textContent = m + ':' + s;
+    timerEl.classList.toggle('urgent', timeLeft <= 60);
+    timerEl.style.color = timeLeft <= 60 ? '#d32f2f' : '#1a237e';
+  }
+}
+
+// ── Input handlers ─────────────────────────────────────────
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Backspace') backspaceCount++;
+  else keystrokes++;
+  setTxt('ks-label', 'Keystrokes: ' + keystrokes);
+});
+
+inputEl.addEventListener('input', () => { updateHighlights(); });
+
+inputEl.addEventListener('paste',       e => e.preventDefault());
+inputEl.addEventListener('copy',        e => e.preventDefault());
+inputEl.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('contextmenu', e => { if(!submitted) e.preventDefault(); });
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && !submitted) {
+    const w = document.getElementById('tab-warn');
+    if (w) { w.style.display = 'block'; setTimeout(() => w.style.display = 'none', 5000); }
+  }
+});
+window.addEventListener('beforeunload', e => { if (!submitted) { e.preventDefault(); e.returnValue=''; } });
+
+// ══════════════════════════════════════════════════════════
+// SMART WORD ALIGNMENT (v2 — correct algorithm)
+// ══════════════════════════════════════════════════════════
+// Strategy: for each typed word, try to match it at current
+// passage position. If no match, look LOOKAHEAD words ahead.
+// If a match is found ahead, the words in between are marked
+// as 'missed' (skipped by user). If no match anywhere, mark
+// the typed word as 'wrong' and advance passage by 1.
+//
+// This is a greedy alignment — same as artypingplatform.com
+const LOOKAHEAD = 12;
+
+// smartAlign replaced by doAlignWords
+
+// ── Real-time highlights ───────────────────────────────────
+function updateHighlights() {
+  const raw        = inputEl.value;
+  const typedParts = raw.split(' ');           // includes current partial word
+  const curTypedIdx= typedParts.length - 1;    // index being typed right now
+  const completed  = typedParts.slice(0, curTypedIdx); // space-confirmed words
+
+  let correct = 0, wrong = 0, missed = 0;
+  let currentPassageIdx = 0;
+
+  if (highlightingEnabled) {
+    // Use same doAlignWords for realtime so green jumps ahead correctly
+    const { slots, lastPi } = doAlignWords(passageWords, completed);
+    currentPassageIdx = lastPi;
+
+    // Count correct/wrong — missed = omissions (shown red in passage but NOT counted as typed errors)
+    slots.forEach((s, i) => {
+      if (!s || i >= lastPi) return;
+      if (s.status === 'correct' || s.status === 'halfmistake') correct++;
+      else if (s.status === 'wrong') wrong++; // only TYPED wrong words count as live errors
+      // 'missed' words are shown red in passage but are omissions, not counted in error bar
+    });
+
+    // Apply classes to DOM — missed = red, correct = green
+    slots.forEach((slot, i) => {
+      const el = document.getElementById(`pw-${i}`);
+      if (!el) return;
+      el.className = 'w';
+      if (i >= lastPi) {
+        if (i === lastPi) el.classList.add('current');
+        return;
+      }
+      if (slot.status === 'correct' || slot.status === 'halfmistake') el.classList.add('correct');
+      else if (slot.status === 'wrong')  el.classList.add('wrong');
+      else if (slot.status === 'missed') el.classList.add('missed');
+    });
+
+    // Auto-scroll disabled — user controls the passage view
+  } else {
+    // No highlighting — count from typed words directly
+    completed.forEach((tw, ti) => {
+      if (!tw || ti >= passageWords.length) return;
+      if (tw === normaliseWord(passageWords[ti]) || tw === passageWords[ti]) correct++;
+      else wrong++;
+    });
+    currentPassageIdx = completed.length;
+  }
+
+  const total   = completed.filter(Boolean).length;
+  // elapsed = seconds actually spent (totalSecs - timeLeft), min 1s to avoid div/0
+  const elapsedSec = Math.max(totalSecs - timeLeft, 1);
+  const elapsedMin = elapsedSec / 60;
+  // WPM = total completed words / elapsed minutes (standard formula)
+  const wpm = Math.max(0, Math.round(total / elapsedMin));
+  // Accuracy = correct / total typed (only completed words, not current partial)
+  const acc = total > 0 ? Math.round((correct / total) * 100) : 100;
+  const prog = Math.min(Math.round((currentPassageIdx / passageWords.length) * 100), 100);
+
+  setTxt('ls-wpm', wpm);
+  setTxt('ls-acc', acc + '%');
+  // Errors = only wrong typed words; missed = omissions shown separately
+  setTxt('ls-err', wrong);
+  setTxt('ls-typed', total);
+  setTxt('ls-correct', correct);
+  if (progFill) progFill.style.width = prog + '%';
+  setTxt('prog-pct', prog + '%');
+
+  { const _tw2=document.getElementById('typing-wrap'); if(_tw2) _tw2.classList.toggle('has-error', wrong > 0); }
+}
+
+// autoScroll removed — passage stays fixed
+
+// ── Submit ─────────────────────────────────────────────────
+function confirmCancel() {
+  if (confirm('Cancel this test? Progress will be lost.')) {
+    submitted = true; clearInterval(timerHandle);
+    sessionStorage.removeItem('tt_session');
+    location.href = '/pages/select-exam.html';
+  }
+}
+function confirmSubmit() {
+  if (confirm('Submit test now?')) submitTest(false);
+}
+
+async function submitTest(autoSubmit) {
+  if (submitted) return;
+  submitted = true;
+  clearInterval(timerHandle);
+  inputEl.disabled = true;
+  const _sb = document.getElementById('submit-btn');
+  if (_sb) { _sb.disabled = true; _sb.textContent = 'Submitting...'; }
+
+  const timeTaken = totalSecs - timeLeft;
+
+  try {
+    const result = await apiFetch('/submit-test', {
+      method: 'POST',
+      body: JSON.stringify({
+        session_id:    session.session_id,
+        session_token: session.session_token,
+        typed_text:    inputEl.value,
+        time_taken:    timeTaken,
+        keystrokes,
+        backspaces:    backspaceCount,
+      })
+    });
+    sessionStorage.removeItem('tt_session');
+
+    // ── If this was a live exam, mark the attempt as submitted ──
+    if (session.live_exam_id && result.result_id) {
+      try {
+        await apiFetch(`/live-exams/${session.live_exam_id}/mark-attempt-submitted`, {
+          method: 'PATCH',
+          body: JSON.stringify({ result_id: result.result_id })
+        });
+      } catch(e) { /* non-critical */ }
+    }
+
+    showPerformanceDashboard(result, timeTaken, autoSubmit);
+  } catch(err) {
+    alert('Submission error: ' + err.message);
+    submitted = false; inputEl.disabled = false;
+    const _sb2 = document.getElementById('submit-btn');
+    if (_sb2) { _sb2.disabled = false; _sb2.textContent = 'Submit ✓'; }
+    if (!autoSubmit) { timeLeft++; startTimer(); }
+  }
+}
+
+// ── Performance Dashboard ──────────────────────────────────
+function showPerformanceDashboard(r, timeTaken, autoSubmit) {
+  setStyle('test-ui', 'display', 'none');
+  setStyle('result-page', 'display', 'block');
+  window.scrollTo(0, 0);
+
+  const typedText   = inputEl.value || '';
+  const typedWords  = typedText.trim().split(/\s+/).filter(Boolean);
+  const origWords   = passageWords;
+  const totalGiven  = origWords.length;
+  const durationMin = totalSecs / 60;
+  const timeTakenMin= timeTaken / 60;
+  const today       = new Date();
+  const dateStr     = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+
+  // SCORING — government exam rules
+  // accuracy  = correct / TYPED (NOT total passage)
+  // omissions = skipped + never reached (shown separately, NOT in accuracy)
+  // netWrong  = full + half*0.5  (no omissions)
+  let fullMistake  = 0, halfMistake  = 0;
+  let correctWords = 0, missedWords  = 0, extraSpaces = 0;
+
+  const spaceMatches = typedText.match(/  +/g);
+  if (spaceMatches) extraSpaces = spaceMatches.reduce((a,m) => a + m.length - 1, 0);
+
+  const { slots, extra: extraWords, lastPi } = doAlignWords(origWords, typedWords);
+  slots.forEach(s => {
+    if      (s.status === 'correct')     correctWords++;
+    else if (s.status === 'halfmistake') halfMistake++;
+    else if (s.status === 'wrong')       fullMistake++;
+    else if (s.status === 'missed')      missedWords++;
+  });
+
+  const extraWordCount = extraWords.length;
+  const omissions = missedWords + Math.max(0, origWords.length - lastPi);
+  const correctWordsDisplay = parseFloat((correctWords + halfMistake * 0.5).toFixed(1));
+  const netWrongWords = parseFloat((fullMistake + halfMistake * 0.5).toFixed(1));
+  const grossSpeed = timeTakenMin > 0
+    ? parseFloat((typedWords.length / timeTakenMin).toFixed(2)) : 0;
+  const netSpeed = timeTakenMin > 0
+    ? parseFloat((Math.max(0, typedWords.length - netWrongWords) / timeTakenMin).toFixed(2)) : 0;
+
+  // ACCURACY: correct / word_limit (total passage length) * 100
+  const accuracy = origWords.length > 0
+    ? parseFloat(((correctWords / origWords.length) * 100).toFixed(2)) : 0;
+
+  const minWords = Math.round(origWords.length * 0.85);
+  const qualified = typedWords.length >= minWords && accuracy >= 80;
+
+  // Meta
+  document.getElementById('rd-exam-title').textContent = passageData?.exam_name || 'Typing Test';
+  setTxt('rd-total-words-given', origWords.length);
+  document.getElementById('rd-date').textContent = dateStr;
+  setTxt('rd-passage-title', passageData?.title || ('Passage #' + passageData?.id));
+  document.getElementById('rd-duration').textContent = `${durationMin.toFixed(0)}:00 min.`;
+  document.getElementById('rd-time-taken').textContent = timeTaken >= totalSecs
+    ? `${durationMin.toFixed(0)}:00 min.`
+    : `${Math.floor(timeTaken/60).toString().padStart(2,'0')}:${(timeTaken%60).toString().padStart(2,'0')} min.`;
+
+  // Cards
+  document.getElementById('rd-typed').textContent = typedWords.length;
+  setTxt('rd-full-mistake', fullMistake);
+  setTxt('rd-half-mistake', halfMistake);
+  document.getElementById('rd-net-wrong').textContent = netWrongWords;
+  document.getElementById('rd-omissions').textContent = omissions;
+  setTxt('rd-extra-spaces', extraSpaces);
+  document.getElementById('rd-backspaces').textContent = backspaceCount;
+  document.getElementById('rd-correct').textContent = correctWordsDisplay;
+  document.getElementById('rd-gross-speed').textContent = grossSpeed;
+  document.getElementById('rd-net-speed').textContent = netSpeed;
+  document.getElementById('rd-accuracy').textContent = accuracy + ' %';
+
+  setTxt('rd-status', qualified ? 'Qualified ✓' : 'Not Qualified');
+  setCls('rd-status', 'card-value ' + (qualified ? 'qualified' : 'not-qualified'));
+
+  setHtml('rd-qualify-msg',
+    'Minimum <b>' + minWords + '</b> words required to qualify. &nbsp;|&nbsp; ' +
+    'Accuracy = Correct (<b>' + correctWords + '</b>) &divide; Word Limit (<b>' + origWords.length + '</b>) &times; 100 = <b>' + accuracy + '%</b>');
+
+  buildComparison(origWords, typedWords);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TYPING COMPARISON ENGINE — Needleman-Wunsch sequence alignment
+// Handles: skips, wrong words, missed lines, extra words
+// ═══════════════════════════════════════════════════════════
+
+// Strip surrounding punctuation/quotes for matching only
+function normWord(w) {
+  return String(w||'').replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g,'').toLowerCase();
+}
+function normaliseWord(w) { return normWord(w); }
+
+// Levenshtein distance (used for similarity scoring in NW matrix)
+function levenshtein(a, b) {
+  const m=a.length, n=b.length;
+  const dp=[];
+  for(let i=0;i<=m;i++){ dp[i]=[i]; }
+  for(let j=0;j<=n;j++){ dp[0][j]=j; }
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+// Classify a match between typed word and original word
+function classifyWord(tw, ow) {
+  const normTw = normWord(tw), normOw = normWord(ow);
+  if (tw === ow)             return 'correct';     // exact match
+  if (normTw === normOw)     return 'halfmistake'; // case difference only
+  return 'wrong';                                   // anything else = full mistake
+}
+
+// ════════════════════════════════════════════════════════════
+// LCS-BASED ALIGNMENT ENGINE
+// Uses Longest Common Subsequence to find optimal word matching.
+// This correctly handles:
+//   - skipped words / missed lines
+//   - wrong words followed by correct resumption
+//   - extra inserted words
+//   - large gaps (whole paragraphs skipped)
+// ════════════════════════════════════════════════════════════
+
+function doAlignWords(origWords, typedWords) {
+  const O = origWords.length;
+  const T = typedWords.length;
+
+  // ── Step 1: Build LCS table ─────────────────────────────
+  // lcs[i][j] = length of LCS of orig[0..i-1] and typed[0..j-1]
+  // Use flat Uint16Array for performance on 500+ word passages
+  const lcs = new Uint16Array((O + 1) * (T + 1));
+  const idx = (i, j) => i * (T + 1) + j;
+
+  for (let i = 1; i <= O; i++) {
+    for (let j = 1; j <= T; j++) {
+      if (normWord(origWords[i-1]) === normWord(typedWords[j-1])) {
+        lcs[idx(i,j)] = lcs[idx(i-1,j-1)] + 1;
+      } else {
+        lcs[idx(i,j)] = Math.max(lcs[idx(i-1,j)], lcs[idx(i,j-1)]);
+      }
+    }
+  }
+
+  // ── Step 2: Traceback to get alignment ──────────────────
+  // Produces pairs: { oi: origIdx|null, ti: typedIdx|null }
+  const alignment = [];
+  let i = O, j = T;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && normWord(origWords[i-1]) === normWord(typedWords[j-1])) {
+      alignment.push({ oi: i-1, ti: j-1 });
+      i--; j--;
+    } else if (j > 0 && (i === 0 || lcs[idx(i,j-1)] >= lcs[idx(i-1,j)])) {
+      alignment.push({ oi: null, ti: j-1 }); // extra typed word
+      j--;
+    } else {
+      alignment.push({ oi: i-1, ti: null }); // missed orig word
+      i--;
+    }
+  }
+  alignment.reverse();
+
+  // ── Step 3: Build result slots ───────────────────────────
+  const slots = origWords.map(w => ({ orig: w, typed: null, status: 'omitted' }));
+  const extra = [];
+  let lastPi = 0;
+
+  // Find last matched original index to know how far user got
+  let lastMatchedOi = -1;
+  for (const a of alignment) {
+    if (a.oi !== null && a.ti !== null) lastMatchedOi = a.oi;
+  }
+
+  for (const a of alignment) {
+    if (a.oi !== null && a.ti !== null) {
+      // Matched pair — classify as correct/half/wrong
+      const tw = typedWords[a.ti];
+      const ow = origWords[a.oi];
+      slots[a.oi] = { orig: ow, typed: tw, status: classifyWord(tw, ow) };
+      lastPi = a.oi + 1;
+    } else if (a.oi !== null && a.ti === null) {
+      // Original word has no typed match → missed (if within range user typed)
+      if (a.oi <= lastMatchedOi) {
+        slots[a.oi] = { orig: origWords[a.oi], typed: null, status: 'missed' };
+      }
+      // else: omitted (user never reached here) — stays as 'omitted'
+    } else if (a.oi === null && a.ti !== null) {
+      // Typed word has no original match → extra word
+      extra.push(typedWords[a.ti]);
+    }
+  }
+
+  return { slots, extra, lastPi };
+}
+
+// ── COMPARISON DISPLAY ─────────────────────────────────────
+// Passage-aligned slots, 10 per line, both panels in sync.
+function buildComparison(origWords, typedWords) {
+  const { slots, extra } = doAlignWords(origWords, typedWords);
+  const WPL = 10;
+  let origHtml = '', typedHtml = '';
+
+  for (let i = 0; i < slots.length; i += WPL) {
+    const lineNum   = Math.floor(i/WPL) + 1;
+    const lineSlots = slots.slice(i, i+WPL);
+    let oLine = '', tLine = '';
+
+    lineSlots.forEach(slot => {
+      const od = escHtml(slot.orig);
+      const tw = slot.typed ? escHtml(slot.typed) : '';
+
+      switch (slot.status) {
+        case 'correct':
+          oLine += `<span style="background:#bbf7d0;border-radius:2px;padding:0 3px;margin:1px;">${od}</span> `;
+          tLine += `<span style="background:#bbf7d0;border-radius:2px;padding:0 3px;margin:1px;">${tw}</span> `;
+          break;
+        case 'halfmistake':
+          oLine += `<span style="background:#fef3c7;border-radius:2px;padding:0 3px;margin:1px;">${od}</span> `;
+          tLine += `<span style="background:#fef3c7;border-radius:2px;padding:0 3px;margin:1px;text-decoration:underline wavy #f59e0b;">${tw}</span> `;
+          break;
+        case 'wrong':
+          oLine += `<span style="background:#fecaca;border-radius:2px;padding:0 3px;margin:1px;">${od}</span> `;
+          tLine += `<span style="background:#fecaca;border-radius:2px;padding:0 3px;margin:1px;text-decoration:underline wavy #ef4444;">${tw}</span> `;
+          break;
+        case 'missed':
+          oLine += `<span style="background:#fef3c7;border-radius:2px;padding:0 3px;margin:1px;font-style:italic;">${od}</span> `;
+          tLine += `<span style="color:#d1d5db;padding:0 3px;margin:1px;">____</span> `;
+          break;
+        default: // omitted — never reached
+          oLine += `<span style="color:#94a3b8;padding:0 3px;margin:1px;">${od}</span> `;
+          tLine += `<span style="color:#e2e8f0;padding:0 3px;margin:1px;">·</span> `;
+      }
+    });
+
+    const lnSt = 'color:#94a3b8;font-size:11px;min-width:22px;flex-shrink:0;user-select:none;text-align:right;padding-top:2px;';
+    origHtml  += `<div style="display:flex;gap:5px;margin-bottom:5px;align-items:flex-start;flex-wrap:wrap;"><span style="${lnSt}">${lineNum}</span><span>- ${oLine}</span></div>`;
+    typedHtml += `<div style="display:flex;gap:5px;margin-bottom:5px;align-items:flex-start;flex-wrap:wrap;"><span style="${lnSt}">${lineNum}</span><span>+ ${tLine}</span></div>`;
+  }
+
+  // Show extra words appended at the bottom of typed panel
+  if (extra.length) {
+    const extraSpans = extra.map(w =>
+      `<span style="background:#fde68a;border-radius:2px;padding:0 3px;margin:1px;font-style:italic;">${escHtml(w)}</span>`
+    ).join(' ');
+    typedHtml += `<div style="margin-top:8px;font-size:12px;color:#92400e;"><strong>Extra words:</strong> ${extraSpans}</div>`;
+  }
+
+  document.getElementById('comp-original').innerHTML = origHtml || '<em style="color:#94a3b8">No passage.</em>';
+  document.getElementById('comp-typed').innerHTML    = typedHtml || '<em style="color:#94a3b8">Nothing typed.</em>';
+}
+
+function toggleComparison() {
+  const show = document.getElementById('show-comparison').checked;
+  setStyle('comparison-wrap', 'display', show ? 'block' : 'none');
+}
+</script>
+</body>
+</html>

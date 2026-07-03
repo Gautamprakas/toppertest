@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Instructions – TopperTest</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .instructions-card { max-width: 680px; margin: 40px auto; }
+    .inst-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+    .inst-list li:last-child { border: none; }
+    .inst-list li .inst-icon { font-size: 18px; flex-shrink: 0; }
+    .checkbox-row { display: flex; align-items: flex-start; gap: 12px; background: #fffbf0; border: 1.5px solid var(--accent); border-radius: 10px; padding: 16px; margin-top: 20px; cursor: pointer; }
+    .checkbox-row input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--primary); cursor: pointer; }
+    .passage-preview { background: #fffbf0; border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-size: 14px; line-height: 2; max-height: 200px; overflow: hidden; position: relative; }
+    .passage-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, #fffbf0); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div></a></div>
+  <div id="nav-right"></div>
+</nav>
+<div style="background:var(--bg);min-height:calc(100vh - 64px);padding:24px 16px;">
+<div class="instructions-card">
+
+  <div class="card">
+    <div class="card-header" style="background:var(--primary);color:#fff;">
+      <h2 style="color:#fff;font-size:18px;">📋 Typing Test Instructions</h2>
+      <p id="exam-info" style="opacity:.8;font-size:13px;margin-top:4px;">Loading exam details...</p>
+    </div>
+    <div class="card-body">
+
+      <!-- Passage details -->
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;" id="test-meta">
+        <div class="stat-card"><div class="stat-value" id="m-dur">-</div><div class="stat-label">Duration</div></div>
+        <div class="stat-card accent"><div class="stat-value" id="m-words">-</div><div class="stat-label">Word Limit</div></div>
+        <div class="stat-card success"><div class="stat-value" id="m-diff">-</div><div class="stat-label">Difficulty</div></div>
+      </div>
+
+      <!-- Instructions list -->
+      <h3 style="font-size:15px;margin-bottom:12px;color:var(--primary);">⚠️ Important Instructions</h3>
+      <ul class="inst-list" style="list-style:none;padding:0;">
+        <li><span class="inst-icon">⏱️</span><span>Timer will start as soon as you click <strong>Start Typing</strong>. Test will auto-submit when time is up.</span></li>
+        <li><span class="inst-icon">🚫</span><span>Copy-paste is <strong>not allowed</strong>. Right-click is disabled during the test.</span></li>
+        <li><span class="inst-icon">📝</span><span>Type the passage <strong>exactly</strong> as shown. Extra spaces and punctuation errors are counted as mistakes.</span></li>
+        <li><span class="inst-icon">🔤</span><span>Use only <strong>one space</strong> after punctuation marks (comma, period, etc.).</span></li>
+        <li><span class="inst-icon">🪟</span><span>Do not switch tabs or minimize the browser during the test. <strong>Tab switch is detected.</strong></span></li>
+        <li><span class="inst-icon">📱</span><span>For Hindi typing, ensure <strong>Mangal font</strong> is installed and <strong>Inscript keyboard</strong> is enabled.</span></li>
+        <li><span class="inst-icon">🔄</span><span>Do not refresh the page during the test. Your progress will be lost.</span></li>
+        <li><span class="inst-icon">📊</span><span>WPM and accuracy are calculated in real-time. Results are saved automatically after submission.</span></li>
+      </ul>
+
+      <!-- Passage preview -->
+      <h3 style="font-size:15px;margin:20px 0 10px;color:var(--primary);">👀 Passage Preview</h3>
+      <div class="passage-preview" id="passage-preview">Loading passage...</div>
+
+      <!-- Hindi keyboard check -->
+      <label class="checkbox-row" id="hindi-check" style="display:none;">
+        <input type="checkbox" id="hindi-cb" />
+        <div>
+          <strong>✅ I have enabled Hindi Mangal Keyboard (Inscript Layout)</strong>
+          <p style="font-size:12px;color:var(--muted);margin-top:4px;">
+            Press <kbd style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:11px;">Windows + Space</kbd> to switch input method. 
+            Install Mangal font if not already installed.
+          </p>
+        </div>
+      </label>
+
+      <!-- Consent -->
+      <label class="checkbox-row" style="margin-top:12px;">
+        <input type="checkbox" id="consent-cb" />
+        <div>
+          <strong>✅ I have read and understood all instructions</strong>
+          <p style="font-size:12px;color:var(--muted);margin-top:4px;">I agree to practice genuinely without any unfair means.</p>
+        </div>
+      </label>
+
+      <div class="d-flex gap-2 mt-3">
+        <a href="/pages/select-exam.html" class="btn btn-outline">← Back</a>
+        <button class="btn btn-accent btn-lg" id="start-btn" onclick="startTest()" style="flex:1;">⌨️ Start Typing Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  if (!requireLogin()) throw '';
+
+  const params = new URLSearchParams(location.search);
+  const passageId = params.get('passage');
+
+  if (!passageId) { showToast('No passage selected', 'error'); setTimeout(() => history.back(), 1000); }
+
+  let passageData = null;
+
+  apiFetch(`/passages/${passageId}`).then(p => {
+    passageData = p;
+    document.getElementById('exam-info').textContent = `${p.exam_name} · ${p.language === 'hindi' ? '🇮🇳 Hindi' : '🔤 English'} · ${fmtDate(p.passage_date)}`;
+    document.getElementById('m-dur').textContent   = p.duration_minutes + ' min';
+    document.getElementById('m-words').textContent = p.word_limit;
+    document.getElementById('m-diff').textContent  = p.difficulty === 'E' ? 'Easy' : p.difficulty === 'M' ? 'Medium' : 'Hard';
+    document.getElementById('passage-preview').textContent = p.passage_text.substring(0, 300) + '...';
+
+    if (p.language === 'hindi') document.getElementById('hindi-check').style.display = 'flex';
+  }).catch(() => showToast('Failed to load passage', 'error'));
+
+  async function startTest() {
+    const consent = document.getElementById('consent-cb').checked;
+    const hindiCb = document.getElementById('hindi-cb');
+    const needHindi = passageData?.language === 'hindi';
+
+    if (!consent) { showToast('Please read and accept the instructions first.', 'warning'); return; }
+    if (needHindi && !hindiCb.checked) { showToast('Please confirm your Hindi Mangal keyboard is enabled.', 'warning'); return; }
+
+    const btn = document.getElementById('start-btn');
+    btn.disabled = true; btn.textContent = 'Starting test...';
+
+    try {
+      const data = await apiFetch('/start-test', { method: 'POST', body: JSON.stringify({ passage_id: parseInt(passageId) }) });
+      sessionStorage.setItem('tt_session', JSON.stringify(data));
+      window.location.href = `/pages/typing-test.html`;
+    } catch (err) {
+      showToast('Failed to start test: ' + err.message, 'error');
+      btn.disabled = false; btn.textContent = '⌨️ Start Typing Test';
+    }
+  }
+</script>
+</body>
+</html>

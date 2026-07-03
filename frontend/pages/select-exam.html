@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Select Exam – TopperTest Typing Practice</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+    .exam-opt  { border: 2px solid var(--border); border-radius: 10px; padding: 16px 12px; cursor: pointer; transition: all .2s; background: #fff; text-align: center; }
+    .exam-opt:hover  { border-color: var(--primary); background: #eef4ff; transform: translateY(-2px); }
+    .exam-opt.selected { border-color: var(--primary); background: #eef4ff; box-shadow: 0 0 0 3px rgba(26,60,110,.15); }
+    .exam-opt .eo-icon { font-size: 28px; margin-bottom: 8px; }
+    .exam-opt h4 { font-size: 13px; font-weight: 700; color: var(--primary); }
+    .exam-opt p  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    .lang-opts { display: flex; gap: 16px; }
+    .lang-opt  { flex: 1; border: 2px solid var(--border); border-radius: 12px; padding: 24px 20px; cursor: pointer; transition: all .2s; background: #fff; text-align: center; }
+    .lang-opt:hover  { border-color: var(--primary); background: #eef4ff; }
+    .lang-opt.selected { border-color: var(--primary); background: #eef4ff; box-shadow: 0 0 0 3px rgba(26,60,110,.15); }
+    .lang-opt .lo-icon { font-size: 40px; margin-bottom: 10px; }
+    .lang-opt h4 { font-size: 17px; font-weight: 700; color: var(--primary); }
+    .lang-opt p  { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* Calendar */
+    .cal-wrap { max-width: 380px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.1); }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; background: var(--primary); color: #fff; padding: 14px 18px; }
+    .cal-header h3 { font-size: 16px; font-weight: 700; }
+    .cal-nav-btn { background: rgba(255,255,255,.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 1; transition: background .2s; }
+    .cal-nav-btn:hover { background: rgba(255,255,255,.35); }
+    .cal-body { background: #fff; padding: 12px; }
+    .cal-dow { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 6px; }
+    .cal-dow span { text-align: center; font-size: 10px; font-weight: 700; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
+    .cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+    .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; font-weight: 500; position: relative; transition: all .15s; user-select: none; }
+    .cal-day.empty { visibility: hidden; }
+    .cal-day.no-passage { color: #c0c0c0; }
+    .cal-day.has-passage { background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer; border: 2px solid #93c5fd; }
+    .cal-day.has-passage:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: scale(1.12); z-index: 1; }
+    .cal-day.is-selected { background: var(--primary) !important; color: #fff !important; border-color: var(--primary-dark) !important; transform: scale(1.12); z-index: 1; }
+    .cal-day.is-today::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+    .cal-legend { display: flex; gap: 14px; padding: 10px 12px; background: #f8fafc; flex-wrap: wrap; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+    .leg-box  { width: 13px; height: 13px; border-radius: 3px; }
+
+    .passage-list { display: flex; flex-direction: column; gap: 10px; }
+    .passage-opt { border: 2px solid var(--border); border-radius: 10px; padding: 14px 18px; cursor: pointer; background: #fff; transition: all .2s; display: flex; align-items: center; justify-content: space-between; }
+    .passage-opt:hover  { border-color: var(--primary); background: #eef4ff; transform: translateX(3px); }
+    .passage-opt.selected { border-color: var(--primary); background: #eef4ff; }
+
+    .sel-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; }
+    .sel-bar .sb-item { display: flex; align-items: center; gap: 5px; }
+    .sel-bar .sb-label { color: var(--muted); font-weight: 600; }
+    .sel-bar .sb-val   { color: var(--primary); font-weight: 700; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+
+    /* Quick Practice button on exam card */
+    .quick-btn {
+      display:inline-block; margin-top:10px;
+      background:var(--primary); color:#fff;
+      border:none; border-radius:6px;
+      padding:6px 14px; font-size:12px; font-weight:700;
+      cursor:pointer; transition:all .2s; font-family:inherit;
+      width:100%;
+    }
+    .quick-btn:hover { background:var(--primary-dark); transform:translateY(-1px); }
+    .quick-btn.loading { opacity:.7; cursor:wait; }
+    .quick-btn.random-btn { background:#f59e0b; }
+    .quick-btn.random-btn:hover { background:#d97706; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
+  <div id="nav-right"></div>
+</nav>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Main Menu</div>
+    <ul class="sidebar-menu">
+      <li><a href="/pages/live-exam.html"><span class="icon">🔴</span> Live Typing</a></li>
+      <li><a href="/pages/select-exam.html" class="active"><span class="icon">⌨️</span> Practice Test</a></li>
+      <li><a href="/pages/exams.html"><span class="icon">📋</span> All Exams</a></li>
+      <li><a href="/pages/dashboard.html"><span class="icon">📊</span> Dashboard</a></li>
+      <li><a href="/pages/history.html"><span class="icon">📅</span> History</a></li>
+      <li><a href="/pages/leaderboard.html"><span class="icon">🏆</span> Leaderboard</a></li>
+    </ul>
+    <div class="sidebar-section">Account</div>
+    <ul class="sidebar-menu">
+      <li><a href="#" onclick="Auth.logout()"><span class="icon">🚪</span> Logout</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <h1 class="section-title">⌨️ Start <span>Typing Test</span></h1>
+    <p class="text-muted mb-3">Select exam → language → date → passage to begin</p>
+
+    <!-- Steps indicator -->
+    <div class="steps mb-4">
+      <div class="step active" id="si-1"><div class="step-num">1</div><div class="step-label">Select Exam</div></div>
+      <div class="step"        id="si-2"><div class="step-num">2</div><div class="step-label">Language</div></div>
+      <div class="step"        id="si-3"><div class="step-num">3</div><div class="step-label">Pick Date</div></div>
+      <div class="step"        id="si-4"><div class="step-num">4</div><div class="step-label">Passage</div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-content active card" id="sc-1">
+      <div class="card-header"><h3 style="font-size:16px;font-weight:700;">📋 Step 1 – Select Your Exam</h3></div>
+      <div class="card-body">
+        <div class="exam-grid" id="exam-grid">
+          <div style="text-align:center;padding:40px;grid-column:1/-1;"><div class="spinner" style="margin:auto;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-content card" id="sc-2">
+      <div class="card-header d-flex align-center justify-between">
+        <h3 style="font-size:16px;font-weight:700;">🔤 Step 2 – Select Language</h3>
+        <button class="btn btn-outline btn-sm" onclick="goStep(1)">← Back</button>
+      </div>
+      <div class="card-body"><div class="lang-opts" id="lang-opts"></div></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-content card" id="sc-3">
+      <div class="card-header d-flex align-center justify-between">
+        <h3 style="font-size:16px;font-weight:700;">📅 Step 3 – Select Exam Date</h3>
+        <button class="btn btn-outline btn-sm" onclick="goStep(2)">← Back</button>
+      </div>
+      <div class="card-body">
+        <div id="cal-loading" style="text-align:center;padding:40px;">
+          <div class="spinner" style="margin:auto;"></div>
+          <p class="text-muted mt-2" style="font-size:13px;">Loading available dates...</p>
+        </div>
+        <div id="cal-section" style="display:none;">
+          <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;">
+            <div>
+              <div class="cal-wrap">
+                <div class="cal-header">
+                  <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+                  <h3 id="cal-title">Month Year</h3>
+                  <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+                </div>
+                <div class="cal-body">
+                  <div class="cal-dow">
+                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span>
+                    <span>Th</span><span>Fr</span><span>Sa</span>
+                  </div>
+                  <div class="cal-days" id="cal-days"></div>
+                </div>
+                <div class="cal-legend">
+                  <div class="leg-item"><div class="leg-box" style="background:#dbeafe;border:2px solid #93c5fd;"></div> Has Passages</div>
+                  <div class="leg-item"><div class="leg-box" style="background:var(--primary);"></div> Selected</div>
+                  <div class="leg-item"><div class="leg-box" style="background:#f3f4f6;"></div> No Passage</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;min-width:220px;padding-top:4px;">
+              <div style="background:#f8fafc;border-radius:10px;padding:20px;">
+                <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:8px;">📌 How to use</p>
+                <p style="font-size:13px;color:var(--muted);line-height:1.7;">
+                  Dates shown in <strong style="color:#1d4ed8;">blue</strong> have typing passages available.<br><br>
+                  Click any blue date to load its passages and continue to Step 4.
+                </p>
+                <div id="cal-stats" style="margin-top:16px;background:#fff;border-radius:8px;padding:14px;border:1px solid var(--border);">
+                  <div style="font-size:24px;font-weight:800;color:var(--primary);font-family:var(--font-head);" id="avail-total">0</div>
+                  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;">Dates with Passages</div>
+                </div>
+                <div id="selected-date-info" style="display:none;margin-top:12px;background:#dbeafe;border-radius:8px;padding:12px;font-size:13px;">
+                  ✅ Selected: <strong id="sel-date-display"></strong>
+                  <br><span id="sel-date-count" style="color:var(--primary);font-weight:700;"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="no-dates-msg" style="display:none;">
+          <div class="empty-state">
+            <div class="es-icon">📭</div>
+            <h4>No Passages Available</h4>
+            <p>No passages found for <strong id="no-dates-exam"></strong>.<br>Admin needs to add passages first.</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+              <button class="btn btn-outline" onclick="goStep(1)">← Change Exam</button>
+              <button class="btn btn-outline" onclick="goStep(2)">← Change Language</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-content card" id="sc-4">
+      <div class="card-header d-flex align-center justify-between">
+        <div>
+          <h3 style="font-size:16px;font-weight:700;">📝 Step 4 – Select Passage</h3>
+          <p class="text-muted" style="font-size:12px;margin-top:3px;" id="p4-subtitle">Choose a passage to start typing</p>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="goStep(3)">← Back</button>
+      </div>
+      <div class="card-body">
+        <div class="sel-bar" id="sel-bar" style="display:none;">
+          <div class="sb-item"><span class="sb-label">Exam:</span><span class="sb-val" id="sb-exam">-</span></div>
+          <div class="sb-item"><span class="sb-label">Language:</span><span class="sb-val" id="sb-lang">-</span></div>
+          <div class="sb-item"><span class="sb-label">Date:</span><span class="sb-val" id="sb-date">-</span></div>
+        </div>
+        <div class="alert alert-info" style="font-size:13px;">
+          <strong>Difficulty:</strong>&nbsp;
+          <span class="badge badge-E">E = Easy</span>&nbsp;
+          <span class="badge badge-M">M = Medium</span>&nbsp;
+          <span class="badge badge-H">H = Hard</span>
+        </div>
+        <div id="p-loading" style="text-align:center;padding:30px;display:none;"><div class="spinner" style="margin:auto;"></div></div>
+        <div class="passage-list mt-2" id="passage-list"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+if (!requireLogin()) throw '';
+
+// ── State ──────────────────────────────────────────────────
+let SEL = { exam: null, lang: null, date: null };
+let availDates = [];
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const ICONS = { UP_POLICE_ASI:'🚔', SSC_CHSL:'📝', SSC_CGL_DEO:'💻', HIGH_COURT:'⚖️', DSSSB:'🏛️', JR_ASSISTANT:'📋', STENO:'✍️', RAJ_HC:'⚖️' };
+
+// ── Navigate steps ─────────────────────────────────────────
+function goStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById(`sc-${i}`).classList.toggle('active', i === n);
+    const si = document.getElementById(`si-${i}`);
+    si.classList.remove('active','done');
+    if (i < n) si.classList.add('done');
+    if (i === n) si.classList.add('active');
+  }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── Load exams ─────────────────────────────────────────────
+apiFetch('/exams').then(exams => {
+  document.getElementById('exam-grid').innerHTML = exams.length
+    ? exams.map(e => `
+        <div class="exam-opt" id="eo-${e.id}"
+          data-id="${e.id}"
+          data-name="${e.exam_name.replace(/"/g,'&quot;')}"
+          data-code="${e.exam_code}"
+          data-lang="${e.language}">
+          <div class="eo-icon" style="cursor:pointer;">${ICONS[e.exam_code]||'📄'}</div>
+          <h4 style="cursor:pointer;">${e.exam_name}</h4>
+          <p>${e.language==='both'?'Hindi + English':e.language==='hindi'?'🇮🇳 Hindi':'🔤 English'}</p>
+          <p>⏱ ${e.duration_minutes} min</p>
+          <button class="quick-btn random-btn" data-action="quick">🎲 Quick Practice</button>
+        </div>`).join('')
+    : '<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">📭</div><h4>No exams found</h4></div>';
+
+  // Event delegation — handles both card click and Quick Practice button
+  document.getElementById('exam-grid').addEventListener('click', function(ev) {
+    const card = ev.target.closest('.exam-opt');
+    if (!card) return;
+    const id   = parseInt(card.dataset.id);
+    const name = card.dataset.name;
+    const code = card.dataset.code;
+    const lang = card.dataset.lang;
+
+    // Quick Practice button clicked
+    if (ev.target.closest('[data-action="quick"]')) {
+      ev.stopPropagation();
+      const btn = ev.target.closest('[data-action="quick"]');
+      quickPractice(id, name, lang, btn, ev);
+      return;
+    }
+    // Card itself clicked → go to step 2
+    pickExam(id, name, code, lang);
+  });
+
+  const urlExam = new URLSearchParams(location.search).get('exam');
+  if (urlExam) {
+    const e = exams.find(x => x.id == urlExam);
+    if (e) pickExam(e.id, e.exam_name, e.exam_code, e.language);
+  }
+}).catch(() => {
+  document.getElementById('exam-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">⚠️</div><h4>Failed to load exams</h4><p>Please refresh.</p></div>';
+});
+
+// ── Step 1 → 2 ─────────────────────────────────────────────
+function pickExam(id, name, code, lang) {
+  SEL.exam = { id, name, code, lang };
+  SEL.lang = null; SEL.date = null;
+  document.querySelectorAll('.exam-opt').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`eo-${id}`)?.classList.add('selected');
+
+  const lo = document.getElementById('lang-opts');
+  const mkLang = (l, icon, label, sub) => `
+    <div class="lang-opt" id="lo-${l}" onclick="pickLang('${l}')">
+      <div class="lo-icon">${icon}</div><h4>${label}</h4><p>${sub}</p>
+    </div>`;
+
+  if (lang === 'hindi')   { lo.innerHTML = mkLang('hindi','🇮🇳','Hindi (Mangal)','Inscript Keyboard'); setTimeout(()=>pickLang('hindi'),100); return; }
+  if (lang === 'english') { lo.innerHTML = mkLang('english','🔤','English','QWERTY Keyboard');       setTimeout(()=>pickLang('english'),100); return; }
+  lo.innerHTML = mkLang('hindi','🇮🇳','Hindi (Mangal)','Inscript Keyboard') + mkLang('english','🔤','English','QWERTY Keyboard');
+  goStep(2);
+}
+
+// ── Step 2 → 3 ─────────────────────────────────────────────
+async function pickLang(lang) {
+  SEL.lang = lang; SEL.date = null;
+  document.querySelectorAll('.lang-opt').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`lo-${lang}`)?.classList.add('selected');
+  goStep(3);
+
+  // Reset calendar UI
+  document.getElementById('cal-loading').style.display = 'block';
+  document.getElementById('cal-section').style.display = 'none';
+  document.getElementById('no-dates-msg').style.display = 'none';
+  document.getElementById('selected-date-info').style.display = 'none';
+
+  try {
+    const raw = await apiFetch(`/passages/dates?exam_id=${SEL.exam.id}&language=${lang}`);
+
+    // API returns DATE_FORMAT strings like "2024-01-15" — use them directly.
+    // NEVER use new Date() here — it shifts the date by IST offset (UTC+5:30).
+    availDates = raw.map(d => String(d).substring(0, 10));
+
+    document.getElementById('cal-loading').style.display = 'none';
+
+    if (!availDates.length) {
+      document.getElementById('no-dates-msg').style.display = 'block';
+      document.getElementById('no-dates-exam').textContent = `${SEL.exam.name} (${lang})`;
+      return;
+    }
+
+    // Jump to month of most recent date
+    const latest = [...availDates].sort().at(-1);
+    const [y, m] = latest.split('-').map(Number);
+    calYear = y; calMonth = m - 1;
+
+    document.getElementById('avail-total').textContent = availDates.length;
+    document.getElementById('cal-section').style.display = 'block';
+    renderCal();
+
+  } catch(err) {
+    document.getElementById('cal-loading').style.display = 'none';
+    document.getElementById('no-dates-msg').style.display = 'block';
+    document.getElementById('no-dates-exam').textContent = SEL.exam.name;
+    console.error(err);
+  }
+}
+
+// ── Render Calendar ─────────────────────────────────────────
+function renderCal() {
+  document.getElementById('cal-title').textContent = `${MONTHS[calMonth]} ${calYear}`;
+  // Build today's date string using LOCAL date parts (not UTC) to avoid IST shift
+  const _now = new Date();
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
+  const firstDow = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  let html = '';
+  for (let i = 0; i < firstDow; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds  = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const has = availDates.includes(ds);
+    const sel = ds === SEL.date;
+    const tod = ds === todayStr;
+
+    let cls = 'cal-day';
+    if (has) cls += sel ? ' has-passage is-selected' : ' has-passage';
+    else     cls += ' no-passage';
+    if (tod) cls += ' is-today';
+
+    html += `<div class="${cls}" ${has ? `onclick="pickDate('${ds}')" title="Click to see passages"` : ''} >${d}</div>`;
+  }
+  document.getElementById('cal-days').innerHTML = html;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCal();
+}
+
+// ── Step 3 → 4 ─────────────────────────────────────────────
+async function pickDate(ds) {
+  SEL.date = ds;
+  renderCal(); // re-highlight
+
+  // Show selected info panel
+  const info = document.getElementById('selected-date-info');
+  info.style.display = 'block';
+  document.getElementById('sel-date-display').textContent = fmtDate(ds);
+  document.getElementById('sel-date-count').textContent = 'Loading passages...';
+
+  goStep(4);
+
+  // Update summary bar
+  document.getElementById('sel-bar').style.display = 'flex';
+  document.getElementById('sb-exam').textContent = SEL.exam.name;
+  document.getElementById('sb-lang').textContent = SEL.lang === 'hindi' ? '🇮🇳 Hindi' : '🔤 English';
+  document.getElementById('sb-date').textContent = fmtDate(ds);
+  document.getElementById('p4-subtitle').textContent = `Passages for ${fmtDate(ds)}`;
+
+  // Load passages
+  document.getElementById('p-loading').style.display = 'block';
+  document.getElementById('passage-list').innerHTML = '';
+
+  try {
+    const passages = await apiFetch(`/passages?exam_id=${SEL.exam.id}&language=${SEL.lang}&date=${ds}`);
+    document.getElementById('p-loading').style.display = 'none';
+    document.getElementById('sel-date-count').textContent = `${passages.length} passage${passages.length !== 1 ? 's' : ''} found`;
+    renderPassages(passages);
+  } catch(err) {
+    document.getElementById('p-loading').style.display = 'none';
+    renderPassages([]);
+    showToast('Failed to load passages: ' + err.message, 'error');
+  }
+}
+
+function renderPassages(list) {
+  const el = document.getElementById('passage-list');
+  if (!list.length) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="es-icon">📭</div>
+        <h4>No Passages for This Date</h4>
+        <p>No passages found for <strong>${fmtDate(SEL.date)}</strong>.<br>Try a different date.</p>
+        <button class="btn btn-primary mt-3" onclick="goStep(3)">← Pick Another Date</button>
+      </div>`;
+    return;
+  }
+
+  const diff = { E:'Easy', M:'Medium', H:'Hard' };
+  el.innerHTML = list.map((p, i) => `
+    <div class="passage-opt" id="po-${p.id}" onclick="pickPassage(${p.id})">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;color:var(--primary);font-size:14px;">
+          📄 Passage ${i+1}${p.title ? ` – ${p.title}` : ''}
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">
+          📝 ${p.word_count} words
+          ${p.shift ? `&nbsp;·&nbsp;🕐 ${p.shift}` : ''}
+          &nbsp;·&nbsp;${SEL.lang === 'hindi' ? '🇮🇳 Hindi' : '🔤 English'}
+        </div>
+      </div>
+      <div style="flex-shrink:0;margin-left:12px;text-align:right;">
+        <span class="badge badge-${p.difficulty}">${diff[p.difficulty]||p.difficulty}</span>
+        <br><span class="btn btn-primary btn-sm" style="margin-top:8px;display:inline-block;">Start →</span>
+      </div>
+    </div>`).join('');
+}
+
+function pickPassage(id) {
+  document.querySelectorAll('.passage-opt').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`po-${id}`)?.classList.add('selected');
+  setTimeout(() => {
+    window.location.href = `/pages/instructions.html?passage=${id}&exam=${SEL.exam.id}`;
+  }, 250);
+}
+
+// ── Quick Practice: pick random passage and start immediately ──
+async function quickPractice(examId, examName, lang, btn, event) {
+  // Stop click bubbling to parent elements
+  if (event) event.stopPropagation();
+
+  const origText = btn.innerHTML;
+  btn.innerHTML = '⏳ Loading...';
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  try {
+    // If language is 'both', try english first, fall back to hindi
+    const langs = (lang === 'both') ? ['english', 'hindi'] : [lang];
+    
+    let dates = [];
+    let useLang = langs[0];
+
+    for (const l of langs) {
+      dates = await apiFetch(`/passages/dates?exam_id=${examId}&language=${l}`);
+      if (dates && dates.length) { useLang = l; break; }
+    }
+
+    if (!dates || !dates.length) {
+      throw new Error('No passages available for this exam yet. Please ask admin to add passages.');
+    }
+
+    // Pick a random date string (API returns "YYYY-MM-DD")
+    const randomDate = dates[Math.floor(Math.random() * dates.length)];
+    const dateStr = String(randomDate).substring(0, 10);
+
+    // Get passages for that date
+    const passages = await apiFetch(`/passages?exam_id=${examId}&language=${useLang}&date=${dateStr}`);
+
+    if (!passages || !passages.length) {
+      // Try another random date if first one had no passages
+      const anotherDate = dates[Math.floor(Math.random() * dates.length)];
+      const anotherStr = String(anotherDate).substring(0, 10);
+      const passages2 = await apiFetch(`/passages?exam_id=${examId}&language=${useLang}&date=${anotherStr}`);
+      if (!passages2 || !passages2.length) throw new Error('No passages found. Try again or use the manual selection flow.');
+      passages.push(...passages2);
+    }
+
+    // Pick a random passage
+    const p = passages[Math.floor(Math.random() * passages.length)];
+
+    btn.innerHTML = '✅ Starting...';
+
+    // Navigate to instructions page
+    setTimeout(() => {
+      window.location.href = `/pages/instructions.html?passage=${p.id}&exam=${examId}`;
+    }, 400);
+
+  } catch(err) {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    showToast('⚠️ ' + (err.message || 'Failed to start. Try again.'), 'error');
+  }
+}
+
+function fmtDate(s) {
+  if (!s) return '-';
+  const [y, m, d] = s.split('-');
+  return `${parseInt(d)} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]} ${y}`;
+}
+</script>
+</body>
+</html>

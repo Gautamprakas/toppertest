@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel – TopperTest</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .tab-btns  { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:24px; flex-wrap:wrap; }
+    .tab-btn   { padding:10px 18px; border:none; background:none; font-weight:600; font-size:14px; cursor:pointer; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .2s; }
+    .tab-btn:hover  { color:var(--primary); }
+    .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
+    .tab-panel { display:none; } .tab-panel.active { display:block; }
+
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:2000; display:none; align-items:center; justify-content:center; padding:16px; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:#fff; border-radius:16px; width:100%; max-width:600px; max-height:92vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,.25); }
+    .modal-header { background:var(--primary); color:#fff; padding:20px 28px; border-radius:16px 16px 0 0; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:1; }
+    .modal-header h3 { font-size:18px; color:#fff; margin:0; }
+    .modal-close { background:rgba(255,255,255,.2); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .modal-close:hover { background:rgba(255,255,255,.35); }
+    .modal-body { padding:28px; }
+    .modal-footer { padding:16px 28px; border-top:1px solid var(--border); display:flex; gap:12px; justify-content:flex-end; background:#f8fafc; border-radius:0 0 16px 16px; }
+
+    /* Form row */
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:520px) { .form-row { grid-template-columns:1fr; } }
+
+    /* Table actions */
+    .action-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
+    .tbl-actions { display:flex; gap:6px; }
+
+    /* Status badge */
+    .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+    .status-dot.active   { background:var(--success); }
+    .status-dot.inactive { background:var(--danger); }
+
+    /* Word count badge */
+    .wc-badge { display:inline-block; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:700; }
+
+    /* Textarea */
+    .form-control.tall { min-height:160px; resize:vertical; font-size:14px; line-height:1.7; }
+
+
+    /* Highlight toggle switch */
+    .hl-toggle { display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+    .hl-switch {
+      width:44px; height:24px; border-radius:12px; position:relative;
+      transition:background .25s; flex-shrink:0; border:none; cursor:pointer;
+      outline:none;
+    }
+    .hl-switch.on  { background:#22c55e; }
+    .hl-switch.off { background:#cbd5e1; }
+    .hl-switch::after {
+      content:''; position:absolute; top:3px; width:18px; height:18px;
+      border-radius:50%; background:#fff; transition:left .2s;
+      box-shadow:0 1px 4px rgba(0,0,0,.2);
+    }
+    .hl-switch.on::after  { left:23px; }
+    .hl-switch.off::after { left:3px; }
+    .hl-label { font-size:12px; font-weight:600; }
+    .hl-label.on  { color:#16a34a; }
+    .hl-label.off { color:#94a3b8; }
+
+    /* Info note */
+    .info-note { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px 14px; font-size:13px; color:#1e40af; margin-bottom:16px; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a href="/" style="color:#fff;">
+      <div class="brand-text">⌨️ TopperTest</div>
+      <div class="brand-sub">Admin Panel</div>
+    </a>
+  </div>
+  <div id="nav-right"></div>
+</nav>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Admin</div>
+    <ul class="sidebar-menu">
+      <li><a href="/pages/admin.html" class="active"><span class="icon">⚙️</span> Admin Panel</a></li>
+      <li><a href="/pages/live-exam.html"><span class="icon">🔴</span> Live Typing</a></li>
+      <li><a href="/pages/dashboard.html"><span class="icon">📊</span> Dashboard</a></li>
+    </ul>
+    <div class="sidebar-section">Account</div>
+    <ul class="sidebar-menu">
+      <li><a href="#" onclick="Auth.logout()"><span class="icon">🚪</span> Logout</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="d-flex align-center justify-between mb-3">
+      <h1 class="section-title" style="margin:0;">⚙️ Admin <span>Panel</span></h1>
+      <span id="admin-name" style="color:var(--muted);font-size:13px;"></span>
+    </div>
+
+    <!-- Site Stats -->
+    <div class="stats-grid mb-4">
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="as-users">-</div><div class="stat-label">Students</div></div>
+      <div class="stat-card accent"><div class="stat-icon">📋</div><div class="stat-value" id="as-exams">-</div><div class="stat-label">Exams</div></div>
+      <div class="stat-card success"><div class="stat-icon">📝</div><div class="stat-value" id="as-passages">-</div><div class="stat-label">Passages</div></div>
+      <div class="stat-card info"><div class="stat-icon">⌨️</div><div class="stat-value" id="as-tests">-</div><div class="stat-label">Tests Taken</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="showTab('passages',this)">📝 Manage Passages</button>
+      <button class="tab-btn"        onclick="showTab('exams',this)">📋 Manage Exams</button>
+      <button class="tab-btn"        onclick="showTab('import',this)">📥 Bulk Import JSON</button>
+      <button class="tab-btn"        onclick="showTab('live',this)">🔴 Live Exams</button>
+      <button class="tab-btn"        onclick="showTab('users',this)">👥 Students</button>
+      <button class="tab-btn"        onclick="showTab('results',this)">📊 Results</button>
+    </div>
+
+    <!-- ── PASSAGES TAB ─────────────────────────────────────── -->
+    <div class="tab-panel active" id="tab-passages">
+      <div class="action-bar">
+        <h3 style="font-size:17px;">All Passages <span id="passage-count" style="font-size:13px;color:var(--muted);font-weight:400;"></span></h3>
+        <button class="btn btn-accent" onclick="openModal('passage-modal')">➕ Add New Passage</button>
+      </div>
+      <!-- Passage filter bar -->
+      <div class="card mb-3" style="padding:12px 16px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <select class="form-control form-select" id="filter-exam" style="max-width:200px;" onchange="loadPassages()">
+            <option value="">All Exams</option>
+          </select>
+          <select class="form-control form-select" id="filter-lang" style="max-width:150px;" onchange="loadPassages()">
+            <option value="">All Languages</option>
+            <option value="hindi">Hindi</option>
+            <option value="english">English</option>
+          </select>
+          <select class="form-control form-select" id="filter-diff" style="max-width:140px;" onchange="loadPassages()">
+            <option value="">All Difficulties</option>
+            <option value="E">Easy</option>
+            <option value="M">Medium</option>
+            <option value="H">Hard</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Exam</th><th>Language</th><th>Date</th><th>Difficulty</th><th>Words</th><th>Title / Shift</th><th>Actions</th></tr></thead>
+              <tbody id="passages-tbody">
+                <tr><td colspan="8" class="text-center" style="padding:32px;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EXAMS TAB ─────────────────────────────────────────── -->
+    <div class="tab-panel" id="tab-exams">
+      <div class="action-bar">
+        <h3 style="font-size:17px;">All Exams</h3>
+        <button class="btn btn-accent" onclick="openModal('exam-modal')">➕ Add New Exam</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Exam Name</th><th>Code</th><th>Language</th><th>Duration</th><th>Word Limit</th><th style="text-align:center;">Word Highlight</th><th>Actions</th></tr></thead>
+              <tbody id="exams-tbody">
+                <tr><td colspan="8" class="text-center" style="padding:32px;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BULK IMPORT TAB ─────────────────────────────────── -->
+    <div class="tab-panel" id="tab-import">
+      <div class="action-bar">
+        <div>
+          <h3 style="font-size:17px;">📥 Bulk Import Passages from JSON</h3>
+          <p style="font-size:13px;color:var(--muted);margin-top:4px;">Select exam → map fields → upload/paste JSON → click Import</p>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;">⚙️ Step 1 – Exam &amp; Defaults</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Target Exam *</label>
+              <select class="form-control form-select" id="imp-exam"><option value="">— Select exam —</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Language</label>
+              <select class="form-control form-select" id="imp-lang">
+                <option value="hindi">🇮🇳 Hindi</option>
+                <option value="english">🔤 English</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Default Difficulty</label>
+              <select class="form-control form-select" id="imp-diff">
+                <option value="E">Easy (E)</option>
+                <option value="M" selected>Medium (M)</option>
+                <option value="H">Hard (H)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Date (if JSON has no date)</label>
+              <input type="date" class="form-control" id="imp-date" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;">🗺️ Step 2 – Field Mapping</div>
+        <div class="card-body">
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;font-size:13px;color:#1e40af;margin-bottom:14px;">
+            ℹ️ Enter the field names as they appear in your JSON. For your data: <code>passage_text</code>, <code>title</code>, <code>difficulty</code>, <code>created_at</code>, <code>language</code> (3 = Hindi)
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">
+            <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Passage text field</label><input type="text" class="form-control" id="fmap-text" value="passage_text" /></div>
+            <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Title field</label><input type="text" class="form-control" id="fmap-title" value="title" /></div>
+            <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Difficulty field (E/M/H)</label><input type="text" class="form-control" id="fmap-diff" value="difficulty" /></div>
+            <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Date field</label><input type="text" class="form-control" id="fmap-date" value="created_at" /></div>
+            <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Language field</label><input type="text" class="form-control" id="fmap-lang" value="language" /></div>
+            <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Hindi value</label><input type="text" class="form-control" id="fmap-lang-hindi" value="3" placeholder="3 or hindi" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;">📂 Step 3 – Upload or Paste JSON</div>
+        <div class="card-body">
+          <div id="drop-zone"
+            style="border:2px dashed #cbd5e1;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:all .2s;"
+            onclick="document.getElementById('json-file-input').click()"
+            ondragover="this.style.borderColor='#3b82f6';this.style.background='#eef4ff';event.preventDefault();"
+            ondragleave="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';"
+            ondrop="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';handleJsonDrop(event);">
+            <div style="font-size:40px;margin-bottom:8px;">📂</div>
+            <strong style="color:var(--primary);">Click to browse or drag &amp; drop .json file</strong>
+            <p style="margin-top:4px;font-size:13px;color:var(--muted);">Array of passage objects</p>
+          </div>
+          <input type="file" id="json-file-input" accept=".json" style="display:none" onchange="handleFileSelect(event)" />
+          <div style="text-align:center;margin:12px 0;color:var(--muted);font-size:13px;font-weight:600;">— OR paste JSON —</div>
+          <textarea class="form-control" id="json-paste"
+            placeholder='[{"title":"Chandrashekhar Azad...","passage_text":"चंद्रशेखर...","difficulty":"M","language":3,"created_at":"2026-03-02T00:00:00Z"}]'
+            oninput="parseJsonInput()"
+            style="min-height:110px;font-family:monospace;font-size:12px;resize:vertical;"></textarea>
+          <div id="json-preview" style="display:none;margin-top:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <strong id="preview-count" style="font-size:14px;"></strong>
+              <button class="btn btn-outline btn-sm" onclick="clearImport()">✕ Clear</button>
+            </div>
+            <div id="preview-rows" style="display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div id="import-alert"></div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-accent" id="import-btn" onclick="runImport()" disabled>📥 Import All Passages</button>
+            <span id="import-progress" style="font-size:13px;color:var(--muted);display:none;">
+              Importing <strong id="imp-cur">0</strong> / <strong id="imp-tot">0</strong>…
+            </span>
+          </div>
+          <div id="import-results" style="margin-top:14px;display:flex;flex-direction:column;gap:4px;max-height:280px;overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STUDENTS TAB ──────────────────────────────────────── -->
+    <div class="tab-panel" id="tab-users">
+      <div class="action-bar"><h3 style="font-size:17px;">Registered Students</h3></div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Tests</th><th>Best WPM</th><th>Avg WPM</th><th>Joined</th></tr></thead>
+              <tbody id="users-tbody">
+                <tr><td colspan="7" class="text-center" style="padding:32px;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESULTS TAB ───────────────────────────────────────── -->
+    <div class="tab-panel" id="tab-results">
+      <div class="action-bar"><h3 style="font-size:17px;">All Test Results</h3></div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Student</th><th>Exam</th><th>Difficulty</th><th>WPM</th><th>Accuracy</th><th>Errors</th><th>Time</th><th>Date</th></tr></thead>
+              <tbody id="results-tbody">
+                <tr><td colspan="8" class="text-center" style="padding:32px;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LIVE EXAMS TAB ──────────────────────────────────────── -->
+    <div class="tab-panel" id="tab-live">
+
+      <!-- Schedule New Live Exam -->
+      <div class="card" style="margin-bottom:24px;">
+        <div class="card-header" style="cursor:pointer;user-select:none;" onclick="toggleScheduleForm()">
+          <h3 style="font-size:17px;margin:0;display:flex;align-items:center;gap:8px;">
+            🔴 Schedule New Live Exam
+            <span id="schedule-toggle-icon" style="font-size:12px;color:var(--muted);">▼ expand</span>
+          </h3>
+        </div>
+        <div class="card-body" id="schedule-form-body" style="display:none;">
+          <div id="live-form-alert"></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Title *</label>
+              <input class="form-control" id="lf-title" placeholder="e.g. UP Police ASI Live Test #1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Exam *</label>
+              <select class="form-control form-select" id="lf-exam" onchange="loadPassagesForLiveForm()">
+                <option value="">— Select Exam —</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Language</label>
+              <select class="form-control form-select" id="lf-lang" onchange="loadPassagesForLiveForm()">
+                <option value="english">English</option>
+                <option value="hindi">Hindi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Passage *</label>
+              <select class="form-control form-select" id="lf-passage">
+                <option value="">— Select exam first —</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Scheduled Date &amp; Time (IST) *</label>
+              <input class="form-control" id="lf-datetime" type="datetime-local">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Join Window (minutes)</label>
+              <input class="form-control" id="lf-window" type="number" value="10" min="1" max="60" placeholder="10">
+              <small style="color:var(--muted);font-size:12px;">How long after start can students join</small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Test Duration (minutes)</label>
+              <input class="form-control" id="lf-duration" type="number" value="15" min="5" max="120" placeholder="15">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description (optional)</label>
+              <input class="form-control" id="lf-desc" placeholder="e.g. Open for all UP Police ASI aspirants">
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <button class="btn btn-accent" onclick="scheduleLiveExam()">📅 Schedule Live Exam</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- List of live exams -->
+      <div class="card">
+        <div class="action-bar">
+          <h3 style="font-size:17px;margin:0;">All Scheduled Live Exams</h3>
+          <button class="btn btn-outline btn-sm" onclick="loadAdminLiveExams()">🔄 Refresh</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="table-wrap">
+            <table id="live-exams-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Exam</th>
+                  <th>Scheduled (IST)</th>
+                  <th>Window</th>
+                  <th>Duration</th>
+                  <th>Participants</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="live-exams-tbody">
+                <tr><td colspan="9" class="text-center" style="padding:32px;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Exam Results Panel -->
+      <div class="card" id="live-results-panel" style="margin-top:24px;display:none;">
+        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+          <h3 style="font-size:17px;margin:0;" id="live-results-title">Results</h3>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('live-results-panel').style.display='none'">✕ Close</button>
+        </div>
+        <div class="card-body">
+          <div id="live-results-body">Loading...</div>
+        </div>
+      </div>
+
+    </div><!-- end tab-live -->
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PASSAGE MODAL
+     ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="passage-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📝 Add New Passage</h3>
+      <button class="modal-close" onclick="closeModal('passage-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="pm-alert"></div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Exam *</label>
+          <select class="form-control form-select" id="pm-exam">
+            <option value="">— Select exam —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Language *</label>
+          <select class="form-control form-select" id="pm-lang">
+            <option value="hindi">🇮🇳 Hindi (Mangal)</option>
+            <option value="english">🔤 English</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Exam Date</label>
+          <input type="date" class="form-control" id="pm-date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Difficulty *</label>
+          <select class="form-control form-select" id="pm-diff">
+            <option value="E">🟢 Easy (E)</option>
+            <option value="M" selected>🟡 Medium (M)</option>
+            <option value="H">🔴 Hard (H)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Passage Title</label>
+          <input type="text" class="form-control" id="pm-title" placeholder="e.g. SSC CHSL Jan 2024" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Shift</label>
+          <input type="text" class="form-control" id="pm-shift" placeholder="e.g. Morning Shift / Shift 1" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
+          <span>Passage Text *</span>
+          <span id="pm-wc" class="wc-badge">0 words</span>
+        </label>
+        <div class="info-note">
+          💡 Paste the complete passage text. Word count is calculated automatically.
+          For Hindi passages, paste Unicode (Mangal font) text directly.
+        </div>
+        <textarea class="form-control tall" id="pm-text" placeholder="Paste or type the passage text here..."
+          oninput="updateWordCount()"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('passage-modal')">Cancel</button>
+      <button class="btn btn-accent" id="pm-save-btn" onclick="savePassage()">💾 Save Passage</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     EXAM MODAL
+     ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="exam-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📋 Add New Exam</h3>
+      <button class="modal-close" onclick="closeModal('exam-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="em-alert"></div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Exam Name *</label>
+          <input type="text" class="form-control" id="em-name" placeholder="e.g. UP Police ASI" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Exam Code * <span style="font-size:11px;color:var(--muted);">(unique, UPPERCASE)</span></label>
+          <input type="text" class="form-control" id="em-code" placeholder="e.g. UP_POLICE_ASI"
+            oninput="this.value=this.value.toUpperCase().replace(/\s/g,'_')" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Language</label>
+          <select class="form-control form-select" id="em-lang">
+            <option value="hindi">🇮🇳 Hindi</option>
+            <option value="english">🔤 English</option>
+            <option value="both">🌐 Both (Hindi + English)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duration (minutes)</label>
+          <input type="number" class="form-control" id="em-dur" value="15" min="1" max="120" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Word Limit</label>
+          <input type="number" class="form-control" id="em-words" value="250" min="50" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sort Order <span style="font-size:11px;color:var(--muted);">(lower = first)</span></label>
+          <input type="number" class="form-control" id="em-sort" value="10" min="0" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" id="em-desc" rows="3" placeholder="Brief description of this exam and its requirements..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('exam-modal')">Cancel</button>
+      <button class="btn btn-accent" id="em-save-btn" onclick="saveExam()">💾 Save Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     VIEW PASSAGE MODAL (read-only preview)
+     ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="view-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="vm-title">Passage Preview</h3>
+      <button class="modal-close" onclick="closeModal('view-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="vm-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+      <div id="vm-text" style="background:#fffbf0;border:1px solid #e2d4a0;border-radius:8px;padding:20px;font-size:15px;line-height:2.2;font-family:'Hind',sans-serif;white-space:pre-wrap;max-height:400px;overflow-y:auto;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('view-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+// ── HTML escape helper ──────────────────────────────────────
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+// ── Guard ──────────────────────────────────────────────────
+if (!requireLogin() || !requireAdmin()) throw '';
+document.getElementById('admin-name').textContent = '👤 ' + Auth.getUser().name;
+
+// ── Helpers ────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open');    document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-overlay').forEach(m =>
+  m.addEventListener('click', e => { if (e.target === m) { closeModal(m.id); } })
+);
+
+function showAlert(elId, msg, type='error') {
+  document.getElementById(elId).innerHTML = `<div class="alert alert-${type}" style="margin-bottom:12px;">${msg}</div>`;
+}
+function clearAlert(elId) { document.getElementById(elId).innerHTML = ''; }
+
+// ── Tab switching ──────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'passages') loadPassages();
+  if (name === 'exams')    loadExams();
+  if (name === 'users')    loadUsers();
+  if (name === 'results')  loadResults();
+  if (name === 'import')   loadExams();
+  if (name === 'live') {
+    loadAdminLiveExams();
+    // Auto-expand schedule form and load exams into dropdown
+    const formBody = document.getElementById('schedule-form-body');
+    const icon     = document.getElementById('schedule-toggle-icon');
+    if (formBody && formBody.style.display === 'none') {
+      formBody.style.display = 'block';
+      if (icon) icon.textContent = '▲ collapse';
+    }
+    loadExamsForLiveForm();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// LIVE EXAM ADMIN FUNCTIONS
+// ════════════════════════════════════════════════════════════
+
+function toggleScheduleForm() {
+  const body = document.getElementById('schedule-form-body');
+  const icon = document.getElementById('schedule-toggle-icon');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  icon.textContent   = open ? '▼ expand' : '▲ collapse';
+  if (!open) loadExamsForLiveForm();
+}
+
+async function loadExamsForLiveForm() {
+  const sel = document.getElementById('lf-exam');
+  if (!sel) return;
+  try {
+    // Reuse allExams if already loaded by Manage Exams tab, else fetch fresh
+    const exams = (typeof allExams !== 'undefined' && allExams && allExams.length)
+      ? allExams
+      : await apiFetch('/exams');
+    sel.innerHTML = '<option value="">— Select Exam —</option>' +
+      exams.map(e => `<option value="${e.id}">${escHtml(e.exam_name)}</option>`).join('');
+    if (exams.length === 0) sel.innerHTML = '<option value="">⚠ No exams found</option>';
+  } catch(e) {
+    console.error('loadExamsForLiveForm error:', e);
+    sel.innerHTML = '<option value="">⚠ Failed to load exams</option>';
+  }
+}
+
+async function loadPassagesForLiveForm() {
+  const examId = document.getElementById('lf-exam').value;
+  const lang   = document.getElementById('lf-lang').value;
+  const sel    = document.getElementById('lf-passage');
+  if (!examId) { sel.innerHTML = '<option value="">— Select exam first —</option>'; return; }
+  try {
+    sel.innerHTML = '<option value="">Loading...</option>';
+    const passages = await apiFetch(`/passages?exam_id=${examId}&language=${lang}&limit=200`);
+    if (!passages.length) {
+      sel.innerHTML = '<option value="">No passages found</option>';
+      return;
+    }
+    sel.innerHTML = passages.map(p =>
+      `<option value="${p.id}">[${p.id}] ${escHtml(p.title||'Passage')} (${p.word_count||0} words)</option>`
+    ).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Error loading passages</option>';
+  }
+}
+
+async function scheduleLiveExam() {
+  const title    = document.getElementById('lf-title').value.trim();
+  const examId   = document.getElementById('lf-exam').value;
+  const passId   = document.getElementById('lf-passage').value;
+  const dtLocal  = document.getElementById('lf-datetime').value; // "YYYY-MM-DDTHH:mm"
+  const window_  = document.getElementById('lf-window').value;
+  const duration = document.getElementById('lf-duration').value;
+  const desc     = document.getElementById('lf-desc').value.trim();
+  const alertEl  = document.getElementById('live-form-alert');
+
+  if (!title || !examId || !passId || !dtLocal) {
+    alertEl.innerHTML = '<div class="alert alert-error">Please fill all required fields.</div>';
+    return;
+  }
+
+  // Convert local datetime to MySQL DATETIME (server treats as IST)
+  const scheduled_at = dtLocal.replace('T', ' ') + ':00';
+
+  try {
+    alertEl.innerHTML = '<div class="alert alert-info">Scheduling...</div>';
+    await apiFetch('/live-exams', {
+      method: 'POST',
+      body: JSON.stringify({ title, exam_id: examId, passage_id: passId,
+        scheduled_at, join_window_mins: window_, duration_minutes: duration, description: desc })
+    });
+    alertEl.innerHTML = '<div class="alert alert-success">✅ Live exam scheduled!</div>';
+    // Reset form
+    ['lf-title','lf-datetime','lf-desc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('lf-window').value   = '10';
+    document.getElementById('lf-duration').value = '15';
+    loadAdminLiveExams();
+    setTimeout(() => alertEl.innerHTML = '', 3000);
+  } catch(e) {
+    alertEl.innerHTML = `<div class="alert alert-error">❌ ${e.message}</div>`;
+  }
+}
+
+function computeLiveStatus(le) {
+  const now     = Date.now();
+  const start   = new Date(le.scheduled_at).getTime();
+  const joinEnd = start + le.join_window_mins * 60000;
+  const hardEnd = start + (le.join_window_mins + le.duration_minutes) * 60000 + 300000;
+  if (le.results_released) return 'results_released';
+  if (now < start)    return 'scheduled';
+  if (now <= joinEnd) return 'active';
+  if (now <= hardEnd) return 'ongoing';
+  return 'ended';
+}
+
+const statusLabels = {
+  scheduled:        '<span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">🔵 Scheduled</span>',
+  active:           '<span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">🟢 LIVE</span>',
+  ongoing:          '<span class="badge" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;">🟠 Ongoing</span>',
+  ended:            '<span class="badge" style="background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;">⚫ Ended</span>',
+  results_released: '<span class="badge" style="background:#faf5ff;color:#7e22ce;border:1px solid #e9d5ff;">🟣 Results Out</span>',
+};
+
+async function loadAdminLiveExams() {
+  const tbody = document.getElementById('live-exams-tbody');
+  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Loading...</td></tr>`;
+  try {
+    const exams = await apiFetch('/live-exams');
+    if (!exams.length) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted);">No live exams yet. Schedule one above!</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = exams.map(le => {
+      const status  = computeLiveStatus(le);
+      const dt      = new Date(le.scheduled_at);
+      const dtStr   = dt.toLocaleString('en-IN', {timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
+      const canRelease = (status === 'ended') && !le.results_released;
+      const alreadyReleased = le.results_released;
+      return `<tr>
+        <td>${le.id}</td>
+        <td><strong>${escHtml(le.title)}</strong>${le.description?`<br><small style="color:var(--muted);">${escHtml(le.description)}</small>`:''}</td>
+        <td>${escHtml(le.exam_name||'')}</td>
+        <td style="white-space:nowrap;">${dtStr}</td>
+        <td>${le.join_window_mins} min</td>
+        <td>${le.duration_minutes} min</td>
+        <td style="text-align:center;"><strong>${le.attempt_count||0}</strong></td>
+        <td>${statusLabels[status]||status}</td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${canRelease
+              ? `<button class="btn btn-sm" style="background:#7e22ce;color:#fff;" onclick="releaseResults(${le.id})">🏆 Release Results</button>`
+              : ''}
+            ${alreadyReleased || status === 'ended'
+              ? `<button class="btn btn-outline btn-sm" onclick="viewAdminResults(${le.id}, '${escHtml(le.title)}')">👁 View Results</button>`
+              : ''}
+            ${status === 'active'
+              ? `<span class="badge" style="background:#dcfce7;color:#15803d;">Live Now!</span>`
+              : ''}
+            <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:var(--danger);" onclick="deleteLiveExam(${le.id}, '${escHtml(le.title)}')">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--danger);">❌ ${e.message}</td></tr>`;
+  }
+}
+
+async function releaseResults(id) {
+  if (!confirm('Release results for this live exam? Students will be able to see the leaderboard.')) return;
+  try {
+    await apiFetch(`/live-exams/${id}/release-results`, { method: 'POST' });
+    showToast('✅ Results released!', 'success');
+    loadAdminLiveExams();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function deleteLiveExam(id, title) {
+  if (!confirm(`Delete live exam "${title}"? This cannot be undone.`)) return;
+  try {
+    await apiFetch(`/live-exams/${id}`, { method: 'DELETE' });
+    showToast('Deleted.', 'success');
+    loadAdminLiveExams();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function viewAdminResults(id, title) {
+  const panel = document.getElementById('live-results-panel');
+  const body  = document.getElementById('live-results-body');
+  const titleEl = document.getElementById('live-results-title');
+  panel.style.display = 'block';
+  titleEl.textContent = `🏆 Results – ${title}`;
+  body.innerHTML = '<div class="spinner" style="margin:16px auto;"></div>';
+  panel.scrollIntoView({ behavior: 'smooth' });
+  try {
+    const data  = await apiFetch(`/live-exams/${id}/results`);
+    const rows  = data.results;
+    if (!rows.length) {
+      body.innerHTML = '<p style="color:var(--muted);text-align:center;padding:32px;">No submissions yet.</p>';
+      return;
+    }
+    const medals = ['🥇','🥈','🥉'];
+    body.innerHTML = `
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">
+        ${rows.length} participants · Results ${data.live_exam.results_released ? '✅ Released' : '⏳ Not yet released to students'}
+      </p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Rank</th><th>Student</th><th>WPM</th><th>Accuracy</th><th>Correct</th><th>Wrong</th><th>Errors</th><th>Time Taken</th><th>Submitted</th></tr></thead>
+        <tbody>
+          ${rows.map((r,i) => {
+            const wpm  = r.wpm     ? parseFloat(r.wpm).toFixed(1)      : '—';
+            const acc  = r.accuracy? parseFloat(r.accuracy).toFixed(1)+'%' : '—';
+            const time = r.time_taken ? `${Math.floor(r.time_taken/60)}:${String(r.time_taken%60).padStart(2,'0')} min` : '—';
+            const sub  = r.submitted_at ? new Date(r.submitted_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) : 'Not submitted';
+            return `<tr style="${i<3?'font-weight:600;':''}">
+              <td>${i<3?medals[i]:'#'+(i+1)}</td>
+              <td>${escHtml(r.student_name)}</td>
+              <td style="color:var(--primary);font-size:16px;font-weight:700;">${wpm}</td>
+              <td style="color:var(--success);">${acc}</td>
+              <td>${r.correct_words??'—'}</td>
+              <td style="color:var(--danger);">${r.wrong_words??'—'}</td>
+              <td>${r.errors??'—'}</td>
+              <td>${time}</td>
+              <td style="font-size:12px;color:var(--muted);">${sub}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table></div>`;
+  } catch(e) {
+    body.innerHTML = `<p style="color:var(--danger);">❌ ${e.message}</p>`;
+  }
+}
+
+// ── Word count ─────────────────────────────────────────────
+function updateWordCount() {
+  const txt = document.getElementById('pm-text').value.trim();
+  const wc  = txt === '' ? 0 : txt.split(/\s+/).filter(Boolean).length;
+  const el  = document.getElementById('pm-wc');
+  el.textContent = `${wc} words`;
+  el.style.background = wc < 50 ? '#fef3c7' : '#d1fae5';
+  el.style.color       = wc < 50 ? '#92400e' : '#065f46';
+  el.style.borderColor = wc < 50 ? '#fcd34d' : '#a7f3d0';
+}
+
+// ── Load site stats ────────────────────────────────────────
+async function loadSiteStats() {
+  try {
+    const s = await apiFetch('/admin/site-stats');
+    document.getElementById('as-users').textContent    = fmtNum(s.total_users);
+    document.getElementById('as-exams').textContent    = fmtNum(s.total_exams);
+    document.getElementById('as-passages').textContent = fmtNum(s.total_passages);
+    document.getElementById('as-tests').textContent    = fmtNum(s.total_tests);
+  } catch(e) { console.warn('Stats failed:', e.message); }
+}
+
+// ── EXAMS ──────────────────────────────────────────────────
+let allExams = [];
+
+async function loadExams() {
+  try {
+    allExams = await apiFetch('/exams');
+    const tbody = document.getElementById('exams-tbody');
+
+    if (!allExams.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--muted);">No exams yet. Click "+ Add New Exam" to get started.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = allExams.map(e => {
+      const hlOn = e.enable_highlighting != 0;
+      return `<tr>
+        <td style="color:var(--muted);">${e.id}</td>
+        <td><strong>${e.exam_name}</strong></td>
+        <td><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px;">${e.exam_code}</code></td>
+        <td><span class="badge badge-${e.language === 'both' ? 'success' : e.language}">${e.language}</span></td>
+        <td>${e.duration_minutes} min</td>
+        <td><strong>${e.word_limit}</strong> words</td>
+        <td style="text-align:center;">
+          <div style="display:inline-flex;align-items:center;gap:8px;">
+            <button type="button"
+              id="hl-sw-${e.id}"
+              onclick="toggleHighlighting(${e.id})"
+              title="${hlOn?'Disable':'Enable'} word highlighting"
+              style="width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;padding:0;outline:none;transition:background .25s;background:${hlOn?'#22c55e':'#cbd5e1'};">
+              <span style="position:absolute;top:4px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:left .2s;left:${hlOn?'26':'4'}px;display:block;"></span>
+            </button>
+            <span id="hl-tx-${e.id}" style="font-size:12px;font-weight:700;min-width:28px;color:${hlOn?'#16a34a':'#94a3b8'};">${hlOn?'ON':'OFF'}</span>
+          </div>
+        </td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteExam(${e.id}, '${e.exam_name.replace(/'/g,"\\'")}')">🗑 Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    // Populate exam selects
+    const examOpts = allExams.map(e => `<option value="${e.id}">${e.exam_name}</option>`).join('');
+    document.getElementById('pm-exam').innerHTML = '<option value="">— Select exam —</option>' + examOpts;
+    document.getElementById('filter-exam').innerHTML = '<option value="">All Exams</option>' + examOpts;
+    const impEl = document.getElementById('imp-exam');
+    if (impEl) impEl.innerHTML = '<option value="">— Select exam —</option>' + examOpts;
+
+  } catch(err) {
+    document.getElementById('exams-tbody').innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);">❌ Failed to load exams: ${err.message}</td></tr>`;
+  }
+}
+
+async function saveExam() {
+  clearAlert('em-alert');
+  const btn = document.getElementById('em-save-btn');
+
+  const exam_name        = document.getElementById('em-name').value.trim();
+  const exam_code        = document.getElementById('em-code').value.trim().toUpperCase();
+  const language         = document.getElementById('em-lang').value;
+  const duration_minutes = parseInt(document.getElementById('em-dur').value) || 15;
+  const word_limit       = parseInt(document.getElementById('em-words').value) || 250;
+  const sort_order       = parseInt(document.getElementById('em-sort').value) || 10;
+  const description      = document.getElementById('em-desc').value.trim();
+
+  if (!exam_name) { showAlert('em-alert', '⚠️ Exam name is required.'); return; }
+  if (!exam_code) { showAlert('em-alert', '⚠️ Exam code is required.'); return; }
+  if (!/^[A-Z0-9_]+$/.test(exam_code)) { showAlert('em-alert', '⚠️ Exam code must be uppercase letters, numbers and underscores only.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  try {
+    const result = await apiFetch('/exams', {
+      method:  'POST',
+      body: JSON.stringify({ exam_name, exam_code, language, duration_minutes, word_limit, sort_order, description })
+    });
+    showToast(`✅ Exam "${exam_name}" created successfully!`, 'success');
+    closeModal('exam-modal');
+    // Reset form
+    ['em-name','em-code','em-desc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('em-dur').value = '15';
+    document.getElementById('em-words').value = '250';
+    // Reload
+    loadExams();
+    loadSiteStats();
+  } catch(err) {
+    showAlert('em-alert', `❌ ${err.message}`);
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Save Exam';
+  }
+}
+
+async function deleteExam(id, name) {
+  if (!confirm(`Are you sure you want to deactivate exam:\n"${name}"?\n\nExisting passages will still be accessible.`)) return;
+  try {
+    await apiFetch(`/exams/${id}`, { method: 'DELETE' });
+    showToast('Exam deactivated', 'success');
+    loadExams(); loadSiteStats();
+  } catch(err) { showToast('Error: ' + err.message, 'error'); }
+}
+
+async function toggleHighlighting(id) {
+  const sw = document.getElementById('hl-sw-' + id);
+  const tx = document.getElementById('hl-tx-' + id);
+  if (!sw) return;
+  const wasOn = sw.style.background.includes('22c55e') || getComputedStyle(sw).backgroundColor === 'rgb(34, 197, 94)';
+  const apply = (on) => {
+    sw.style.background = on ? '#22c55e' : '#cbd5e1';
+    const knob = sw.querySelector('span');
+    if (knob) knob.style.left = on ? '26px' : '4px';
+    tx.style.color  = on ? '#16a34a' : '#94a3b8';
+    tx.textContent  = on ? 'ON' : 'OFF';
+  };
+  apply(!wasOn);
+  try {
+    const r = await apiFetch('/exams/' + id + '/toggle-highlighting', { method: 'PATCH' });
+    const isOn = r.enable_highlighting == 1;
+    apply(isOn);
+    showToast('Highlighting ' + (isOn ? 'enabled ✅' : 'disabled ⬜'), isOn ? 'success' : 'info');
+    const ex = allExams.find(e => e.id == id);
+    if (ex) ex.enable_highlighting = isOn ? 1 : 0;
+  } catch(err) {
+    apply(wasOn);
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+
+// ── PASSAGES ───────────────────────────────────────────────
+async function loadPassages() {
+  const examId = document.getElementById('filter-exam')?.value || '';
+  const lang   = document.getElementById('filter-lang')?.value || '';
+  const diff   = document.getElementById('filter-diff')?.value || '';
+
+  let url = '/passages?';
+  if (examId) url += `exam_id=${examId}&`;
+  if (lang)   url += `language=${lang}&`;
+  if (diff)   url += `difficulty=${diff}&`;
+
+  const tbody = document.getElementById('passages-tbody');
+  tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding:24px;"><div class="spinner" style="margin:auto;"></div></td></tr>';
+
+  try {
+    const passages = await apiFetch(url);
+    const examMap  = Object.fromEntries(allExams.map(e => [e.id, e.exam_name]));
+
+    document.getElementById('passage-count').textContent = `(${passages.length} found)`;
+
+    if (!passages.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding:40px;color:var(--muted);">No passages found. Click "+ Add New Passage" to add one.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = passages.map(p => `
+      <tr>
+        <td style="color:var(--muted);">${p.id}</td>
+        <td><strong>${examMap[p.exam_id] || 'Exam #'+p.exam_id}</strong></td>
+        <td><span class="badge badge-${p.language}">${p.language === 'hindi' ? '🇮🇳 Hindi' : '🔤 English'}</span></td>
+        <td style="font-size:12px;white-space:nowrap;">${p.passage_date || '-'}</td>
+        <td><span class="badge badge-${p.difficulty}">${p.difficulty === 'E' ? 'Easy' : p.difficulty === 'M' ? 'Medium' : 'Hard'}</span></td>
+        <td><span class="wc-badge">${p.word_count}</span></td>
+        <td style="font-size:12px;color:var(--muted);">
+          ${p.title ? `<div>${p.title}</div>` : ''}
+          ${p.shift ? `<div style="opacity:.7">${p.shift}</div>` : ''}
+          ${!p.title && !p.shift ? '-' : ''}
+        </td>
+        <td>
+          <div class="tbl-actions">
+            <button class="btn btn-outline btn-sm" onclick="viewPassage(${p.id})">👁 View</button>
+            <button class="btn btn-danger btn-sm"  onclick="deletePassage(${p.id})">🗑</button>
+          </div>
+        </td>
+      </tr>`).join('');
+
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);">❌ Failed: ${err.message}</td></tr>`;
+  }
+}
+
+async function savePassage() {
+  clearAlert('pm-alert');
+  const btn = document.getElementById('pm-save-btn');
+
+  const exam_id      = parseInt(document.getElementById('pm-exam').value);
+  const language     = document.getElementById('pm-lang').value;
+  const difficulty   = document.getElementById('pm-diff').value;
+  const passage_date = document.getElementById('pm-date').value;
+  const title        = document.getElementById('pm-title').value.trim();
+  const shift        = document.getElementById('pm-shift').value.trim();
+  const passage_text = document.getElementById('pm-text').value.trim();
+
+  // Validation
+  if (!exam_id)      { showAlert('pm-alert', '⚠️ Please select an exam.'); return; }
+  if (!passage_text) { showAlert('pm-alert', '⚠️ Passage text cannot be empty.'); return; }
+  if (passage_text.split(/\s+/).filter(Boolean).length < 10) {
+    showAlert('pm-alert', '⚠️ Passage text is too short (minimum 10 words).'); return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  try {
+    const result = await apiFetch('/passages', {
+      method: 'POST',
+      body: JSON.stringify({ exam_id, language, difficulty, passage_date, title, shift, passage_text })
+    });
+
+    showToast(`✅ Passage saved! (${result.word_count} words)`, 'success');
+    closeModal('passage-modal');
+
+    // Reset form fields
+    document.getElementById('pm-text').value  = '';
+    document.getElementById('pm-title').value = '';
+    document.getElementById('pm-shift').value = '';
+    document.getElementById('pm-date').value  = '';
+    document.getElementById('pm-wc').textContent = '0 words';
+
+    loadPassages();
+    loadSiteStats();
+  } catch(err) {
+    showAlert('pm-alert', `❌ Failed to save passage: ${err.message}`);
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Save Passage';
+  }
+}
+
+async function deletePassage(id) {
+  if (!confirm(`Delete passage #${id}? This cannot be undone.`)) return;
+  try {
+    await apiFetch(`/passages/${id}`, { method: 'DELETE' });
+    showToast('Passage deleted', 'success');
+    loadPassages(); loadSiteStats();
+  } catch(err) { showToast('Error: ' + err.message, 'error'); }
+}
+
+async function viewPassage(id) {
+  openModal('view-modal');
+  document.getElementById('vm-text').textContent = 'Loading...';
+  document.getElementById('vm-meta').innerHTML = '';
+  try {
+    const p = await apiFetch(`/passages/${id}`);
+    document.getElementById('vm-title').textContent = p.title || `Passage #${id}`;
+    document.getElementById('vm-meta').innerHTML = `
+      <span class="badge badge-${p.language}">${p.language}</span>
+      <span class="badge badge-${p.difficulty}">${p.difficulty === 'E' ? 'Easy' : p.difficulty === 'M' ? 'Medium' : 'Hard'}</span>
+      <span class="wc-badge">${p.word_count} words</span>
+      ${p.passage_date ? `<span class="badge" style="background:#f0f9ff;color:#1e40af;">${p.passage_date}</span>` : ''}
+      ${p.shift ? `<span class="badge" style="background:#f5f3ff;color:#5b21b6;">${p.shift}</span>` : ''}
+    `;
+    document.getElementById('vm-text').textContent = p.passage_text;
+  } catch(err) {
+    document.getElementById('vm-text').textContent = 'Failed to load passage: ' + err.message;
+  }
+}
+
+// ── USERS ──────────────────────────────────────────────────
+async function loadUsers() {
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding:24px;"><div class="spinner" style="margin:auto;"></div></td></tr>';
+  try {
+    const users = await apiFetch('/admin/user-stats');
+    if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--muted);">No students registered yet.</td></tr>'; return; }
+    tbody.innerHTML = users.map((u, i) => `
+      <tr>
+        <td style="color:var(--muted);">${u.id}</td>
+        <td><strong>${u.name}</strong></td>
+        <td style="font-size:12px;">${u.email}</td>
+        <td style="font-weight:700;">${u.total_tests || 0}</td>
+        <td><strong style="color:var(--primary);">${u.best_wpm || 0}</strong></td>
+        <td>${u.avg_wpm || 0}</td>
+        <td style="font-size:12px;color:var(--muted);">-</td>
+      </tr>`).join('');
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--danger);">❌ ${err.message}</td></tr>`;
+  }
+}
+
+// ── RESULTS ────────────────────────────────────────────────
+async function loadResults() {
+  const tbody = document.getElementById('results-tbody');
+  tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding:24px;"><div class="spinner" style="margin:auto;"></div></td></tr>';
+  try {
+    const rows = await apiFetch('/admin/results?limit=100');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--muted);">No test results yet.</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td><strong>${r.student_name}</strong></td>
+        <td style="font-size:12px;">${r.exam_name}</td>
+        <td><span class="badge badge-${r.difficulty}">${r.difficulty}</span></td>
+        <td><strong style="color:var(--primary);font-size:16px;">${r.wpm}</strong></td>
+        <td style="color:${r.accuracy >= 90 ? 'var(--success)' : r.accuracy >= 70 ? 'var(--warning)' : 'var(--danger)'};">
+          <strong>${r.accuracy}%</strong>
+        </td>
+        <td style="color:var(--danger);">${r.errors}</td>
+        <td style="font-size:12px;color:var(--muted);">${Math.round(r.time_taken||0)}s</td>
+        <td style="font-size:12px;color:var(--muted);">${fmtDate(r.created_at)}</td>
+      </tr>`).join('');
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);">❌ ${err.message}</td></tr>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// BULK JSON IMPORT
+// ══════════════════════════════════════════════════════════
+let parsedPassages = [];
+
+function handleJsonDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) readJsonFile(file);
+}
+function handleFileSelect(e) {
+  const f = e.target.files[0];
+  if (f) readJsonFile(f);
+  e.target.value = '';
+}
+function readJsonFile(file) {
+  const r = new FileReader();
+  r.onload = ev => {
+    document.getElementById('json-paste').value = ev.target.result;
+    parseJsonInput();
+  };
+  r.readAsText(file);
+}
+function parseJsonInput() {
+  const raw = document.getElementById('json-paste').value.trim();
+  if (!raw) { parsedPassages=[]; showJsonPreview(); return; }
+  try {
+    let data = JSON.parse(raw);
+    if (!Array.isArray(data)) data = [data];
+    parsedPassages = data;
+    showJsonPreview();
+  } catch(e) {
+    document.getElementById('json-preview').style.display='block';
+    document.getElementById('preview-count').textContent = '⚠️ Invalid JSON: ' + e.message;
+    document.getElementById('preview-rows').innerHTML='';
+    document.getElementById('import-btn').disabled=true;
+  }
+}
+function showJsonPreview() {
+  const previewEl = document.getElementById('json-preview');
+  const rowsEl    = document.getElementById('preview-rows');
+  const countEl   = document.getElementById('preview-count');
+  if (!parsedPassages.length) { previewEl.style.display='none'; document.getElementById('import-btn').disabled=true; return; }
+  previewEl.style.display='block';
+  countEl.textContent = '✅ ' + parsedPassages.length + ' passage' + (parsedPassages.length>1?'s':'') + ' ready to import';
+  const tf   = document.getElementById('fmap-text').value  || 'passage_text';
+  const titf = document.getElementById('fmap-title').value || 'title';
+  rowsEl.innerHTML = parsedPassages.slice(0,10).map((p,i) => {
+    const text  = p[tf] || '';
+    const title = String(p[titf] || 'Passage '+(i+1));
+    const wc    = text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
+    const ok    = text.length > 20;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;font-size:13px;background:'+(ok?'#f0fdf4':'#fef2f2')+';color:'+(ok?'#166534':'#991b1b')+';">'
+      +'<span>'+(ok?'✅':'❌')+'</span>'
+      +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>'+title.substring(0,70)+(title.length>70?'…':'')+'</strong></span>'
+      +'<span style="white-space:nowrap;font-weight:700;">'+wc+' words</span></div>';
+  }).join('') + (parsedPassages.length>10?'<div style="padding:8px 12px;color:var(--muted);font-size:13px;">…and '+(parsedPassages.length-10)+' more</div>':'');
+  document.getElementById('import-btn').disabled=false;
+}
+function clearImport() {
+  parsedPassages=[];
+  document.getElementById('json-paste').value='';
+  document.getElementById('json-preview').style.display='none';
+  document.getElementById('import-btn').disabled=true;
+  document.getElementById('import-results').innerHTML='';
+  document.getElementById('import-alert').innerHTML='';
+}
+
+async function runImport() {
+  document.getElementById('import-alert').innerHTML='';
+  const examId  = document.getElementById('imp-exam').value;
+  if (!examId)              { showAlert('import-alert','⚠️ Select a target exam first.'); return; }
+  if (!parsedPassages.length) { showAlert('import-alert','⚠️ No passages to import.'); return; }
+
+  const defLang   = document.getElementById('imp-lang').value;
+  const defDiff   = document.getElementById('imp-diff').value;
+  const defDate   = document.getElementById('imp-date').value;
+  const tf        = document.getElementById('fmap-text').value       || 'passage_text';
+  const titf      = document.getElementById('fmap-title').value      || 'title';
+  const difff     = document.getElementById('fmap-diff').value       || 'difficulty';
+  const datef     = document.getElementById('fmap-date').value       || 'created_at';
+  const langf     = document.getElementById('fmap-lang').value       || 'language';
+  const hindiVal  = document.getElementById('fmap-lang-hindi').value || '3';
+
+  const btn   = document.getElementById('import-btn');
+  const prog  = document.getElementById('import-progress');
+  const curEl = document.getElementById('imp-cur');
+  const totEl = document.getElementById('imp-tot');
+  const resEl = document.getElementById('import-results');
+
+  btn.disabled=true; btn.textContent='Importing…';
+  prog.style.display='inline'; totEl.textContent=parsedPassages.length;
+  resEl.innerHTML='';
+  let ok=0, fail=0;
+
+  for (let i=0; i<parsedPassages.length; i++) {
+    curEl.textContent = i+1;
+    const p = parsedPassages[i];
+    const passageText = (p[tf]||'').trim();
+    if (!passageText) { fail++; continue; }
+
+    let passLang = defLang;
+    if (p[langf] !== undefined) {
+      passLang = (String(p[langf])===hindiVal || String(p[langf])==='hindi') ? 'hindi' : 'english';
+    }
+    let passDate = defDate || null;
+    if (p[datef]) passDate = String(p[datef]).substring(0,10);
+    const diff = (['E','M','H'].includes(p[difff])) ? p[difff] : defDiff;
+
+    try {
+      const result = await apiFetch('/passages', { method:'POST', body: JSON.stringify({
+        exam_id:      parseInt(examId),
+        language:     passLang,
+        difficulty:   diff,
+        passage_date: passDate,
+        title:        p[titf]||'',
+        shift:        p.shift||'',
+        passage_text: passageText,
+      })});
+      ok++;
+      resEl.innerHTML += '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;background:#f0fdf4;color:#166534;"><span>✅</span><span>#'+(i+1)+' – '+String(p[titf]||'').substring(0,60)+' ('+(result.word_count||'?')+' words)</span></div>';
+    } catch(err) {
+      fail++;
+      resEl.innerHTML += '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;background:#fef2f2;color:#991b1b;"><span>❌</span><span>#'+(i+1)+' – '+err.message+'</span></div>';
+    }
+    resEl.scrollTop = resEl.scrollHeight;
+    if (i%5===4) await new Promise(r=>setTimeout(r,150));
+  }
+
+  prog.style.display='none';
+  btn.disabled=false; btn.textContent='📥 Import All Passages';
+  showAlert('import-alert','Import complete: <strong>'+ok+' imported</strong>'+(fail?' · '+fail+' failed':'')+'.',ok>0?'success':'error');
+  if (ok>0) { loadSiteStats(); loadPassages(); }
+}
+
+// ── Init ───────────────────────────────────────────────────
+(async () => {
+  await loadSiteStats();
+  await loadExams();   // load exams first so selects are populated
+  loadPassages();      // then load passages
+})();
+</script>
+</body>
+</html>
