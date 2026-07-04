@@ -122,6 +122,47 @@ CREATE TABLE daily_challenges (
 );
 
 -- ============================================================
+-- LIVE EXAMS TABLE
+-- ============================================================
+CREATE TABLE live_exams (
+    id                INT AUTO_INCREMENT PRIMARY KEY,
+    title             VARCHAR(200) NOT NULL,
+    exam_id           INT NOT NULL,
+    passage_id        INT NOT NULL,
+    scheduled_at      DATETIME NOT NULL,
+    join_window_mins  INT NOT NULL DEFAULT 10,
+    duration_minutes  INT NOT NULL DEFAULT 15,
+    description       TEXT,
+    created_by        INT NOT NULL,
+    results_released  TINYINT(1) DEFAULT 0,
+    status            VARCHAR(30) DEFAULT 'scheduled',
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (exam_id) REFERENCES exams(id),
+    FOREIGN KEY (passage_id) REFERENCES passages(id),
+    FOREIGN KEY (created_by) REFERENCES users(id),
+    INDEX idx_scheduled_at (scheduled_at)
+);
+
+-- ============================================================
+-- LIVE EXAM ATTEMPTS TABLE
+-- ============================================================
+CREATE TABLE live_exam_attempts (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    live_exam_id  INT NOT NULL,
+    user_id       INT NOT NULL,
+    session_id    INT,
+    result_id     INT,
+    joined_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    submitted_at  DATETIME,
+    FOREIGN KEY (live_exam_id) REFERENCES live_exams(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (session_id) REFERENCES typing_sessions(id),
+    FOREIGN KEY (result_id) REFERENCES typing_results(id),
+    UNIQUE KEY uniq_live_exam_user (live_exam_id, user_id),
+    INDEX idx_live_exam (live_exam_id)
+);
+
+-- ============================================================
 -- LEADERBOARD VIEW
 -- ============================================================
 CREATE OR REPLACE VIEW leaderboard_view AS
