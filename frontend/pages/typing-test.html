@@ -234,7 +234,14 @@
     .comp-panel-header { padding:10px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
     .comp-panel.original .comp-panel-header { background:#fee2e2;color:#991b1b; }
     .comp-panel.typed    .comp-panel-header { background:#dcfce7;color:#166534; }
-    .comp-text { padding:14px 16px;font-family:'Courier New',Consolas,monospace;font-size:13px;line-height:1.7;background:#fafafa;max-height:500px;overflow-y:auto; }
+    .comp-text { padding:16px 20px;font-family:'Hind',sans-serif;font-size:15px;line-height:1.9;text-align:justify;background:#fafafa;max-height:500px;overflow-y:auto; }
+    .comp-text .cw { border-radius:2px;padding:0 1px; }
+    .comp-text .cw-correct { background:#bbf7d0; }
+    .comp-text .cw-half    { background:#fef3c7; }
+    .comp-text .cw-wrong   { background:#fecaca; }
+    .comp-text .cw-missed  { background:#fef3c7;font-style:italic;opacity:.8; }
+    .comp-text .cw-omitted { color:#94a3b8; }
+    .comp-text .cw-extra   { background:#fde68a;font-style:italic; }
     .rd-actions { padding:16px 32px 32px;display:flex;gap:12px;flex-wrap:wrap; }
     .icon-inline { width:1em; height:1em; display:inline-block; vertical-align:-0.15em; flex-shrink:0; }
   </style>
@@ -1050,19 +1057,30 @@ function doAlignWords(origWords, typedWords) {
   const extra = [];
   let lastPi = 0;
 
-  // Find last matched original index to know how far user got
+  // Find last matched original index to know how far user got.
+  // Raw LCS matches can spuriously extend deep into the passage because
+  // common short words ("the", "a", "is") recur throughout the text even
+  // though the user only typed a handful of words — cap the "reached"
+  // boundary near how many words were actually typed so untouched text
+  // is correctly marked 'omitted' rather than 'missed'.
   let lastMatchedOi = -1;
   for (const a of alignment) {
     if (a.oi !== null && a.ti !== null) lastMatchedOi = a.oi;
   }
+  lastMatchedOi = Math.min(lastMatchedOi, typedWords.length + 10);
 
   for (const a of alignment) {
     if (a.oi !== null && a.ti !== null) {
-      // Matched pair — classify as correct/half/wrong
-      const tw = typedWords[a.ti];
-      const ow = origWords[a.oi];
-      slots[a.oi] = { orig: ow, typed: tw, status: classifyWord(tw, ow) };
-      lastPi = a.oi + 1;
+      if (a.oi <= lastMatchedOi) {
+        // Genuine matched pair within the range the user actually typed —
+        // classify as correct/half/wrong
+        const tw = typedWords[a.ti];
+        const ow = origWords[a.oi];
+        slots[a.oi] = { orig: ow, typed: tw, status: classifyWord(tw, ow) };
+        lastPi = a.oi + 1;
+      }
+      // else: spurious far-flung LCS match (a common word coincidentally
+      // matching deep in unread text) — leave as 'omitted'
     } else if (a.oi !== null && a.ti === null) {
       // Original word has no typed match → missed (if within range user typed)
       if (a.oi <= lastMatchedOi) {
@@ -1082,52 +1100,38 @@ function doAlignWords(origWords, typedWords) {
 // Passage-aligned slots, 10 per line, both panels in sync.
 function buildComparison(origWords, typedWords) {
   const { slots, extra } = doAlignWords(origWords, typedWords);
-  const WPL = 10;
   let origHtml = '', typedHtml = '';
 
-  for (let i = 0; i < slots.length; i += WPL) {
-    const lineNum   = Math.floor(i/WPL) + 1;
-    const lineSlots = slots.slice(i, i+WPL);
-    let oLine = '', tLine = '';
+  slots.forEach(slot => {
+    const od = escHtml(slot.orig);
+    const tw = slot.typed ? escHtml(slot.typed) : '';
 
-    lineSlots.forEach(slot => {
-      const od = escHtml(slot.orig);
-      const tw = slot.typed ? escHtml(slot.typed) : '';
+    switch (slot.status) {
+      case 'correct':
+        origHtml  += `<span class="cw cw-correct">${od}</span> `;
+        typedHtml += `<span class="cw cw-correct">${tw}</span> `;
+        break;
+      case 'halfmistake':
+        origHtml  += `<span class="cw cw-half">${od}</span> `;
+        typedHtml += `<span class="cw cw-half" style="text-decoration:underline wavy #f59e0b;">${tw}</span> `;
+        break;
+      case 'wrong':
+        origHtml  += `<span class="cw cw-wrong">${od}</span> `;
+        typedHtml += `<span class="cw cw-wrong" style="text-decoration:underline wavy #ef4444;">${tw}</span> `;
+        break;
+      case 'missed':
+        origHtml  += `<span class="cw cw-missed">${od}</span> `;
+        typedHtml += `<span class="cw" style="color:#d1d5db;">___</span> `;
+        break;
+      default: // omitted — user never reached here
+        origHtml += `<span class="cw cw-omitted">${od}</span> `;
+    }
+  });
 
-      switch (slot.status) {
-        case 'correct':
-          oLine += `<span style="background:#bbf7d0;border-radius:2px;padding:0 3px;margin:1px;">${od}</span> `;
-          tLine += `<span style="background:#bbf7d0;border-radius:2px;padding:0 3px;margin:1px;">${tw}</span> `;
-          break;
-        case 'halfmistake':
-          oLine += `<span style="background:#fef3c7;border-radius:2px;padding:0 3px;margin:1px;">${od}</span> `;
-          tLine += `<span style="background:#fef3c7;border-radius:2px;padding:0 3px;margin:1px;text-decoration:underline wavy #f59e0b;">${tw}</span> `;
-          break;
-        case 'wrong':
-          oLine += `<span style="background:#fecaca;border-radius:2px;padding:0 3px;margin:1px;">${od}</span> `;
-          tLine += `<span style="background:#fecaca;border-radius:2px;padding:0 3px;margin:1px;text-decoration:underline wavy #ef4444;">${tw}</span> `;
-          break;
-        case 'missed':
-          oLine += `<span style="background:#fef3c7;border-radius:2px;padding:0 3px;margin:1px;font-style:italic;">${od}</span> `;
-          tLine += `<span style="color:#d1d5db;padding:0 3px;margin:1px;">____</span> `;
-          break;
-        default: // omitted — never reached
-          oLine += `<span style="color:#94a3b8;padding:0 3px;margin:1px;">${od}</span> `;
-          tLine += `<span style="color:#e2e8f0;padding:0 3px;margin:1px;">·</span> `;
-      }
-    });
-
-    const lnSt = 'color:#94a3b8;font-size:11px;min-width:22px;flex-shrink:0;user-select:none;text-align:right;padding-top:2px;';
-    origHtml  += `<div style="display:flex;gap:5px;margin-bottom:5px;align-items:flex-start;flex-wrap:wrap;"><span style="${lnSt}">${lineNum}</span><span>- ${oLine}</span></div>`;
-    typedHtml += `<div style="display:flex;gap:5px;margin-bottom:5px;align-items:flex-start;flex-wrap:wrap;"><span style="${lnSt}">${lineNum}</span><span>+ ${tLine}</span></div>`;
-  }
-
-  // Show extra words appended at the bottom of typed panel
+  // Show extra words typed beyond the passage
   if (extra.length) {
-    const extraSpans = extra.map(w =>
-      `<span style="background:#fde68a;border-radius:2px;padding:0 3px;margin:1px;font-style:italic;">${escHtml(w)}</span>`
-    ).join(' ');
-    typedHtml += `<div style="margin-top:8px;font-size:12px;color:#92400e;"><strong>Extra words:</strong> ${extraSpans}</div>`;
+    const extraSpans = extra.map(w => `<span class="cw cw-extra">${escHtml(w)}</span>`).join(' ');
+    typedHtml += `<div style="margin-top:12px;font-size:12px;color:#92400e;"><strong>Extra words typed:</strong> ${extraSpans}</div>`;
   }
 
   document.getElementById('comp-original').innerHTML = origHtml || '<em style="color:#94a3b8">No passage.</em>';
