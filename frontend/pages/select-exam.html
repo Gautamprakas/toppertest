@@ -72,32 +72,38 @@
     .quick-btn.loading { opacity:.7; cursor:wait; }
     .quick-btn.random-btn { background:#f59e0b; }
     .quick-btn.random-btn:hover { background:#d97706; }
+
+    .icon-inline { width:1em; height:1em; display:inline-block; vertical-align:-0.15em; flex-shrink:0; }
+    .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#ef4444; flex-shrink:0; }
+    .eo-icon svg { width:28px; height:28px; stroke-width:1.6; }
+    .lo-icon svg { width:40px; height:40px; stroke-width:1.6; }
+    .es-icon svg { width:48px; height:48px; stroke-width:1.5; }
   </style>
 </head>
 <body>
 <nav class="navbar">
-  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin-right:2px;"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
   <div id="nav-right"></div>
 </nav>
 <div class="app-layout">
   <aside class="sidebar">
     <div class="sidebar-section">Main Menu</div>
     <ul class="sidebar-menu">
-      <li><a href="/pages/live-exam.html"><span class="icon">🔴</span> Live Typing</a></li>
-      <li><a href="/pages/select-exam.html" class="active"><span class="icon">⌨️</span> Practice Test</a></li>
-      <li><a href="/pages/exams.html"><span class="icon">📋</span> All Exams</a></li>
-      <li><a href="/pages/dashboard.html"><span class="icon">📊</span> Dashboard</a></li>
-      <li><a href="/pages/history.html"><span class="icon">📅</span> History</a></li>
-      <li><a href="/pages/leaderboard.html"><span class="icon">🏆</span> Leaderboard</a></li>
+      <li><a href="/pages/live-exam.html"><span class="icon"><span class="live-dot"></span></span> Live Typing</a></li>
+      <li><a href="/pages/select-exam.html" class="active"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg></span> Practice Test</a></li>
+      <li><a href="/pages/exams.html"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span> All Exams</a></li>
+      <li><a href="/pages/dashboard.html"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></span> Dashboard</a></li>
+      <li><a href="/pages/history.html"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> History</a></li>
+      <li><a href="/pages/leaderboard.html"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 5H3v2a4 4 0 004 4M17 5h4v2a4 4 0 01-4 4"/><path d="M8 21h8M12 17v4"/></svg></span> Leaderboard</a></li>
     </ul>
     <div class="sidebar-section">Account</div>
     <ul class="sidebar-menu">
-      <li><a href="#" onclick="Auth.logout()"><span class="icon">🚪</span> Logout</a></li>
+      <li><a href="#" onclick="Auth.logout()"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 00-2 2v14a2 2 0 002 2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> Logout</a></li>
     </ul>
   </aside>
 
   <main class="main-content">
-    <h1 class="section-title">⌨️ Start <span>Typing Test</span></h1>
+    <h1 class="section-title"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> Start <span>Typing Test</span></h1>
     <p class="text-muted mb-3">Select exam → language → date → passage to begin</p>
 
     <!-- Steps indicator -->
@@ -110,7 +116,7 @@
 
     <!-- STEP 1 -->
     <div class="step-content active card" id="sc-1">
-      <div class="card-header"><h3 style="font-size:16px;font-weight:700;">📋 Step 1 – Select Your Exam</h3></div>
+      <div class="card-header"><h3 style="font-size:16px;font-weight:700;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px;margin-right:4px;"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Step 1 – Select Your Exam</h3></div>
       <div class="card-body">
         <div class="exam-grid" id="exam-grid">
           <div style="text-align:center;padding:40px;grid-column:1/-1;"><div class="spinner" style="margin:auto;"></div></div>
@@ -121,7 +127,7 @@
     <!-- STEP 2 -->
     <div class="step-content card" id="sc-2">
       <div class="card-header d-flex align-center justify-between">
-        <h3 style="font-size:16px;font-weight:700;">🔤 Step 2 – Select Language</h3>
+        <h3 style="font-size:16px;font-weight:700;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg> Step 2 – Select Language</h3>
         <button class="btn btn-outline btn-sm" onclick="goStep(1)">← Back</button>
       </div>
       <div class="card-body"><div class="lang-opts" id="lang-opts"></div></div>
@@ -130,7 +136,7 @@
     <!-- STEP 3 -->
     <div class="step-content card" id="sc-3">
       <div class="card-header d-flex align-center justify-between">
-        <h3 style="font-size:16px;font-weight:700;">📅 Step 3 – Select Exam Date</h3>
+        <h3 style="font-size:16px;font-weight:700;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px;margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Step 3 – Select Exam Date</h3>
         <button class="btn btn-outline btn-sm" onclick="goStep(2)">← Back</button>
       </div>
       <div class="card-body">
@@ -163,7 +169,7 @@
             </div>
             <div style="flex:1;min-width:220px;padding-top:4px;">
               <div style="background:#f8fafc;border-radius:10px;padding:20px;">
-                <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:8px;">📌 How to use</p>
+                <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:8px;"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V6a1 1 0 011-1 2 2 0 000-4H8a2 2 0 000 4 1 1 0 011 1v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24z"/></svg> How to use</p>
                 <p style="font-size:13px;color:var(--muted);line-height:1.7;">
                   Dates shown in <strong style="color:#1d4ed8;">blue</strong> have typing passages available.<br><br>
                   Click any blue date to load its passages and continue to Step 4.
@@ -173,7 +179,7 @@
                   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;">Dates with Passages</div>
                 </div>
                 <div id="selected-date-info" style="display:none;margin-top:12px;background:#dbeafe;border-radius:8px;padding:12px;font-size:13px;">
-                  ✅ Selected: <strong id="sel-date-display"></strong>
+                  <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Selected: <strong id="sel-date-display"></strong>
                   <br><span id="sel-date-count" style="color:var(--primary);font-weight:700;"></span>
                 </div>
               </div>
@@ -182,7 +188,7 @@
         </div>
         <div id="no-dates-msg" style="display:none;">
           <div class="empty-state">
-            <div class="es-icon">📭</div>
+            <div class="es-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg></div>
             <h4>No Passages Available</h4>
             <p>No passages found for <strong id="no-dates-exam"></strong>.<br>Admin needs to add passages first.</p>
             <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
@@ -198,7 +204,7 @@
     <div class="step-content card" id="sc-4">
       <div class="card-header d-flex align-center justify-between">
         <div>
-          <h3 style="font-size:16px;font-weight:700;">📝 Step 4 – Select Passage</h3>
+          <h3 style="font-size:16px;font-weight:700;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px;margin-right:4px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg> Step 4 – Select Passage</h3>
           <p class="text-muted" style="font-size:12px;margin-top:3px;" id="p4-subtitle">Choose a passage to start typing</p>
         </div>
         <button class="btn btn-outline btn-sm" onclick="goStep(3)">← Back</button>
@@ -232,7 +238,27 @@ let availDates = [];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const ICONS = { UP_POLICE_ASI:'🚔', SSC_CHSL:'📝', SSC_CGL_DEO:'💻', HIGH_COURT:'⚖️', DSSSB:'🏛️', JR_ASSISTANT:'📋', STENO:'✍️', RAJ_HC:'⚖️' };
+const svgIcon = path => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+const svgIconInline = path => `<svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+const ICON_SHIELD    = svgIcon('<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>');
+const ICON_DOCUMENT  = svgIcon('<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/>');
+const ICON_MONITOR   = svgIcon('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>');
+const ICON_SCALES    = svgIcon('<path d="M12 3v18M5 7h14M5 7l-3 6a3 3 0 006 0l-3-6zM19 7l-3 6a3 3 0 006 0l-3-6zM8 21h8"/>');
+const ICON_BUILDING  = svgIcon('<path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/>');
+const ICON_CLIPBOARD = svgIcon('<rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/>');
+const ICON_PEN       = svgIcon('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>');
+const ICONS = { UP_POLICE_ASI:ICON_SHIELD, SSC_CHSL:ICON_DOCUMENT, SSC_CGL_DEO:ICON_MONITOR, HIGH_COURT:ICON_SCALES, DSSSB:ICON_BUILDING, JR_ASSISTANT:ICON_CLIPBOARD, STENO:ICON_PEN, RAJ_HC:ICON_SCALES };
+
+// Additional icons used inline across this page (globe/language, timer, dice, check, warning, inbox)
+const ICON_GLOBE        = svgIcon('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>');
+const ICON_GLOBE_INLINE  = svgIconInline('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>');
+const ICON_TIMER_INLINE  = svgIconInline('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>');
+const ICON_CLOCK_INLINE  = svgIconInline('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>');
+const ICON_DICE_INLINE   = svgIconInline('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/>');
+const ICON_CHECK_INLINE  = svgIconInline('<polyline points="20 6 9 17 4 12"/>');
+const ICON_DOC_INLINE    = svgIconInline('<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/>');
+const ICON_WARNING       = svgIcon('<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>');
+const ICON_INBOX         = svgIcon('<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>');
 
 // ── Navigate steps ─────────────────────────────────────────
 function goStep(n) {
@@ -255,13 +281,13 @@ apiFetch('/exams').then(exams => {
           data-name="${e.exam_name.replace(/"/g,'&quot;')}"
           data-code="${e.exam_code}"
           data-lang="${e.language}">
-          <div class="eo-icon" style="cursor:pointer;">${ICONS[e.exam_code]||'📄'}</div>
+          <div class="eo-icon" style="cursor:pointer;">${ICONS[e.exam_code]||ICON_DOCUMENT}</div>
           <h4 style="cursor:pointer;">${e.exam_name}</h4>
-          <p>${e.language==='both'?'Hindi + English':e.language==='hindi'?'🇮🇳 Hindi':'🔤 English'}</p>
-          <p>⏱ ${e.duration_minutes} min</p>
-          <button class="quick-btn random-btn" data-action="quick">🎲 Quick Practice</button>
+          <p>${e.language==='both'?'Hindi + English':e.language==='hindi'?ICON_GLOBE_INLINE+' Hindi':ICON_GLOBE_INLINE+' English'}</p>
+          <p>${ICON_TIMER_INLINE} ${e.duration_minutes} min</p>
+          <button class="quick-btn random-btn" data-action="quick">${ICON_DICE_INLINE} Quick Practice</button>
         </div>`).join('')
-    : '<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">📭</div><h4>No exams found</h4></div>';
+    : `<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">${ICON_INBOX}</div><h4>No exams found</h4></div>`;
 
   // Event delegation — handles both card click and Quick Practice button
   document.getElementById('exam-grid').addEventListener('click', function(ev) {
@@ -289,7 +315,7 @@ apiFetch('/exams').then(exams => {
     if (e) pickExam(e.id, e.exam_name, e.exam_code, e.language);
   }
 }).catch(() => {
-  document.getElementById('exam-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">⚠️</div><h4>Failed to load exams</h4><p>Please refresh.</p></div>';
+  document.getElementById('exam-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">${ICON_WARNING}</div><h4>Failed to load exams</h4><p>Please refresh.</p></div>`;
 });
 
 // ── Step 1 → 2 ─────────────────────────────────────────────
@@ -305,9 +331,9 @@ function pickExam(id, name, code, lang) {
       <div class="lo-icon">${icon}</div><h4>${label}</h4><p>${sub}</p>
     </div>`;
 
-  if (lang === 'hindi')   { lo.innerHTML = mkLang('hindi','🇮🇳','Hindi (Mangal)','Inscript Keyboard'); setTimeout(()=>pickLang('hindi'),100); return; }
-  if (lang === 'english') { lo.innerHTML = mkLang('english','🔤','English','QWERTY Keyboard');       setTimeout(()=>pickLang('english'),100); return; }
-  lo.innerHTML = mkLang('hindi','🇮🇳','Hindi (Mangal)','Inscript Keyboard') + mkLang('english','🔤','English','QWERTY Keyboard');
+  if (lang === 'hindi')   { lo.innerHTML = mkLang('hindi',ICON_GLOBE,'Hindi (Mangal)','Inscript Keyboard'); setTimeout(()=>pickLang('hindi'),100); return; }
+  if (lang === 'english') { lo.innerHTML = mkLang('english',ICON_GLOBE,'English','QWERTY Keyboard');       setTimeout(()=>pickLang('english'),100); return; }
+  lo.innerHTML = mkLang('hindi',ICON_GLOBE,'Hindi (Mangal)','Inscript Keyboard') + mkLang('english',ICON_GLOBE,'English','QWERTY Keyboard');
   goStep(2);
 }
 
@@ -407,7 +433,7 @@ async function pickDate(ds) {
   // Update summary bar
   document.getElementById('sel-bar').style.display = 'flex';
   document.getElementById('sb-exam').textContent = SEL.exam.name;
-  document.getElementById('sb-lang').textContent = SEL.lang === 'hindi' ? '🇮🇳 Hindi' : '🔤 English';
+  document.getElementById('sb-lang').innerHTML = SEL.lang === 'hindi' ? (ICON_GLOBE_INLINE + ' Hindi') : (ICON_GLOBE_INLINE + ' English');
   document.getElementById('sb-date').textContent = fmtDate(ds);
   document.getElementById('p4-subtitle').textContent = `Passages for ${fmtDate(ds)}`;
 
@@ -432,7 +458,7 @@ function renderPassages(list) {
   if (!list.length) {
     el.innerHTML = `
       <div class="empty-state">
-        <div class="es-icon">📭</div>
+        <div class="es-icon">${ICON_INBOX}</div>
         <h4>No Passages for This Date</h4>
         <p>No passages found for <strong>${fmtDate(SEL.date)}</strong>.<br>Try a different date.</p>
         <button class="btn btn-primary mt-3" onclick="goStep(3)">← Pick Another Date</button>
@@ -445,12 +471,12 @@ function renderPassages(list) {
     <div class="passage-opt" id="po-${p.id}" onclick="pickPassage(${p.id})">
       <div style="flex:1;min-width:0;">
         <div style="font-weight:700;color:var(--primary);font-size:14px;">
-          📄 Passage ${i+1}${p.title ? ` – ${p.title}` : ''}
+          ${ICON_DOC_INLINE} Passage ${i+1}${p.title ? ` – ${p.title}` : ''}
         </div>
         <div style="font-size:12px;color:var(--muted);margin-top:3px;">
-          📝 ${p.word_count} words
-          ${p.shift ? `&nbsp;·&nbsp;🕐 ${p.shift}` : ''}
-          &nbsp;·&nbsp;${SEL.lang === 'hindi' ? '🇮🇳 Hindi' : '🔤 English'}
+          ${ICON_DOC_INLINE} ${p.word_count} words
+          ${p.shift ? `&nbsp;·&nbsp;${ICON_CLOCK_INLINE} ${p.shift}` : ''}
+          &nbsp;·&nbsp;${SEL.lang === 'hindi' ? ICON_GLOBE_INLINE + ' Hindi' : ICON_GLOBE_INLINE + ' English'}
         </div>
       </div>
       <div style="flex-shrink:0;margin-left:12px;text-align:right;">
@@ -474,7 +500,7 @@ async function quickPractice(examId, examName, lang, btn, event) {
   if (event) event.stopPropagation();
 
   const origText = btn.innerHTML;
-  btn.innerHTML = '⏳ Loading...';
+  btn.innerHTML = ICON_CLOCK_INLINE + ' Loading...';
   btn.disabled = true;
   btn.classList.add('loading');
 
@@ -513,7 +539,7 @@ async function quickPractice(examId, examName, lang, btn, event) {
     // Pick a random passage
     const p = passages[Math.floor(Math.random() * passages.length)];
 
-    btn.innerHTML = '✅ Starting...';
+    btn.innerHTML = ICON_CHECK_INLINE + ' Starting...';
 
     // Navigate to instructions page
     setTimeout(() => {
@@ -524,7 +550,7 @@ async function quickPractice(examId, examName, lang, btn, event) {
     btn.innerHTML = origText;
     btn.disabled = false;
     btn.classList.remove('loading');
-    showToast('⚠️ ' + (err.message || 'Failed to start. Try again.'), 'error');
+    showToast(err.message || 'Failed to start. Try again.', 'error');
   }
 }
 

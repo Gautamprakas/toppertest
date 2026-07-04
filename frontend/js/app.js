@@ -59,7 +59,7 @@ function initNavbar() {
   if (Auth.isLoggedIn()) {
     const u = Auth.getUser();
     navRight.innerHTML = `
-      <span style="color:rgba(255,255,255,.8);font-size:13px;">👋 ${u.name}</span>
+      <span style="color:rgba(255,255,255,.8);font-size:13px;">${u.name}</span>
       ${u.role === 'admin' ? '<a href="/pages/admin.html" class="btn btn-accent btn-sm">Admin</a>' : ''}
       <a href="/pages/dashboard.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.4);color:#fff;">Dashboard</a>
       <button onclick="Auth.logout()" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;">Logout</button>`;

@@ -14,24 +14,25 @@
     .auth-logo p  { color: var(--muted); font-size: 13px; }
     .benefits { background: #f0f9ff; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; }
     .benefits li { padding: 3px 0; }
+    .icon-inline{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0}
   </style>
 </head>
 <body>
 <nav class="navbar">
-  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
   <div id="nav-right"></div>
 </nav>
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">
-      <h1>⌨️ TopperTest</h1>
+      <h1><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</h1>
       <p>Free Government Exam Typing Practice by ASI Sandeep</p>
     </div>
     <ul class="benefits" style="list-style:none;">
-      <li>✅ Free access to all exam passages</li>
-      <li>✅ Track your WPM & accuracy history</li>
-      <li>✅ Compete on national leaderboard</li>
-      <li>✅ Performance analytics & graphs</li>
+      <li><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Free access to all exam passages</li>
+      <li><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Track your WPM & accuracy history</li>
+      <li><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Compete on national leaderboard</li>
+      <li><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Performance analytics & graphs</li>
     </ul>
     <h2 style="font-size:18px;margin-bottom:16px;color:var(--primary);">Create Free Account</h2>
     <div id="alert-box"></div>
@@ -53,7 +54,7 @@
       <input type="password" id="password" class="form-control" placeholder="Create a strong password" />
     </div>
 
-    <button class="btn btn-accent btn-block btn-lg mt-2" id="reg-btn" onclick="doRegister()">🚀 Register Free</button>
+    <button class="btn btn-accent btn-block btn-lg mt-2" id="reg-btn" onclick="doRegister()"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Register Free</button>
 
     <p class="text-center mt-3" style="font-size:13px;color:var(--muted);">
       Already have an account? <a href="/pages/login.html" style="font-weight:700;">Login here</a>
@@ -73,19 +74,19 @@
     const pass = document.getElementById('password').value;
     const box  = document.getElementById('alert-box');
 
-    if (!name || !email || !pass) { box.innerHTML = '<div class="alert alert-error">⚠️ Please fill all required fields.</div>'; return; }
-    if (pass.length < 6)          { box.innerHTML = '<div class="alert alert-error">⚠️ Password must be at least 6 characters.</div>'; return; }
+    if (!name || !email || !pass) { box.innerHTML = '<div class="alert alert-error"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Please fill all required fields.</div>'; return; }
+    if (pass.length < 6)          { box.innerHTML = '<div class="alert alert-error"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Password must be at least 6 characters.</div>'; return; }
 
     btn.disabled = true; btn.textContent = 'Creating account...';
     try {
       const data = await apiFetch('/register', { method: 'POST', body: JSON.stringify({ name, email, password: pass, phone }) });
       Auth.setToken(data.token);
       Auth.setUser(data.user);
-      showToast('Account created! Welcome to TopperTest 🎉', 'success');
+      showToast('Account created! Welcome to TopperTest', 'success');
       setTimeout(() => window.location.href = '/pages/dashboard.html', 800);
     } catch (err) {
-      box.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
-      btn.disabled = false; btn.textContent = '🚀 Register Free';
+      box.innerHTML = `<div class="alert alert-error"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${err.message}</div>`;
+      btn.disabled = false; btn.textContent = 'Register Free';
     }
   }
 </script>

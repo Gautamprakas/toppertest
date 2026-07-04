@@ -16,21 +16,22 @@
     .divider-text { text-align: center; color: var(--muted); font-size: 13px; margin: 16px 0; position: relative; }
     .divider-text::before, .divider-text::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border); }
     .divider-text::before { left: 0; } .divider-text::after { right: 0; }
+    .icon-inline{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0}
   </style>
 </head>
 <body>
 <nav class="navbar">
-  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text">⌨️ TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
   <div id="nav-right"></div>
 </nav>
 
 <div class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">
-      <h1>⌨️ TopperTest</h1>
+      <h1><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</h1>
       <p>Government Exam Typing Practice by ASI Sandeep</p>
     </div>
-    <h2>Welcome Back 👋</h2>
+    <h2>Welcome Back</h2>
     <div id="alert-box"></div>
 
     <div class="form-group">
@@ -63,7 +64,7 @@
     const pass  = document.getElementById('password').value;
     const box   = document.getElementById('alert-box');
 
-    if (!email || !pass) { box.innerHTML = '<div class="alert alert-error">⚠️ Please enter email and password.</div>'; return; }
+    if (!email || !pass) { box.innerHTML = '<div class="alert alert-error"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Please enter email and password.</div>'; return; }
 
     btn.disabled = true; btn.textContent = 'Logging in...';
     try {
@@ -73,7 +74,7 @@
       showToast('Login successful! Redirecting...', 'success');
       setTimeout(() => window.location.href = '/pages/dashboard.html', 800);
     } catch (err) {
-      box.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+      box.innerHTML = `<div class="alert alert-error"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${err.message}</div>`;
       btn.disabled = false; btn.textContent = 'Login →';
     }
   }

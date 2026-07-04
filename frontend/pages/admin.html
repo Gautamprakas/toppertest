@@ -34,6 +34,7 @@
     .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
     .status-dot.active   { background:var(--success); }
     .status-dot.inactive { background:var(--danger); }
+    .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#ef4444; flex-shrink:0; }
 
     /* Word count badge */
     .wc-badge { display:inline-block; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:700; }
@@ -70,7 +71,7 @@
 <nav class="navbar">
   <div class="navbar-brand">
     <a href="/" style="color:#fff;">
-      <div class="brand-text">⌨️ TopperTest</div>
+      <div class="brand-text"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</div>
       <div class="brand-sub">Admin Panel</div>
     </a>
   </div>
@@ -81,45 +82,45 @@
   <aside class="sidebar">
     <div class="sidebar-section">Admin</div>
     <ul class="sidebar-menu">
-      <li><a href="/pages/admin.html" class="active"><span class="icon">⚙️</span> Admin Panel</a></li>
-      <li><a href="/pages/live-exam.html"><span class="icon">🔴</span> Live Typing</a></li>
-      <li><a href="/pages/dashboard.html"><span class="icon">📊</span> Dashboard</a></li>
+      <li><a href="/pages/admin.html" class="active"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.2 4.2l4.2 4.2m7.2 7.2l4.2 4.2M1 12h6m10 0h6M4.2 19.8l4.2-4.2m7.2-7.2l4.2-4.2"/></svg></span> Admin Panel</a></li>
+      <li><a href="/pages/live-exam.html"><span class="icon"><span class="live-dot"></span></span> Live Typing</a></li>
+      <li><a href="/pages/dashboard.html"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></span> Dashboard</a></li>
     </ul>
     <div class="sidebar-section">Account</div>
     <ul class="sidebar-menu">
-      <li><a href="#" onclick="Auth.logout()"><span class="icon">🚪</span> Logout</a></li>
+      <li><a href="#" onclick="Auth.logout()"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 00-2 2v14a2 2 0 002 2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> Logout</a></li>
     </ul>
   </aside>
 
   <main class="main-content">
     <div class="d-flex align-center justify-between mb-3">
-      <h1 class="section-title" style="margin:0;">⚙️ Admin <span>Panel</span></h1>
+      <h1 class="section-title" style="margin:0;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.2 4.2l4.2 4.2m7.2 7.2l4.2 4.2M1 12h6m10 0h6M4.2 19.8l4.2-4.2m7.2-7.2l4.2-4.2"/></svg> Admin <span>Panel</span></h1>
       <span id="admin-name" style="color:var(--muted);font-size:13px;"></span>
     </div>
 
     <!-- Site Stats -->
     <div class="stats-grid mb-4">
-      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="as-users">-</div><div class="stat-label">Students</div></div>
-      <div class="stat-card accent"><div class="stat-icon">📋</div><div class="stat-value" id="as-exams">-</div><div class="stat-label">Exams</div></div>
-      <div class="stat-card success"><div class="stat-icon">📝</div><div class="stat-value" id="as-passages">-</div><div class="stat-label">Passages</div></div>
-      <div class="stat-card info"><div class="stat-icon">⌨️</div><div class="stat-value" id="as-tests">-</div><div class="stat-label">Tests Taken</div></div>
+      <div class="stat-card"><div class="stat-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div class="stat-value" id="as-users">-</div><div class="stat-label">Students</div></div>
+      <div class="stat-card accent"><div class="stat-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div><div class="stat-value" id="as-exams">-</div><div class="stat-label">Exams</div></div>
+      <div class="stat-card success"><div class="stat-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div><div class="stat-value" id="as-passages">-</div><div class="stat-label">Passages</div></div>
+      <div class="stat-card info"><div class="stat-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg></div><div class="stat-value" id="as-tests">-</div><div class="stat-label">Tests Taken</div></div>
     </div>
 
     <!-- Tabs -->
     <div class="tab-btns">
-      <button class="tab-btn active" onclick="showTab('passages',this)">📝 Manage Passages</button>
-      <button class="tab-btn"        onclick="showTab('exams',this)">📋 Manage Exams</button>
-      <button class="tab-btn"        onclick="showTab('import',this)">📥 Bulk Import JSON</button>
-      <button class="tab-btn"        onclick="showTab('live',this)">🔴 Live Exams</button>
-      <button class="tab-btn"        onclick="showTab('users',this)">👥 Students</button>
-      <button class="tab-btn"        onclick="showTab('results',this)">📊 Results</button>
+      <button class="tab-btn active" onclick="showTab('passages',this)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg> Manage Passages</button>
+      <button class="tab-btn"        onclick="showTab('exams',this)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Manage Exams</button>
+      <button class="tab-btn"        onclick="showTab('import',this)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Bulk Import JSON</button>
+      <button class="tab-btn"        onclick="showTab('live',this)"><span class="live-dot"></span> Live Exams</button>
+      <button class="tab-btn"        onclick="showTab('users',this)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Students</button>
+      <button class="tab-btn"        onclick="showTab('results',this)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg> Results</button>
     </div>
 
     <!-- ── PASSAGES TAB ─────────────────────────────────────── -->
     <div class="tab-panel active" id="tab-passages">
       <div class="action-bar">
         <h3 style="font-size:17px;">All Passages <span id="passage-count" style="font-size:13px;color:var(--muted);font-weight:400;"></span></h3>
-        <button class="btn btn-accent" onclick="openModal('passage-modal')">➕ Add New Passage</button>
+        <button class="btn btn-accent" onclick="openModal('passage-modal')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add New Passage</button>
       </div>
       <!-- Passage filter bar -->
       <div class="card mb-3" style="padding:12px 16px;">
@@ -158,7 +159,7 @@
     <div class="tab-panel" id="tab-exams">
       <div class="action-bar">
         <h3 style="font-size:17px;">All Exams</h3>
-        <button class="btn btn-accent" onclick="openModal('exam-modal')">➕ Add New Exam</button>
+        <button class="btn btn-accent" onclick="openModal('exam-modal')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add New Exam</button>
       </div>
       <div class="card">
         <div class="card-body" style="padding:0;">
@@ -178,13 +179,13 @@
     <div class="tab-panel" id="tab-import">
       <div class="action-bar">
         <div>
-          <h3 style="font-size:17px;">📥 Bulk Import Passages from JSON</h3>
+          <h3 style="font-size:17px;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Bulk Import Passages from JSON</h3>
           <p style="font-size:13px;color:var(--muted);margin-top:4px;">Select exam → map fields → upload/paste JSON → click Import</p>
         </div>
       </div>
 
       <div class="card mb-3">
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;">⚙️ Step 1 – Exam &amp; Defaults</div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.2 4.2l4.2 4.2m7.2 7.2l4.2 4.2M1 12h6m10 0h6M4.2 19.8l4.2-4.2m7.2-7.2l4.2-4.2"/></svg> Step 1 – Exam &amp; Defaults</div>
         <div class="card-body">
           <div class="form-row">
             <div class="form-group">
@@ -194,8 +195,8 @@
             <div class="form-group">
               <label class="form-label">Default Language</label>
               <select class="form-control form-select" id="imp-lang">
-                <option value="hindi">🇮🇳 Hindi</option>
-                <option value="english">🔤 English</option>
+                <option value="hindi">Hindi</option>
+                <option value="english">English</option>
               </select>
             </div>
           </div>
@@ -217,10 +218,10 @@
       </div>
 
       <div class="card mb-3">
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;">🗺️ Step 2 – Field Mapping</div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> Step 2 – Field Mapping</div>
         <div class="card-body">
           <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;font-size:13px;color:#1e40af;margin-bottom:14px;">
-            ℹ️ Enter the field names as they appear in your JSON. For your data: <code>passage_text</code>, <code>title</code>, <code>difficulty</code>, <code>created_at</code>, <code>language</code> (3 = Hindi)
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Enter the field names as they appear in your JSON. For your data: <code>passage_text</code>, <code>title</code>, <code>difficulty</code>, <code>created_at</code>, <code>language</code> (3 = Hindi)
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">
             <div class="form-group" style="margin:0;"><label class="form-label" style="font-size:11px;text-transform:uppercase;">Passage text field</label><input type="text" class="form-control" id="fmap-text" value="passage_text" /></div>
@@ -234,7 +235,7 @@
       </div>
 
       <div class="card mb-3">
-        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;">📂 Step 3 – Upload or Paste JSON</div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> Step 3 – Upload or Paste JSON</div>
         <div class="card-body">
           <div id="drop-zone"
             style="border:2px dashed #cbd5e1;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:all .2s;"
@@ -242,7 +243,7 @@
             ondragover="this.style.borderColor='#3b82f6';this.style.background='#eef4ff';event.preventDefault();"
             ondragleave="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';"
             ondrop="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';handleJsonDrop(event);">
-            <div style="font-size:40px;margin-bottom:8px;">📂</div>
+            <div style="font-size:40px;margin-bottom:8px;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
             <strong style="color:var(--primary);">Click to browse or drag &amp; drop .json file</strong>
             <p style="margin-top:4px;font-size:13px;color:var(--muted);">Array of passage objects</p>
           </div>
@@ -255,7 +256,7 @@
           <div id="json-preview" style="display:none;margin-top:14px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <strong id="preview-count" style="font-size:14px;"></strong>
-              <button class="btn btn-outline btn-sm" onclick="clearImport()">✕ Clear</button>
+              <button class="btn btn-outline btn-sm" onclick="clearImport()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Clear</button>
             </div>
             <div id="preview-rows" style="display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;"></div>
           </div>
@@ -266,7 +267,7 @@
         <div class="card-body">
           <div id="import-alert"></div>
           <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-accent" id="import-btn" onclick="runImport()" disabled>📥 Import All Passages</button>
+            <button class="btn btn-accent" id="import-btn" onclick="runImport()" disabled><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Import All Passages</button>
             <span id="import-progress" style="font-size:13px;color:var(--muted);display:none;">
               Importing <strong id="imp-cur">0</strong> / <strong id="imp-tot">0</strong>…
             </span>
@@ -317,7 +318,7 @@
       <div class="card" style="margin-bottom:24px;">
         <div class="card-header" style="cursor:pointer;user-select:none;" onclick="toggleScheduleForm()">
           <h3 style="font-size:17px;margin:0;display:flex;align-items:center;gap:8px;">
-            🔴 Schedule New Live Exam
+            <span class="live-dot"></span> Schedule New Live Exam
             <span id="schedule-toggle-icon" style="font-size:12px;color:var(--muted);">▼ expand</span>
           </h3>
         </div>
@@ -372,7 +373,7 @@
             </div>
           </div>
           <div style="margin-top:8px;">
-            <button class="btn btn-accent" onclick="scheduleLiveExam()">📅 Schedule Live Exam</button>
+            <button class="btn btn-accent" onclick="scheduleLiveExam()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Schedule Live Exam</button>
           </div>
         </div>
       </div>
@@ -381,7 +382,7 @@
       <div class="card">
         <div class="action-bar">
           <h3 style="font-size:17px;margin:0;">All Scheduled Live Exams</h3>
-          <button class="btn btn-outline btn-sm" onclick="loadAdminLiveExams()">🔄 Refresh</button>
+          <button class="btn btn-outline btn-sm" onclick="loadAdminLiveExams()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:0;">
           <div class="table-wrap">
@@ -411,7 +412,7 @@
       <div class="card" id="live-results-panel" style="margin-top:24px;display:none;">
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
           <h3 style="font-size:17px;margin:0;" id="live-results-title">Results</h3>
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('live-results-panel').style.display='none'">✕ Close</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('live-results-panel').style.display='none'"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close</button>
         </div>
         <div class="card-body">
           <div id="live-results-body">Loading...</div>
@@ -429,8 +430,8 @@
 <div class="modal-overlay" id="passage-modal">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>📝 Add New Passage</h3>
-      <button class="modal-close" onclick="closeModal('passage-modal')">✕</button>
+      <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg> Add New Passage</h3>
+      <button class="modal-close" onclick="closeModal('passage-modal')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div id="pm-alert"></div>
@@ -445,8 +446,8 @@
         <div class="form-group">
           <label class="form-label">Language *</label>
           <select class="form-control form-select" id="pm-lang">
-            <option value="hindi">🇮🇳 Hindi (Mangal)</option>
-            <option value="english">🔤 English</option>
+            <option value="hindi">Hindi (Mangal)</option>
+            <option value="english">English</option>
           </select>
         </div>
       </div>
@@ -459,9 +460,9 @@
         <div class="form-group">
           <label class="form-label">Difficulty *</label>
           <select class="form-control form-select" id="pm-diff">
-            <option value="E">🟢 Easy (E)</option>
-            <option value="M" selected>🟡 Medium (M)</option>
-            <option value="H">🔴 Hard (H)</option>
+            <option value="E">Easy (E)</option>
+            <option value="M" selected>Medium (M)</option>
+            <option value="H">Hard (H)</option>
           </select>
         </div>
       </div>
@@ -483,7 +484,7 @@
           <span id="pm-wc" class="wc-badge">0 words</span>
         </label>
         <div class="info-note">
-          💡 Paste the complete passage text. Word count is calculated automatically.
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Paste the complete passage text. Word count is calculated automatically.
           For Hindi passages, paste Unicode (Mangal font) text directly.
         </div>
         <textarea class="form-control tall" id="pm-text" placeholder="Paste or type the passage text here..."
@@ -492,7 +493,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('passage-modal')">Cancel</button>
-      <button class="btn btn-accent" id="pm-save-btn" onclick="savePassage()">💾 Save Passage</button>
+      <button class="btn btn-accent" id="pm-save-btn" onclick="savePassage()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Passage</button>
     </div>
   </div>
 </div>
@@ -503,8 +504,8 @@
 <div class="modal-overlay" id="exam-modal">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>📋 Add New Exam</h3>
-      <button class="modal-close" onclick="closeModal('exam-modal')">✕</button>
+      <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Add New Exam</h3>
+      <button class="modal-close" onclick="closeModal('exam-modal')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div id="em-alert"></div>
@@ -525,9 +526,9 @@
         <div class="form-group">
           <label class="form-label">Language</label>
           <select class="form-control form-select" id="em-lang">
-            <option value="hindi">🇮🇳 Hindi</option>
-            <option value="english">🔤 English</option>
-            <option value="both">🌐 Both (Hindi + English)</option>
+            <option value="hindi">Hindi</option>
+            <option value="english">English</option>
+            <option value="both">Both (Hindi + English)</option>
           </select>
         </div>
         <div class="form-group">
@@ -554,7 +555,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('exam-modal')">Cancel</button>
-      <button class="btn btn-accent" id="em-save-btn" onclick="saveExam()">💾 Save Exam</button>
+      <button class="btn btn-accent" id="em-save-btn" onclick="saveExam()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Exam</button>
     </div>
   </div>
 </div>
@@ -566,7 +567,7 @@
   <div class="modal-box">
     <div class="modal-header">
       <h3 id="vm-title">Passage Preview</h3>
-      <button class="modal-close" onclick="closeModal('view-modal')">✕</button>
+      <button class="modal-close" onclick="closeModal('view-modal')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div id="vm-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
@@ -588,7 +589,7 @@ function escHtml(s) {
 
 // ── Guard ──────────────────────────────────────────────────
 if (!requireLogin() || !requireAdmin()) throw '';
-document.getElementById('admin-name').textContent = '👤 ' + Auth.getUser().name;
+document.getElementById('admin-name').textContent = Auth.getUser().name;
 
 // ── Helpers ────────────────────────────────────────────────
 function openModal(id)  { document.getElementById(id).classList.add('open');    document.body.style.overflow='hidden'; }
@@ -649,10 +650,10 @@ async function loadExamsForLiveForm() {
       : await apiFetch('/exams');
     sel.innerHTML = '<option value="">— Select Exam —</option>' +
       exams.map(e => `<option value="${e.id}">${escHtml(e.exam_name)}</option>`).join('');
-    if (exams.length === 0) sel.innerHTML = '<option value="">⚠ No exams found</option>';
+    if (exams.length === 0) sel.innerHTML = '<option value="">No exams found</option>';
   } catch(e) {
     console.error('loadExamsForLiveForm error:', e);
-    sel.innerHTML = '<option value="">⚠ Failed to load exams</option>';
+    sel.innerHTML = '<option value="">Failed to load exams</option>';
   }
 }
 
@@ -701,7 +702,7 @@ async function scheduleLiveExam() {
       body: JSON.stringify({ title, exam_id: examId, passage_id: passId,
         scheduled_at, join_window_mins: window_, duration_minutes: duration, description: desc })
     });
-    alertEl.innerHTML = '<div class="alert alert-success">✅ Live exam scheduled!</div>';
+    alertEl.innerHTML = '<div class="alert alert-success"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Live exam scheduled!</div>';
     // Reset form
     ['lf-title','lf-datetime','lf-desc'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('lf-window').value   = '10';
@@ -709,7 +710,7 @@ async function scheduleLiveExam() {
     loadAdminLiveExams();
     setTimeout(() => alertEl.innerHTML = '', 3000);
   } catch(e) {
-    alertEl.innerHTML = `<div class="alert alert-error">❌ ${e.message}</div>`;
+    alertEl.innerHTML = `<div class="alert alert-error"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${e.message}</div>`;
   }
 }
 
@@ -726,11 +727,11 @@ function computeLiveStatus(le) {
 }
 
 const statusLabels = {
-  scheduled:        '<span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">🔵 Scheduled</span>',
-  active:           '<span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">🟢 LIVE</span>',
-  ongoing:          '<span class="badge" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;">🟠 Ongoing</span>',
-  ended:            '<span class="badge" style="background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;">⚫ Ended</span>',
-  results_released: '<span class="badge" style="background:#faf5ff;color:#7e22ce;border:1px solid #e9d5ff;">🟣 Results Out</span>',
+  scheduled:        '<span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;"><span class="status-dot" style="background:#3b82f6;"></span>Scheduled</span>',
+  active:           '<span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;"><span class="status-dot" style="background:#10b981;"></span>LIVE</span>',
+  ongoing:          '<span class="badge" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;"><span class="status-dot" style="background:#f97316;"></span>Ongoing</span>',
+  ended:            '<span class="badge" style="background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;"><span class="status-dot" style="background:#64748b;"></span>Ended</span>',
+  results_released: '<span class="badge" style="background:#faf5ff;color:#7e22ce;border:1px solid #e9d5ff;"><span class="status-dot" style="background:#8b5cf6;"></span>Results Out</span>',
 };
 
 async function loadAdminLiveExams() {
@@ -760,21 +761,21 @@ async function loadAdminLiveExams() {
         <td>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             ${canRelease
-              ? `<button class="btn btn-sm" style="background:#7e22ce;color:#fff;" onclick="releaseResults(${le.id})">🏆 Release Results</button>`
+              ? `<button class="btn btn-sm" style="background:#7e22ce;color:#fff;" onclick="releaseResults(${le.id})"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 5H3v2a4 4 0 004 4M17 5h4v2a4 4 0 01-4 4"/><path d="M8 21h8M12 17v4"/></svg> Release Results</button>`
               : ''}
             ${alreadyReleased || status === 'ended'
-              ? `<button class="btn btn-outline btn-sm" onclick="viewAdminResults(${le.id}, '${escHtml(le.title)}')">👁 View Results</button>`
+              ? `<button class="btn btn-outline btn-sm" onclick="viewAdminResults(${le.id}, '${escHtml(le.title)}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View Results</button>`
               : ''}
             ${status === 'active'
               ? `<span class="badge" style="background:#dcfce7;color:#15803d;">Live Now!</span>`
               : ''}
-            <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:var(--danger);" onclick="deleteLiveExam(${le.id}, '${escHtml(le.title)}')">🗑</button>
+            <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:var(--danger);" onclick="deleteLiveExam(${le.id}, '${escHtml(le.title)}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
           </div>
         </td>
       </tr>`;
     }).join('');
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--danger);">❌ ${e.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--danger);"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${e.message}</td></tr>`;
   }
 }
 
@@ -782,7 +783,7 @@ async function releaseResults(id) {
   if (!confirm('Release results for this live exam? Students will be able to see the leaderboard.')) return;
   try {
     await apiFetch(`/live-exams/${id}/release-results`, { method: 'POST' });
-    showToast('✅ Results released!', 'success');
+    showToast('Results released!', 'success');
     loadAdminLiveExams();
   } catch(e) {
     showToast('Error: ' + e.message, 'error');
@@ -805,7 +806,7 @@ async function viewAdminResults(id, title) {
   const body  = document.getElementById('live-results-body');
   const titleEl = document.getElementById('live-results-title');
   panel.style.display = 'block';
-  titleEl.textContent = `🏆 Results – ${title}`;
+  titleEl.innerHTML = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 5H3v2a4 4 0 004 4M17 5h4v2a4 4 0 01-4 4"/><path d="M8 21h8M12 17v4"/></svg> Results – ${title}`;
   body.innerHTML = '<div class="spinner" style="margin:16px auto;"></div>';
   panel.scrollIntoView({ behavior: 'smooth' });
   try {
@@ -815,10 +816,14 @@ async function viewAdminResults(id, title) {
       body.innerHTML = '<p style="color:var(--muted);text-align:center;padding:32px;">No submissions yet.</p>';
       return;
     }
-    const medals = ['🥇','🥈','🥉'];
+    const medals = [
+      '<span style="color:#eab308;font-weight:800;">1st</span>',
+      '<span style="color:#94a3b8;font-weight:800;">2nd</span>',
+      '<span style="color:#b45309;font-weight:800;">3rd</span>'
+    ];
     body.innerHTML = `
       <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">
-        ${rows.length} participants · Results ${data.live_exam.results_released ? '✅ Released' : '⏳ Not yet released to students'}
+        ${rows.length} participants · Results ${data.live_exam.results_released ? '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Released' : 'Not yet released to students'}
       </p>
       <div class="table-wrap"><table>
         <thead><tr><th>Rank</th><th>Student</th><th>WPM</th><th>Accuracy</th><th>Correct</th><th>Wrong</th><th>Errors</th><th>Time Taken</th><th>Submitted</th></tr></thead>
@@ -843,7 +848,7 @@ async function viewAdminResults(id, title) {
         </tbody>
       </table></div>`;
   } catch(e) {
-    body.innerHTML = `<p style="color:var(--danger);">❌ ${e.message}</p>`;
+    body.innerHTML = `<p style="color:var(--danger);"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${e.message}</p>`;
   }
 }
 
@@ -904,7 +909,7 @@ async function loadExams() {
           </div>
         </td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="deleteExam(${e.id}, '${e.exam_name.replace(/'/g,"\\'")}')">🗑 Delete</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteExam(${e.id}, '${e.exam_name.replace(/'/g,"\\'")}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
         </td>
       </tr>`;
     }).join('');
@@ -917,7 +922,7 @@ async function loadExams() {
     if (impEl) impEl.innerHTML = '<option value="">— Select exam —</option>' + examOpts;
 
   } catch(err) {
-    document.getElementById('exams-tbody').innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);">❌ Failed to load exams: ${err.message}</td></tr>`;
+    document.getElementById('exams-tbody').innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Failed to load exams: ${err.message}</td></tr>`;
   }
 }
 
@@ -933,9 +938,10 @@ async function saveExam() {
   const sort_order       = parseInt(document.getElementById('em-sort').value) || 10;
   const description      = document.getElementById('em-desc').value.trim();
 
-  if (!exam_name) { showAlert('em-alert', '⚠️ Exam name is required.'); return; }
-  if (!exam_code) { showAlert('em-alert', '⚠️ Exam code is required.'); return; }
-  if (!/^[A-Z0-9_]+$/.test(exam_code)) { showAlert('em-alert', '⚠️ Exam code must be uppercase letters, numbers and underscores only.'); return; }
+  const WARN_ICON = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  if (!exam_name) { showAlert('em-alert', `${WARN_ICON} Exam name is required.`); return; }
+  if (!exam_code) { showAlert('em-alert', `${WARN_ICON} Exam code is required.`); return; }
+  if (!/^[A-Z0-9_]+$/.test(exam_code)) { showAlert('em-alert', `${WARN_ICON} Exam code must be uppercase letters, numbers and underscores only.`); return; }
 
   btn.disabled = true; btn.textContent = 'Saving...';
 
@@ -944,7 +950,7 @@ async function saveExam() {
       method:  'POST',
       body: JSON.stringify({ exam_name, exam_code, language, duration_minutes, word_limit, sort_order, description })
     });
-    showToast(`✅ Exam "${exam_name}" created successfully!`, 'success');
+    showToast(`Exam "${exam_name}" created successfully!`, 'success');
     closeModal('exam-modal');
     // Reset form
     ['em-name','em-code','em-desc'].forEach(id => document.getElementById(id).value = '');
@@ -954,9 +960,9 @@ async function saveExam() {
     loadExams();
     loadSiteStats();
   } catch(err) {
-    showAlert('em-alert', `❌ ${err.message}`);
+    showAlert('em-alert', `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${err.message}`);
   } finally {
-    btn.disabled = false; btn.textContent = '💾 Save Exam';
+    btn.disabled = false; btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Exam';
   }
 }
 
@@ -986,7 +992,7 @@ async function toggleHighlighting(id) {
     const r = await apiFetch('/exams/' + id + '/toggle-highlighting', { method: 'PATCH' });
     const isOn = r.enable_highlighting == 1;
     apply(isOn);
-    showToast('Highlighting ' + (isOn ? 'enabled ✅' : 'disabled ⬜'), isOn ? 'success' : 'info');
+    showToast('Highlighting ' + (isOn ? 'enabled' : 'disabled'), isOn ? 'success' : 'info');
     const ex = allExams.find(e => e.id == id);
     if (ex) ex.enable_highlighting = isOn ? 1 : 0;
   } catch(err) {
@@ -1024,7 +1030,7 @@ async function loadPassages() {
       <tr>
         <td style="color:var(--muted);">${p.id}</td>
         <td><strong>${examMap[p.exam_id] || 'Exam #'+p.exam_id}</strong></td>
-        <td><span class="badge badge-${p.language}">${p.language === 'hindi' ? '🇮🇳 Hindi' : '🔤 English'}</span></td>
+        <td><span class="badge badge-${p.language}"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg> ${p.language === 'hindi' ? 'Hindi' : 'English'}</span></td>
         <td style="font-size:12px;white-space:nowrap;">${p.passage_date || '-'}</td>
         <td><span class="badge badge-${p.difficulty}">${p.difficulty === 'E' ? 'Easy' : p.difficulty === 'M' ? 'Medium' : 'Hard'}</span></td>
         <td><span class="wc-badge">${p.word_count}</span></td>
@@ -1035,14 +1041,14 @@ async function loadPassages() {
         </td>
         <td>
           <div class="tbl-actions">
-            <button class="btn btn-outline btn-sm" onclick="viewPassage(${p.id})">👁 View</button>
-            <button class="btn btn-danger btn-sm"  onclick="deletePassage(${p.id})">🗑</button>
+            <button class="btn btn-outline btn-sm" onclick="viewPassage(${p.id})"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn btn-danger btn-sm"  onclick="deletePassage(${p.id})"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
           </div>
         </td>
       </tr>`).join('');
 
   } catch(err) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);">❌ Failed: ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Failed: ${err.message}</td></tr>`;
   }
 }
 
@@ -1059,10 +1065,11 @@ async function savePassage() {
   const passage_text = document.getElementById('pm-text').value.trim();
 
   // Validation
-  if (!exam_id)      { showAlert('pm-alert', '⚠️ Please select an exam.'); return; }
-  if (!passage_text) { showAlert('pm-alert', '⚠️ Passage text cannot be empty.'); return; }
+  const WARN_ICON = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  if (!exam_id)      { showAlert('pm-alert', `${WARN_ICON} Please select an exam.`); return; }
+  if (!passage_text) { showAlert('pm-alert', `${WARN_ICON} Passage text cannot be empty.`); return; }
   if (passage_text.split(/\s+/).filter(Boolean).length < 10) {
-    showAlert('pm-alert', '⚠️ Passage text is too short (minimum 10 words).'); return;
+    showAlert('pm-alert', `${WARN_ICON} Passage text is too short (minimum 10 words).`); return;
   }
 
   btn.disabled = true; btn.textContent = 'Saving...';
@@ -1073,7 +1080,7 @@ async function savePassage() {
       body: JSON.stringify({ exam_id, language, difficulty, passage_date, title, shift, passage_text })
     });
 
-    showToast(`✅ Passage saved! (${result.word_count} words)`, 'success');
+    showToast(`Passage saved! (${result.word_count} words)`, 'success');
     closeModal('passage-modal');
 
     // Reset form fields
@@ -1086,9 +1093,9 @@ async function savePassage() {
     loadPassages();
     loadSiteStats();
   } catch(err) {
-    showAlert('pm-alert', `❌ Failed to save passage: ${err.message}`);
+    showAlert('pm-alert', `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Failed to save passage: ${err.message}`);
   } finally {
-    btn.disabled = false; btn.textContent = '💾 Save Passage';
+    btn.disabled = false; btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Passage';
   }
 }
 
@@ -1139,7 +1146,7 @@ async function loadUsers() {
         <td style="font-size:12px;color:var(--muted);">-</td>
       </tr>`).join('');
   } catch(err) {
-    tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--danger);">❌ ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--danger);"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${err.message}</td></tr>`;
   }
 }
 
@@ -1164,7 +1171,7 @@ async function loadResults() {
         <td style="font-size:12px;color:var(--muted);">${fmtDate(r.created_at)}</td>
       </tr>`).join('');
   } catch(err) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);">❌ ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:32px;color:var(--danger);"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${err.message}</td></tr>`;
   }
 }
 
@@ -1201,7 +1208,7 @@ function parseJsonInput() {
     showJsonPreview();
   } catch(e) {
     document.getElementById('json-preview').style.display='block';
-    document.getElementById('preview-count').textContent = '⚠️ Invalid JSON: ' + e.message;
+    document.getElementById('preview-count').textContent = 'Invalid JSON: ' + e.message;
     document.getElementById('preview-rows').innerHTML='';
     document.getElementById('import-btn').disabled=true;
   }
@@ -1212,7 +1219,7 @@ function showJsonPreview() {
   const countEl   = document.getElementById('preview-count');
   if (!parsedPassages.length) { previewEl.style.display='none'; document.getElementById('import-btn').disabled=true; return; }
   previewEl.style.display='block';
-  countEl.textContent = '✅ ' + parsedPassages.length + ' passage' + (parsedPassages.length>1?'s':'') + ' ready to import';
+  countEl.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ' + parsedPassages.length + ' passage' + (parsedPassages.length>1?'s':'') + ' ready to import';
   const tf   = document.getElementById('fmap-text').value  || 'passage_text';
   const titf = document.getElementById('fmap-title').value || 'title';
   rowsEl.innerHTML = parsedPassages.slice(0,10).map((p,i) => {
@@ -1220,8 +1227,10 @@ function showJsonPreview() {
     const title = String(p[titf] || 'Passage '+(i+1));
     const wc    = text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
     const ok    = text.length > 20;
+    const CHECK_ICON = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    const ERR_ICON   = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
     return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;font-size:13px;background:'+(ok?'#f0fdf4':'#fef2f2')+';color:'+(ok?'#166534':'#991b1b')+';">'
-      +'<span>'+(ok?'✅':'❌')+'</span>'
+      +'<span>'+(ok?CHECK_ICON:ERR_ICON)+'</span>'
       +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><strong>'+title.substring(0,70)+(title.length>70?'…':'')+'</strong></span>'
       +'<span style="white-space:nowrap;font-weight:700;">'+wc+' words</span></div>';
   }).join('') + (parsedPassages.length>10?'<div style="padding:8px 12px;color:var(--muted);font-size:13px;">…and '+(parsedPassages.length-10)+' more</div>':'');
@@ -1239,8 +1248,9 @@ function clearImport() {
 async function runImport() {
   document.getElementById('import-alert').innerHTML='';
   const examId  = document.getElementById('imp-exam').value;
-  if (!examId)              { showAlert('import-alert','⚠️ Select a target exam first.'); return; }
-  if (!parsedPassages.length) { showAlert('import-alert','⚠️ No passages to import.'); return; }
+  const WARN_ICON = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  if (!examId)              { showAlert('import-alert',`${WARN_ICON} Select a target exam first.`); return; }
+  if (!parsedPassages.length) { showAlert('import-alert',`${WARN_ICON} No passages to import.`); return; }
 
   const defLang   = document.getElementById('imp-lang').value;
   const defDiff   = document.getElementById('imp-diff').value;
@@ -1288,17 +1298,17 @@ async function runImport() {
         passage_text: passageText,
       })});
       ok++;
-      resEl.innerHTML += '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;background:#f0fdf4;color:#166534;"><span>✅</span><span>#'+(i+1)+' – '+String(p[titf]||'').substring(0,60)+' ('+(result.word_count||'?')+' words)</span></div>';
+      resEl.innerHTML += '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;background:#f0fdf4;color:#166534;"><span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>#'+(i+1)+' – '+String(p[titf]||'').substring(0,60)+' ('+(result.word_count||'?')+' words)</span></div>';
     } catch(err) {
       fail++;
-      resEl.innerHTML += '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;background:#fef2f2;color:#991b1b;"><span>❌</span><span>#'+(i+1)+' – '+err.message+'</span></div>';
+      resEl.innerHTML += '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;background:#fef2f2;color:#991b1b;"><span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span><span>#'+(i+1)+' – '+err.message+'</span></div>';
     }
     resEl.scrollTop = resEl.scrollHeight;
     if (i%5===4) await new Promise(r=>setTimeout(r,150));
   }
 
   prog.style.display='none';
-  btn.disabled=false; btn.textContent='📥 Import All Passages';
+  btn.disabled=false; btn.innerHTML='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Import All Passages';
   showAlert('import-alert','Import complete: <strong>'+ok+' imported</strong>'+(fail?' · '+fail+' failed':'')+'.',ok>0?'success':'error');
   if (ok>0) { loadSiteStats(); loadPassages(); }
 }
