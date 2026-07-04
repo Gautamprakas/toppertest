@@ -37,6 +37,7 @@ CREATE TABLE exams (
     description       TEXT,
     is_active         TINYINT(1) DEFAULT 1,
     sort_order        INT DEFAULT 0,
+    enable_highlighting TINYINT(1) DEFAULT 1,
     created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_exam_code (exam_code),
     INDEX idx_active (is_active)
