@@ -35,7 +35,7 @@
     .exam-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
     .exam-card  { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border-top: 4px solid var(--primary); transition: transform .2s, box-shadow .2s; cursor: pointer; }
     .exam-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
-    .exam-card .exam-icon { font-size: 32px; margin-bottom: 10px; }
+    .exam-card .exam-icon { margin-bottom: 10px; }
     .exam-card h3 { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
     .exam-card p  { font-size: 12px; color: var(--muted); }
     .exam-card .exam-lang { margin-top: 10px; }
@@ -46,7 +46,7 @@
     .how-step p  { font-size: 13px; color: var(--muted); }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
     .feature-item { background: var(--card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); }
-    .feature-item .fi-icon { font-size: 36px; margin-bottom: 12px; }
+    .feature-item .fi-icon { margin-bottom: 12px; }
     .feature-item h3 { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
     .feature-item p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
     section { padding: 64px 32px; }
@@ -65,8 +65,9 @@
 <!-- ── Navbar ─────────────────────────────────────────────── -->
 <nav class="navbar">
   <div class="navbar-brand">
+    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg>
     <div>
-      <div class="brand-text">⌨️ TopperTest</div>
+      <div class="brand-text">TopperTest</div>
       <div class="brand-sub">by ASI Sandeep</div>
     </div>
   </div>
@@ -83,7 +84,7 @@
   <h1>TopperTest – <span>Free Government Exam</span><br>Typing Practice by ASI Sandeep</h1>
   <p>Practice Hindi Mangal &amp; English Typing Tests for SSC, UP Police, High Court and Other Government Exams. Real exam passages, timer-based tests, instant WPM &amp; accuracy.</p>
   <div class="hero-btns">
-    <a href="/pages/exams.html" class="btn btn-accent btn-lg">⌨️ Start Free Typing Test</a>
+    <a href="/pages/exams.html" class="btn btn-accent btn-lg"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> Start Free Typing Test</a>
     <a href="/pages/register.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:#fff;">Register Free</a>
   </div>
   <div style="margin-top:40px; display:flex; gap:40px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;">
@@ -141,36 +142,57 @@
     <p>Designed specifically for government exam aspirants by ASI Sandeep</p>
   </div>
   <div class="features-grid">
-    <div class="feature-item"><div class="fi-icon">⏱️</div><h3>Real Exam Timer</h3><p>Practice with actual exam durations. Timer auto-submits the test when time is up.</p></div>
-    <div class="feature-item"><div class="fi-icon">📊</div><h3>Instant WPM & Accuracy</h3><p>Get real-time WPM, accuracy percentage and error count as you type.</p></div>
-    <div class="feature-item"><div class="fi-icon">🗓️</div><h3>Date-wise Passages</h3><p>Practice with previous year passages organized by exam date and shift.</p></div>
-    <div class="feature-item"><div class="fi-icon">📈</div><h3>Performance Analytics</h3><p>Track your improvement over time with detailed graphs and history.</p></div>
-    <div class="feature-item"><div class="fi-icon">🏆</div><h3>Leaderboard</h3><p>Compete with students across India. See where you rank in your exam category.</p></div>
-    <div class="feature-item"><div class="fi-icon">🔒</div><h3>Anti-Cheat Security</h3><p>No copy-paste, no right-click, tab-switch detection for genuine practice.</p></div>
+    <div class="feature-item"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></div><h3>Real Exam Timer</h3><p>Practice with actual exam durations. Timer auto-submits the test when time is up.</p></div>
+    <div class="feature-item"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div><h3>Instant WPM & Accuracy</h3><p>Get real-time WPM, accuracy percentage and error count as you type.</p></div>
+    <div class="feature-item"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><h3>Date-wise Passages</h3><p>Practice with previous year passages organized by exam date and shift.</p></div>
+    <div class="feature-item"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg></div><h3>Performance Analytics</h3><p>Track your improvement over time with detailed graphs and history.</p></div>
+    <div class="feature-item"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 5H3v2a4 4 0 004 4M17 5h4v2a4 4 0 01-4 4"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Leaderboard</h3><p>Compete with students across India. See where you rank in your exam category.</p></div>
+    <div class="feature-item"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div><h3>Anti-Cheat Security</h3><p>No copy-paste, no right-click, tab-switch detection for genuine practice.</p></div>
   </div>
 </section>
 
 <!-- ── YouTube Section ────────────────────────────────────── -->
 <section class="yt-section">
-  <h2>📺 Learn Typing Tips on YouTube</h2>
+  <h2>Learn Typing Tips on YouTube</h2>
   <p>ASI Sandeep's YouTube channel has free video lessons on Hindi typing, Mangal font setup, keyboard shortcuts and exam strategies.</p>
-  <a href="https://www.youtube.com/@UPPBlogs" target="_blank" class="yt-btn">▶ Watch on YouTube</a>
+  <a href="https://www.youtube.com/@UPPBlogs" target="_blank" class="yt-btn"><svg class="yt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg> Watch on YouTube</a>
 </section>
 
 <!-- ── Footer ─────────────────────────────────────────────── -->
 <footer>
-  <p>© 2024 <strong style="color:#fff;">TopperTest.com</strong> by <strong style="color:var(--accent);">ASI Sandeep</strong>. All rights reserved.</p>
-  <p style="margin-top:8px;">
-    <a href="/pages/exams.html">Exams</a> · 
-    <a href="/pages/leaderboard.html">Leaderboard</a> · 
-    <a href="/pages/login.html">Login</a> · 
-    <a href="/pages/register.html">Register</a>
-  </p>
-  <p style="margin-top:12px; font-size:12px;">Free Government Exam Typing Practice | SSC | UP Police | High Court | DSSSB | TopperTest</p>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="brand-text" style="display:flex;align-items:center;gap:8px;">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg>
+        TopperTest
+      </div>
+      <p>Free Hindi &amp; English typing practice for government exam aspirants — SSC, UP Police, High Court, DSSSB and more, by ASI Sandeep.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="/pages/exams.html">All Exams</a></li>
+        <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <ul>
+        <li><a href="/pages/login.html">Login</a></li>
+        <li><a href="/pages/register.html">Register Free</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© <span id="footer-year"></span> <strong style="color:#fff;">TopperTest.com</strong> by <strong style="color:var(--accent);">ASI Sandeep</strong>. All rights reserved.</p>
+    <p style="margin-top:8px; font-size:12px;">Free Government Exam Typing Practice | SSC | UP Police | High Court | DSSSB | TopperTest</p>
+  </div>
 </footer>
 
 <script src="/js/app.js"></script>
 <script>
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+
   // Load stats
   fetch('/api/stats').then(r => r.json()).then(d => {
     document.getElementById('stat-passages').textContent = d.total_passages?.toLocaleString() || '500+';
@@ -185,17 +207,25 @@
   });
 
   // Load exams
-  const icons = { UP_POLICE_ASI:'🚔', SSC_CHSL:'📝', SSC_CGL_DEO:'💻', HIGH_COURT:'⚖️', DSSSB:'🏛️', JR_ASSISTANT:'📋', STENO:'✍️', RAJ_HC:'⚖️' };
+  const svgIcon = path => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+  const ICON_SHIELD    = svgIcon('<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>');
+  const ICON_DOCUMENT  = svgIcon('<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/>');
+  const ICON_MONITOR   = svgIcon('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>');
+  const ICON_SCALES    = svgIcon('<path d="M12 3v18M5 7h14M5 7l-3 6a3 3 0 006 0l-3-6zM19 7l-3 6a3 3 0 006 0l-3-6zM8 21h8"/>');
+  const ICON_BUILDING  = svgIcon('<path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/>');
+  const ICON_CLIPBOARD = svgIcon('<rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/>');
+  const ICON_PEN       = svgIcon('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>');
+  const icons = { UP_POLICE_ASI: ICON_SHIELD, SSC_CHSL: ICON_DOCUMENT, SSC_CGL_DEO: ICON_MONITOR, HIGH_COURT: ICON_SCALES, DSSSB: ICON_BUILDING, JR_ASSISTANT: ICON_CLIPBOARD, STENO: ICON_PEN, RAJ_HC: ICON_SCALES };
   fetch('/api/exams').then(r => r.json()).then(exams => {
     const list = document.getElementById('exam-list');
     list.innerHTML = exams.map(e => `
       <div class="exam-card" onclick="window.location='/pages/select-exam.html?exam=${e.id}'">
-        <div class="exam-icon">${icons[e.exam_code] || '📄'}</div>
+        <div class="exam-icon">${icons[e.exam_code] || ICON_DOCUMENT}</div>
         <h3>${e.exam_name}</h3>
         <p>${e.description || ''}</p>
         <div class="exam-lang mt-1">
-          <span class="badge badge-${e.language === 'hindi' ? 'hindi' : 'english'}">${e.language === 'hindi' ? '🔤 Hindi' : e.language === 'english' ? '🔤 English' : '🔤 Hindi & English'}</span>
-          <span class="badge" style="background:#f0fdf4;color:#166534;margin-left:4px;">⏱ ${e.duration_minutes} min</span>
+          <span class="badge badge-${e.language === 'hindi' ? 'hindi' : 'english'}">${e.language === 'hindi' ? 'Hindi' : e.language === 'english' ? 'English' : 'Hindi & English'}</span>
+          <span class="badge" style="background:#f0fdf4;color:#166534;margin-left:4px;">${e.duration_minutes} min</span>
         </div>
       </div>`).join('');
   }).catch(() => {
