@@ -1,13 +1,21 @@
 const db = require('../config/db');
+const cache = require('../utils/cache');
+
+const EXAMS_CACHE_KEY = 'exams:list';
+const EXAMS_CACHE_TTL = 60000;
 
 exports.getExams = async (req, res) => {
   try {
+    const cached = cache.get(EXAMS_CACHE_KEY);
+    if (cached) return res.json(cached);
+
     const [rows] = await db.query(
       `SELECT id, exam_name, exam_code, language, duration_minutes, word_limit,
               description, sort_order,
               IFNULL(enable_highlighting, 1) AS enable_highlighting
        FROM exams WHERE is_active = 1 ORDER BY sort_order ASC, id ASC`
     );
+    cache.set(EXAMS_CACHE_KEY, rows, EXAMS_CACHE_TTL);
     res.json(rows);
   } catch (err) {
     console.error('getExams error:', err);
@@ -59,6 +67,7 @@ exports.createExam = async (req, res) => {
         enable_highlighting !== undefined ? (enable_highlighting ? 1 : 0) : 1
       ]
     );
+    cache.clear(EXAMS_CACHE_KEY);
     res.status(201).json({ id: result.insertId, message: 'Exam created successfully' });
   } catch (err) {
     console.error('createExam error:', err);
@@ -86,6 +95,7 @@ exports.updateExam = async (req, res) => {
         req.params.id
       ]
     );
+    cache.clear(EXAMS_CACHE_KEY);
     res.json({ message: 'Exam updated' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to update exam: ' + err.message });
@@ -105,6 +115,7 @@ exports.toggleHighlighting = async (req, res) => {
       'SELECT id, enable_highlighting FROM exams WHERE id = ?',
       [req.params.id]
     );
+    cache.clear(EXAMS_CACHE_KEY);
     res.json({ id: rows[0].id, enable_highlighting: rows[0].enable_highlighting });
   } catch (err) {
     res.status(500).json({ error: 'Failed to toggle highlighting' });
@@ -114,6 +125,7 @@ exports.toggleHighlighting = async (req, res) => {
 exports.deleteExam = async (req, res) => {
   try {
     await db.query('UPDATE exams SET is_active = 0 WHERE id = ?', [req.params.id]);
+    cache.clear(EXAMS_CACHE_KEY);
     res.json({ message: 'Exam deactivated' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to deactivate exam' });

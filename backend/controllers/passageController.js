@@ -1,4 +1,8 @@
 const db = require('../config/db');
+const cache = require('../utils/cache');
+
+const PASSAGE_DATES_PREFIX = 'passage-dates:';
+const PASSAGE_DATES_TTL = 60000;
 
 function countWords(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -39,6 +43,10 @@ exports.getPassageDates = async (req, res) => {
   const { exam_id, language } = req.query;
   if (!exam_id || !language) return res.status(400).json({ error: 'exam_id and language required' });
   try {
+    const cacheKey = `${PASSAGE_DATES_PREFIX}${exam_id}:${language}`;
+    const cached = cache.get(cacheKey);
+    if (cached) return res.json(cached);
+
     const [rows] = await db.query(
       `SELECT DISTINCT DATE_FORMAT(passage_date, '%Y-%m-%d') AS passage_date
        FROM passages
@@ -47,7 +55,9 @@ exports.getPassageDates = async (req, res) => {
       [exam_id, language]
     );
     // Return plain array of date strings e.g. ["2024-01-15", "2024-01-16"]
-    res.json(rows.map(r => r.passage_date));
+    const dates = rows.map(r => r.passage_date);
+    cache.set(cacheKey, dates, PASSAGE_DATES_TTL);
+    res.json(dates);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch dates' });
@@ -75,6 +85,7 @@ exports.createPassage = async (req, res) => {
     'INSERT INTO passages (exam_id, passage_text, language, difficulty, passage_date, word_count, title, shift) VALUES (?,?,?,?,?,?,?,?)',
     [exam_id, passage_text, language || 'hindi', difficulty || 'M', passage_date || null, word_count, title || '', shift || '']
   );
+  cache.clear(PASSAGE_DATES_PREFIX);
   res.status(201).json({ id: result.insertId, word_count, message: 'Passage created' });
 };
 
@@ -85,10 +96,12 @@ exports.updatePassage = async (req, res) => {
     'UPDATE passages SET passage_text=?, language=?, difficulty=?, passage_date=?, word_count=?, title=?, shift=?, is_active=? WHERE id=?',
     [passage_text, language, difficulty, passage_date, word_count, title, shift, is_active ?? 1, req.params.id]
   );
+  cache.clear(PASSAGE_DATES_PREFIX);
   res.json({ message: 'Passage updated', word_count });
 };
 
 exports.deletePassage = async (req, res) => {
   await db.query('UPDATE passages SET is_active = 0 WHERE id = ?', [req.params.id]);
+  cache.clear(PASSAGE_DATES_PREFIX);
   res.json({ message: 'Passage deactivated' });
 };
