@@ -67,6 +67,13 @@
     .yt-section h2 { font-size: 28px; margin-bottom: 12px; }
     .yt-section p  { opacity: .9; margin-bottom: 24px; }
     .yt-btn { background: #fff; color: #cc0000; font-weight: 700; padding: 12px 28px; border-radius: 8px; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+    .track-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 860px; margin: 0 auto; }
+    .track-card { display: block; background: var(--card); border-radius: var(--radius); padding: 32px 28px; box-shadow: var(--shadow); border-top: 4px solid var(--accent); transition: transform .2s, box-shadow .2s; }
+    .track-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+    .track-card .tc-icon svg { width: 40px; height: 40px; color: var(--primary); margin-bottom: 14px; }
+    .track-card h3 { font-size: 19px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+    .track-card p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+    .track-card .tc-links { font-size: 13px; font-weight: 600; color: var(--accent-dark); }
   </style>
 </head>
 <body>
@@ -83,6 +90,7 @@
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/pages/exams.html">Exams</a></li>
+    <li><a href="/pages/test-series.html">Test Series</a></li>
     <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
     <li id="nav-right"></li>
   </ul>
@@ -94,7 +102,7 @@
   <p>Practice Hindi Mangal &amp; English Typing Tests for SSC, UP Police, High Court and Other Government Exams. Real exam passages, timer-based tests, instant WPM &amp; accuracy.</p>
   <div class="hero-btns">
     <a href="/pages/exams.html" class="btn btn-accent btn-lg"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> Start Free Typing Test</a>
-    <a href="/pages/register.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:#fff;">Register Free</a>
+    <a href="#upp-tracks" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:#fff;">Explore UPP Exams</a>
   </div>
   <div style="margin-top:40px; display:flex; gap:40px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;">
     <div style="text-align:center;">
@@ -113,6 +121,28 @@
       <div style="font-size:36px;font-weight:800;font-family:var(--font-head);color:var(--accent);" id="stat-tests">...</div>
       <div style="font-size:13px;opacity:.8;margin-top:4px;">Tests Taken</div>
     </div>
+  </div>
+</section>
+
+<!-- ── UPP Exam Tracks ───────────────────────────────────── -->
+<section id="upp-tracks" class="bg-white">
+  <div class="section-header">
+    <h2>Choose Your <span style="color:var(--accent-dark)">Exam Track</span></h2>
+    <p>Complete preparation hubs for Uttar Pradesh Police recruitment — typing plus written-exam mocks</p>
+  </div>
+  <div class="track-cards">
+    <a href="/pages/upp-asi-si.html" class="track-card">
+      <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg></div>
+      <h3>UPP ASI / SI</h3>
+      <p>Full preparation for Uttar Pradesh Police Sub Inspector &amp; Assistant Sub Inspector — written exam and typing test.</p>
+      <div class="tc-links">Typing Practice · Mock Test Series · Leaderboard</div>
+    </a>
+    <a href="/pages/upp-computer-operator.html" class="track-card">
+      <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <h3>UPP Computer Operator</h3>
+      <p>Computer fundamentals, MS Office and networking mocks plus Hindi Mangal &amp; English typing practice.</p>
+      <div class="tc-links">Typing Practice · Mock Test Series · Leaderboard</div>
+    </a>
   </div>
 </section>
 
@@ -205,6 +235,9 @@
       <h4>Explore</h4>
       <ul>
         <li><a href="/pages/exams.html">All Exams</a></li>
+        <li><a href="/pages/test-series.html">Test Series</a></li>
+        <li><a href="/pages/upp-asi-si.html">UPP ASI / SI</a></li>
+        <li><a href="/pages/upp-computer-operator.html">UPP Computer Operator</a></li>
         <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
       </ul>
     </div>
