@@ -163,6 +163,73 @@ CREATE TABLE live_exam_attempts (
 );
 
 -- ============================================================
+-- MCQ MOCK TEST SERIES (UPP written-exam practice)
+-- ============================================================
+CREATE TABLE test_series (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    track_code  VARCHAR(30) NOT NULL COMMENT 'UPP_ASI_SI | UPP_CO',
+    title       VARCHAR(200) NOT NULL,
+    description TEXT,
+    is_active   TINYINT(1) DEFAULT 1,
+    sort_order  INT DEFAULT 0,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_track_active (track_code, is_active)
+);
+
+CREATE TABLE mock_tests (
+    id               INT AUTO_INCREMENT PRIMARY KEY,
+    series_id        INT NOT NULL,
+    title            VARCHAR(200) NOT NULL,
+    test_number      INT NOT NULL DEFAULT 1,
+    duration_minutes INT NOT NULL DEFAULT 120,
+    marks_correct    DECIMAL(5,2) NOT NULL DEFAULT 1.00,
+    negative_marks   DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    is_active        TINYINT(1) DEFAULT 1,
+    created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (series_id) REFERENCES test_series(id) ON DELETE CASCADE,
+    INDEX idx_series (series_id, test_number)
+);
+
+CREATE TABLE mock_questions (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    mock_test_id   INT NOT NULL,
+    question_order INT NOT NULL DEFAULT 0,
+    section        VARCHAR(60) DEFAULT NULL COMMENT 'e.g. General Hindi, GK, Reasoning, Computer',
+    question_en    TEXT,
+    question_hi    TEXT,
+    option_a_en TEXT, option_b_en TEXT, option_c_en TEXT, option_d_en TEXT,
+    option_a_hi TEXT, option_b_hi TEXT, option_c_hi TEXT, option_d_hi TEXT,
+    correct_option ENUM('A','B','C','D') NOT NULL,
+    explanation_en TEXT,
+    explanation_hi TEXT,
+    created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (mock_test_id) REFERENCES mock_tests(id) ON DELETE CASCADE,
+    INDEX idx_test_order (mock_test_id, question_order)
+);
+
+CREATE TABLE mock_attempts (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    mock_test_id  INT NOT NULL,
+    user_id       INT NOT NULL,
+    attempt_token VARCHAR(64) NOT NULL,
+    status        ENUM('active','submitted','abandoned') DEFAULT 'active',
+    started_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    submitted_at  DATETIME,
+    time_taken    INT DEFAULT 0 COMMENT 'seconds',
+    score         DECIMAL(8,2) DEFAULT 0,
+    total_marks   DECIMAL(8,2) DEFAULT 0,
+    correct_count INT DEFAULT 0,
+    wrong_count   INT DEFAULT 0,
+    skipped_count INT DEFAULT 0,
+    answers_json  LONGTEXT COMMENT '{question_id: "A"|"B"|"C"|"D"}',
+    sections_json TEXT COMMENT 'per-section {name:{correct,wrong,skipped,marks}}',
+    FOREIGN KEY (mock_test_id) REFERENCES mock_tests(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_test (user_id, mock_test_id, status),
+    INDEX idx_attempt_token (attempt_token)
+);
+
+-- ============================================================
 -- LEADERBOARD VIEW
 -- ============================================================
 CREATE OR REPLACE VIEW leaderboard_view AS
@@ -204,3 +271,10 @@ INSERT INTO passages (exam_id, passage_text, language, difficulty, passage_date,
 -- Admin user (password: Admin@123)
 INSERT INTO users (name, email, password, role) VALUES
 ('ASI Sandeep', 'admin@toppertest.com', '$2b$10$rQZ8kHUqbGkQdGiHCi8mVOJSqIwnPb9LpIp5Q.AYqoFGxhbFV3nAe', 'admin');
+
+-- ============================================================
+-- SEED TEST SERIES (one per UPP track)
+-- ============================================================
+INSERT INTO test_series (track_code, title, description, sort_order) VALUES
+('UPP_ASI_SI', 'UPP ASI / SI Mock Test Series', 'Full-length mock tests on the UPP ASI/SI written-exam pattern covering General Hindi, GK, Numerical Ability and Reasoning', 1),
+('UPP_CO', 'UPP Computer Operator Mock Test Series', 'Written-exam mock tests for UP Police Computer Operator covering the official computer science syllabus', 2);

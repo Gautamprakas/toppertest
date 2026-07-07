@@ -20,4 +20,15 @@ const adminAuth = (req, res, next) => {
   });
 };
 
-module.exports = { auth, adminAuth };
+// Sets req.user if a valid token is present, but never rejects the request —
+// lets public pages (SEO-crawlable) show extra per-user data when logged in.
+const optionalAuth = (req, _res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  req.user = null;
+  if (token) {
+    try { req.user = jwt.verify(token, JWT_SECRET); } catch { /* stay anonymous */ }
+  }
+  next();
+};
+
+module.exports = { auth, adminAuth, optionalAuth };
