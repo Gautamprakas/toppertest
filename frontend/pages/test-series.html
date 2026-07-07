@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPP ASI/SI &amp; Computer Operator Test Series – Free Mock Tests | TopperTest</title>
+  <meta name="description" content="Free UPP ASI SI and UP Police Computer Operator mock test series by ASI Sandeep. Full-length CBT-pattern MCQ tests with Hindi and English questions, negative marking and detailed solutions." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-V3DLNRTMY6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-V3DLNRTMY6');
+  </script>
+  <style>
+    .icon-inline{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0}
+    .track-head { display:flex; align-items:center; gap:10px; margin:32px 0 16px; }
+    .track-head h2 { font-size:22px; color:var(--primary); }
+    .track-head svg { width:24px; height:24px; color:var(--accent-dark); flex-shrink:0; }
+    .series-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px; }
+    .series-card { display:flex; flex-direction:column; }
+    .series-card .card-body { flex:1; display:flex; flex-direction:column; }
+    .series-card h3 { font-size:17px; color:var(--primary); margin-bottom:8px; }
+    .series-card p.desc { font-size:13px; color:var(--muted); line-height:1.6; flex:1; margin-bottom:14px; }
+    .badge-tests { background:#eef4ff; color:var(--primary); border:1px solid #c7d7f0; }
+    .empty-track { background:#fff; border:1px dashed var(--border); border-radius:var(--radius); padding:32px 20px; text-align:center; color:var(--muted); font-size:14px; }
+    .empty-track svg { width:36px; height:36px; margin-bottom:8px; color:var(--border); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand"><a href="/" style="color:#fff;"><div class="brand-text"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> TopperTest</div><div class="brand-sub">by ASI Sandeep</div></a></div>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/pages/exams.html">Typing Exams</a></li>
+    <li><a href="/pages/test-series.html" class="active">Test Series</a></li>
+    <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
+    <li id="nav-right"></li>
+  </ul>
+</nav>
+
+<div style="background:var(--bg);min-height:calc(100vh - 64px);padding:32px 16px;">
+<div style="max-width:1000px;margin:0 auto;">
+
+  <div class="text-center mb-4">
+    <h1 style="font-size:34px;color:var(--primary);">
+      <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      UPP <span style="color:var(--accent-dark);">Test Series</span>
+    </h1>
+    <p class="text-muted" style="max-width:640px;margin:8px auto 0;">
+      Full-length CBT-pattern mock tests for UPP ASI / SI and UP Police Computer Operator —
+      bilingual (Hindi + English) questions, real exam timing, negative marking and detailed solutions.
+    </p>
+  </div>
+
+  <div id="series-wrap">
+    <div style="text-align:center;padding:60px 0;"><div class="spinner" style="margin:auto;"></div></div>
+  </div>
+
+  <p class="text-center text-muted mt-4" style="font-size:13px;">
+    New tests are added regularly. Attempt any test as many times as you like — your best score is saved.
+  </p>
+</div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+const TRACKS = [
+  { code: 'UPP_ASI_SI', label: 'UPP ASI / SI Test Series',
+    icon: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>' },
+  { code: 'UPP_CO', label: 'UPP Computer Operator Test Series',
+    icon: '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>' },
+];
+
+const urlTrack = new URLSearchParams(location.search).get('track');
+const shownTracks = TRACKS.filter(t => !urlTrack || t.code === urlTrack);
+
+function seriesCard(s) {
+  return `
+    <div class="card series-card">
+      <div class="card-body">
+        <div class="d-flex align-center justify-between mb-1" style="gap:10px;">
+          <h3>${escHtml(s.title)}</h3>
+          <span class="badge badge-tests" style="white-space:nowrap;">${parseInt(s.test_count, 10) || 0} Tests</span>
+        </div>
+        <p class="desc">${escHtml(s.description || '')}</p>
+        <a class="btn btn-primary btn-sm" style="align-self:flex-start;" href="/pages/test-series-detail.html?id=${encodeURIComponent(s.id)}">
+          View Tests
+          <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>`;
+}
+
+apiFetch('/test-series').then(list => {
+  const byTrack = {};
+  (list || []).forEach(s => { (byTrack[s.track_code] = byTrack[s.track_code] || []).push(s); });
+
+  document.getElementById('series-wrap').innerHTML = shownTracks.map(t => {
+    const items = byTrack[t.code] || [];
+    return `
+      <div class="track-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>
+        <h2>${escHtml(t.label)}</h2>
+      </div>
+      ${items.length
+        ? `<div class="series-grid">${items.map(seriesCard).join('')}</div>`
+        : `<div class="empty-track">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>
+             <br>Series coming soon</div>`}`;
+  }).join('');
+}).catch(err => {
+  document.getElementById('series-wrap').innerHTML =
+    `<div class="empty-track">Failed to load test series. Please refresh.<br><span style="font-size:12px;">${escHtml(err.message)}</span></div>`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Test – TopperTest CBT</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-V3DLNRTMY6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-V3DLNRTMY6');
+  </script>
+  <style>
+    body { background:#eef1f5; }
+    .icon-inline{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0}
+
+    /* ── Header bar ─────────────────────────────────────── */
+    .cbt-header {
+      background:var(--primary); color:#fff; padding:10px 20px;
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      position:sticky; top:0; z-index:100; flex-wrap:wrap;
+      box-shadow:0 2px 12px rgba(0,0,0,.2);
+    }
+    .cbt-title { font-family:var(--font-head); font-size:16px; font-weight:700; line-height:1.25; }
+    .cbt-sub { font-size:11.5px; color:rgba(255,255,255,.7); }
+    .lang-pill { display:flex; background:rgba(255,255,255,.15); border-radius:99px; padding:3px; }
+    .lang-pill button {
+      border:none; background:transparent; color:rgba(255,255,255,.8);
+      font-family:var(--font-body); font-size:13px; font-weight:600;
+      padding:5px 16px; border-radius:99px; cursor:pointer; transition:all .15s;
+    }
+    .lang-pill button.active { background:#fff; color:var(--primary); }
+    .cbt-timer-block { text-align:right; line-height:1.2; }
+    .cbt-timer-label { font-size:10px; font-weight:600; color:rgba(255,255,255,.7); text-transform:uppercase; letter-spacing:.6px; display:block; }
+    .cbt-timer { font-family:var(--font-head); font-size:24px; font-weight:800; color:var(--accent); display:block; }
+    .cbt-timer.urgent { color:#ff6b6b; animation:tblink 1s infinite; }
+    @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    .cbt-layout { display:flex; gap:16px; max-width:1240px; margin:16px auto; padding:0 16px; align-items:flex-start; }
+    .q-panel { flex:1 1 72%; min-width:0; }
+    .p-panel { flex:0 0 300px; position:sticky; top:76px; }
+    @media (max-width: 900px) {
+      .cbt-layout { flex-direction:column; }
+      .p-panel { position:static; flex:1 1 auto; width:100%; }
+    }
+
+    /* ── Question area ──────────────────────────────────── */
+    .q-card { background:#fff; border-radius:10px; box-shadow:var(--shadow); padding:20px 24px; }
+    .q-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:12px; }
+    .badge-section { background:#eef4ff; color:var(--primary); border:1px solid #c7d7f0; }
+    .q-num { font-size:14px; font-weight:700; color:var(--text); }
+    .q-text { font-size:16.5px; line-height:1.75; color:var(--text); margin-bottom:18px; white-space:pre-wrap; }
+    .opt-row {
+      display:flex; align-items:flex-start; gap:12px;
+      border:2px solid var(--border); border-radius:10px;
+      padding:13px 16px; margin-bottom:10px; cursor:pointer;
+      background:#fff; transition:all .15s; font-size:15px; line-height:1.6;
+    }
+    .opt-row:hover { border-color:#9db4d4; background:#f8fafc; }
+    .opt-row.selected { border-color:var(--primary); background:#eef4ff; }
+    .opt-key {
+      flex-shrink:0; width:28px; height:28px; border-radius:50%;
+      border:2px solid var(--border); display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:800; color:var(--muted); background:#fff;
+    }
+    .opt-row.selected .opt-key { background:var(--primary); border-color:var(--primary); color:#fff; }
+
+    .q-btns { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+    .q-btns .btn { font-size:13px; padding:9px 16px; }
+
+    /* ── Palette panel ──────────────────────────────────── */
+    .p-card { background:#fff; border-radius:10px; box-shadow:var(--shadow); padding:16px; }
+    .p-counts { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:14px; }
+    .p-count { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); }
+    .p-count b { color:var(--text); }
+    .p-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+    .pal-grid { display:grid; grid-template-columns:repeat(8, 1fr); gap:6px; }
+    @media (max-width:900px){ .pal-grid { grid-template-columns:repeat(10, 1fr); } }
+    .pal-btn {
+      position:relative; aspect-ratio:1; border-radius:7px; border:1.5px solid #cbd5e1;
+      background:#fff; color:var(--text); font-family:var(--font-body);
+      font-size:12.5px; font-weight:700; cursor:pointer; transition:transform .1s;
+    }
+    .pal-btn:hover { transform:scale(1.1); z-index:1; }
+    .pal-btn.current { outline:2px solid var(--accent); outline-offset:1px; }
+    .pal-btn.st-ans    { background:#10b981; border-color:#059669; color:#fff; }
+    .pal-btn.st-na     { background:#ef4444; border-color:#dc2626; color:#fff; }
+    .pal-btn.st-mk     { background:#7c3aed; border-color:#6d28d9; color:#fff; border-radius:50%; }
+    .pal-btn.st-mk-ans { background:#7c3aed; border-color:#6d28d9; color:#fff; border-radius:50%; }
+    .pal-btn.st-mk-ans::after {
+      content:''; position:absolute; right:1px; bottom:1px;
+      width:9px; height:9px; border-radius:50%; background:#10b981; border:1.5px solid #fff;
+    }
+    .p-legend { margin-top:14px; border-top:1px solid var(--border); padding-top:12px; display:flex; flex-direction:column; gap:7px; }
+    .p-leg-row { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--muted); }
+    .p-leg-box { width:16px; height:16px; border-radius:4px; border:1.5px solid #cbd5e1; background:#fff; flex-shrink:0; position:relative; }
+
+    /* ── Modal ──────────────────────────────────────────── */
+    .modal-back { position:fixed; inset:0; background:rgba(15,36,72,.55); display:none; align-items:center; justify-content:center; z-index:500; padding:16px; }
+    .modal-back.open { display:flex; }
+    .modal-box { background:#fff; border-radius:12px; max-width:420px; width:100%; padding:26px; box-shadow:0 10px 40px rgba(0,0,0,.3); }
+    .modal-box h3 { color:var(--primary); font-size:19px; margin-bottom:8px; }
+    .sum-table { width:100%; border-collapse:collapse; margin:14px 0 18px; }
+    .sum-table td { padding:8px 6px; border-bottom:1px solid var(--border); font-size:14px; }
+    .sum-table td:last-child { text-align:right; font-weight:800; font-family:var(--font-head); }
+  </style>
+</head>
+<body>
+
+<header class="cbt-header">
+  <div style="min-width:0;">
+    <div class="cbt-title" id="hdr-title">Mock Test</div>
+    <div class="cbt-sub" id="hdr-sub"></div>
+  </div>
+  <div class="lang-pill">
+    <button type="button" id="lang-hi" onclick="setLang('hi')">&#2361;&#2367;&#2306;&#2342;&#2368;</button>
+    <button type="button" id="lang-en" class="active" onclick="setLang('en')">English</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:18px;">
+    <div class="cbt-timer-block">
+      <span class="cbt-timer-label">Time Left</span>
+      <span class="cbt-timer" id="timer">--:--</span>
+    </div>
+    <button class="btn btn-danger btn-sm" onclick="openSubmitModal()">Submit Test</button>
+  </div>
+</header>
+
+<div class="cbt-layout">
+  <!-- Question panel -->
+  <main class="q-panel">
+    <div class="q-card">
+      <div class="q-head">
+        <span class="badge badge-section" id="q-section"></span>
+        <span class="q-num" id="q-num"></span>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div id="q-options"></div>
+      <div class="q-btns">
+        <button class="btn btn-outline" onclick="goPrev()">
+          <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Previous
+        </button>
+        <button class="btn btn-outline" onclick="clearResponse()">Clear Response</button>
+        <button class="btn btn-outline" onclick="markAndNext()">Mark for Review &amp; Next</button>
+        <button class="btn btn-accent" onclick="saveAndNext()">
+          Save &amp; Next
+          <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Palette panel -->
+  <aside class="p-panel">
+    <div class="p-card">
+      <div class="p-counts" id="p-counts"></div>
+      <div class="pal-grid" id="pal-grid"></div>
+      <div class="p-legend">
+        <div class="p-leg-row"><span class="p-leg-box" style="background:#10b981;border-color:#059669;"></span> Answered</div>
+        <div class="p-leg-row"><span class="p-leg-box" style="background:#ef4444;border-color:#dc2626;"></span> Not Answered (visited)</div>
+        <div class="p-leg-row"><span class="p-leg-box" style="background:#7c3aed;border-color:#6d28d9;border-radius:50%;"></span> Marked for Review</div>
+        <div class="p-leg-row"><span class="p-leg-box" style="background:#7c3aed;border-color:#6d28d9;border-radius:50%;"><span style="position:absolute;right:-2px;bottom:-2px;width:8px;height:8px;border-radius:50%;background:#10b981;border:1px solid #fff;"></span></span> Answered &amp; Marked</div>
+        <div class="p-leg-row"><span class="p-leg-box"></span> Not Visited</div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Submit confirmation modal -->
+<div class="modal-back" id="submit-modal">
+  <div class="modal-box">
+    <h3>
+      <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Submit Test?
+    </h3>
+    <p style="font-size:13.5px;color:var(--muted);">Once submitted you cannot change your answers.</p>
+    <table class="sum-table">
+      <tr><td>Answered</td><td id="sum-ans" style="color:var(--success);">0</td></tr>
+      <tr><td>Not Answered</td><td id="sum-na" style="color:var(--danger);">0</td></tr>
+      <tr><td>Marked for Review</td><td id="sum-mk" style="color:#7c3aed;">0</td></tr>
+    </table>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeSubmitModal()">Go Back</button>
+      <button class="btn btn-danger" id="btn-final-submit" onclick="doSubmit(false)">Submit</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+// ── Boot from session ──────────────────────────────────────
+let SESSION = null;
+try { SESSION = JSON.parse(sessionStorage.getItem('tt_mock_session') || 'null'); } catch (e) {}
+if (!SESSION || !SESSION.test || !SESSION.questions || !SESSION.questions.length) {
+  location.replace('/pages/test-series.html');
+  throw new Error('no session');
+}
+
+const TEST = SESSION.test;
+const QS = SESSION.questions.slice().sort((a, b) => (a.question_order || 0) - (b.question_order || 0));
+const N = QS.length;
+
+document.title = `${TEST.title} – TopperTest CBT`;
+document.getElementById('hdr-title').textContent = TEST.title;
+document.getElementById('hdr-sub').textContent =
+  `${TEST.series_title || ''} · ${N} Questions · +${TEST.marks_correct} / -${TEST.negative_marks}`;
+
+// ── State ──────────────────────────────────────────────────
+const answers = {};          // {question_id: 'A'..'D'}
+const marked  = new Set();   // question ids marked for review
+const visited = new Set();   // question ids visited
+let cur = 0;
+let LANG = 'en';
+let submitted = false;
+let submitting = false;
+
+// ── Language ───────────────────────────────────────────────
+function pickText(en, hi) {
+  return LANG === 'hi' ? (hi || en || '') : (en || hi || '');
+}
+function setLang(l) {
+  LANG = l;
+  document.getElementById('lang-hi').classList.toggle('active', l === 'hi');
+  document.getElementById('lang-en').classList.toggle('active', l === 'en');
+  renderQuestion();
+}
+
+// ── Question rendering ─────────────────────────────────────
+function renderQuestion() {
+  const q = QS[cur];
+  visited.add(q.id);
+
+  document.getElementById('q-section').textContent = q.section || 'General';
+  document.getElementById('q-num').textContent = `Question ${cur + 1} of ${N}`;
+  document.getElementById('q-text').textContent = pickText(q.question_en, q.question_hi);
+
+  const opts = [
+    ['A', q.option_a_en, q.option_a_hi],
+    ['B', q.option_b_en, q.option_b_hi],
+    ['C', q.option_c_en, q.option_c_hi],
+    ['D', q.option_d_en, q.option_d_hi],
+  ];
+  document.getElementById('q-options').innerHTML = opts.map(([k, en, hi]) => `
+    <div class="opt-row ${answers[q.id] === k ? 'selected' : ''}" onclick="selectOption('${k}')">
+      <span class="opt-key">${k}</span>
+      <span>${escHtml(pickText(en, hi))}</span>
+    </div>`).join('');
+
+  renderPalette();
+}
+
+function selectOption(k) {
+  answers[QS[cur].id] = k;
+  renderQuestion();
+}
+
+// ── Navigation buttons ─────────────────────────────────────
+function goTo(i) { cur = Math.max(0, Math.min(N - 1, i)); renderQuestion(); window.scrollTo({ top: 0 }); }
+function goPrev() { if (cur > 0) goTo(cur - 1); }
+function goNextOrStay() { if (cur < N - 1) goTo(cur + 1); else renderQuestion(); }
+function saveAndNext() { goNextOrStay(); }
+function markAndNext() { marked.add(QS[cur].id); goNextOrStay(); }
+function clearResponse() { delete answers[QS[cur].id]; marked.delete(QS[cur].id); renderQuestion(); }
+
+// ── Palette ────────────────────────────────────────────────
+function stateOf(q) {
+  const ans = q.id in answers, mk = marked.has(q.id), vis = visited.has(q.id);
+  if (mk && ans) return 'st-mk-ans';
+  if (mk) return 'st-mk';
+  if (ans) return 'st-ans';
+  if (vis) return 'st-na';
+  return '';
+}
+
+function renderPalette() {
+  document.getElementById('pal-grid').innerHTML = QS.map((q, i) =>
+    `<button type="button" class="pal-btn ${stateOf(q)} ${i === cur ? 'current' : ''}" onclick="goTo(${i})">${i + 1}</button>`
+  ).join('');
+
+  const c = counts();
+  document.getElementById('p-counts').innerHTML = `
+    <div class="p-count"><span class="p-dot" style="background:#10b981;"></span><b>${c.ans}</b>&nbsp;Answered</div>
+    <div class="p-count"><span class="p-dot" style="background:#ef4444;"></span><b>${c.na}</b>&nbsp;Not Answered</div>
+    <div class="p-count"><span class="p-dot" style="background:#7c3aed;"></span><b>${c.mk}</b>&nbsp;Marked</div>
+    <div class="p-count"><span class="p-dot" style="background:#fff;border:1.5px solid #cbd5e1;"></span><b>${c.nv}</b>&nbsp;Not Visited</div>`;
+}
+
+function counts() {
+  const ans = Object.keys(answers).length;
+  const mk = marked.size;
+  const nv = QS.filter(q => !visited.has(q.id)).length;
+  const na = N - ans - nv;
+  return { ans, na, mk, nv };
+}
+
+// ── Timer ──────────────────────────────────────────────────
+const durationSec = (Number(TEST.duration_minutes) || 0) * 60;
+const endAt = Date.now() + durationSec * 1000;
+const timerEl = document.getElementById('timer');
+let timerHandle = null;
+
+function tick() {
+  const left = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+  const m = String(Math.floor(left / 60)).padStart(2, '0');
+  const s = String(left % 60).padStart(2, '0');
+  timerEl.textContent = `${m}:${s}`;
+  timerEl.classList.toggle('urgent', left <= 300);
+  if (left <= 0) { clearInterval(timerHandle); doSubmit(true); }
+}
+timerHandle = setInterval(tick, 1000);
+tick();
+
+// ── Submit ─────────────────────────────────────────────────
+function openSubmitModal() {
+  const c = counts();
+  document.getElementById('sum-ans').textContent = c.ans;
+  document.getElementById('sum-na').textContent = c.na + c.nv;
+  document.getElementById('sum-mk').textContent = c.mk;
+  document.getElementById('submit-modal').classList.add('open');
+}
+function closeSubmitModal() { document.getElementById('submit-modal').classList.remove('open'); }
+
+async function doSubmit(auto) {
+  if (submitting || submitted) return;
+  submitting = true;
+  const btn = document.getElementById('btn-final-submit');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  const elapsed = Math.min(durationSec, Math.max(0, Math.round((Date.now() - (endAt - durationSec * 1000)) / 1000)));
+
+  try {
+    const resp = await apiFetch(`/mock-tests/${TEST.id}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({
+        attempt_id: SESSION.attempt_id,
+        attempt_token: SESSION.attempt_token,
+        answers: answers,
+        time_taken: elapsed,
+      }),
+    });
+    submitted = true;
+    clearInterval(timerHandle);
+    sessionStorage.setItem('tt_mock_result', JSON.stringify(resp));
+    sessionStorage.removeItem('tt_mock_session');
+    location.href = `/pages/mock-result.html?attempt=${encodeURIComponent(resp.attempt_id)}`;
+  } catch (err) {
+    showToast(err.message || 'Submit failed', 'error');
+    if (/expired|already/i.test(err.message || '')) {
+      submitted = true;
+      clearInterval(timerHandle);
+      sessionStorage.removeItem('tt_mock_session');
+      location.href = `/pages/mock-result.html?attempt=${encodeURIComponent(SESSION.attempt_id)}`;
+      return;
+    }
+    submitting = false;
+    btn.disabled = false; btn.textContent = 'Submit';
+    if (auto) setTimeout(() => doSubmit(true), 5000); // keep retrying auto-submit
+  }
+}
+
+// ── Guards ─────────────────────────────────────────────────
+window.addEventListener('beforeunload', e => {
+  if (!submitted) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// ── Init ───────────────────────────────────────────────────
+renderQuestion();
+</script>
+</body>
+</html>
