@@ -51,6 +51,10 @@ jobs:
       - name: Load database schema
         run: mysql -h127.0.0.1 -P3306 -uroot -proot < backend/config/schema.sql
 
+      - name: Run migrations
+        working-directory: backend
+        run: node scripts/migrate.js
+
       - name: Run tests
         working-directory: backend
         run: npm test
@@ -106,6 +110,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
             cd /home/ubuntu/toppertest/backend
             npm ci --omit=dev
+            node scripts/migrate.js
             pm2 restart toppertest
