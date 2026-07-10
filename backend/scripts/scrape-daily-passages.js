@@ -211,6 +211,32 @@ async function runBatch(exam, language, today) {
   return withDifficulty.length;
 }
 
+// Pick one of today's fresh Medium passages as the site-wide Daily Challenge,
+// rotating which exam supplies it by day-of-year. INSERT IGNORE + the UNIQUE
+// challenge_date constraint make this idempotent across re-runs.
+async function pickDailyChallenge(exams, today) {
+  if (!exams.length) return;
+  const dayOfYear = Math.floor((Date.now() - Date.UTC(new Date().getUTCFullYear(), 0, 0)) / 86400000);
+  const exam = exams[dayOfYear % exams.length];
+  const [rows] = await db.query(
+    `SELECT id FROM passages
+     WHERE exam_id = ? AND passage_date = ? AND is_active = 1
+     ORDER BY (difficulty = 'M') DESC, id ASC LIMIT 1`,
+    [exam.id, today]
+  );
+  if (!rows.length) {
+    console.warn('  ⚠ Daily challenge: no passage available for', exam.exam_name);
+    return;
+  }
+  const [result] = await db.query(
+    'INSERT IGNORE INTO daily_challenges (passage_id, challenge_date) VALUES (?, ?)',
+    [rows[0].id, today]
+  );
+  console.log(result.affectedRows
+    ? `  ✓ Daily challenge set: ${exam.exam_name} passage ${rows[0].id}`
+    : '  • Daily challenge already set for today');
+}
+
 async function main() {
   const today = new Date().toISOString().slice(0, 10);
   console.log(`Daily passage generation — ${today}`);
@@ -224,6 +250,8 @@ async function main() {
       totalInserted += await runBatch(exam, language, today);
     }
   }
+
+  await pickDailyChallenge(exams, today);
 
   console.log(`Done. ${totalInserted} passages inserted across ${exams.length} exams.`);
   await db.end();

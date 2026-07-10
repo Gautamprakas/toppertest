@@ -90,7 +90,6 @@
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/pages/exams.html">Exams</a></li>
-    <li><a href="/pages/test-series.html">Test Series</a></li>
     <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
     <li id="nav-right"></li>
   </ul>
@@ -128,20 +127,20 @@
 <section id="upp-tracks" class="bg-white">
   <div class="section-header">
     <h2>Choose Your <span style="color:var(--accent-dark)">Exam Track</span></h2>
-    <p>Complete preparation hubs for Uttar Pradesh Police recruitment — typing plus written-exam mocks</p>
+    <p>Dedicated typing-practice hubs for Uttar Pradesh Police recruitment</p>
   </div>
   <div class="track-cards">
     <a href="/pages/upp-asi-si.html" class="track-card">
       <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg></div>
       <h3>UPP ASI / SI</h3>
-      <p>Full preparation for Uttar Pradesh Police Sub Inspector &amp; Assistant Sub Inspector — written exam and typing test.</p>
-      <div class="tc-links">Typing Practice · Mock Test Series · Leaderboard</div>
+      <p>Hindi Mangal &amp; English typing practice for Uttar Pradesh Police Sub Inspector &amp; Assistant Sub Inspector recruitment.</p>
+      <div class="tc-links">Typing Practice · Daily Challenge · Leaderboard</div>
     </a>
     <a href="/pages/upp-computer-operator.html" class="track-card">
       <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
       <h3>UPP Computer Operator</h3>
-      <p>Computer fundamentals, MS Office and networking mocks plus Hindi Mangal &amp; English typing practice.</p>
-      <div class="tc-links">Typing Practice · Mock Test Series · Leaderboard</div>
+      <p>Hindi Mangal &amp; English typing practice for the UP Police Computer Operator recruitment exam.</p>
+      <div class="tc-links">Typing Practice · Daily Challenge · Leaderboard</div>
     </a>
   </div>
 </section>
@@ -235,7 +234,6 @@
       <h4>Explore</h4>
       <ul>
         <li><a href="/pages/exams.html">All Exams</a></li>
-        <li><a href="/pages/test-series.html">Test Series</a></li>
         <li><a href="/pages/upp-asi-si.html">UPP ASI / SI</a></li>
         <li><a href="/pages/upp-computer-operator.html">UPP Computer Operator</a></li>
         <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
@@ -281,7 +279,7 @@
   const ICON_BUILDING  = svgIcon('<path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/>');
   const ICON_CLIPBOARD = svgIcon('<rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/>');
   const ICON_PEN       = svgIcon('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>');
-  const icons = { UP_POLICE_ASI: ICON_SHIELD, SSC_CHSL: ICON_DOCUMENT, SSC_CGL_DEO: ICON_MONITOR, HIGH_COURT: ICON_SCALES, DSSSB: ICON_BUILDING, JR_ASSISTANT: ICON_CLIPBOARD, STENO: ICON_PEN, RAJ_HC: ICON_SCALES };
+  const icons = { UPP_ASI_SI_HINDI: ICON_SHIELD, UPP_ASI_SI_ENGLISH: ICON_SHIELD, UPP_CO_HINDI: ICON_MONITOR, UPP_CO_ENGLISH: ICON_MONITOR, UP_POLICE_ASI: ICON_SHIELD, SSC_CHSL: ICON_DOCUMENT, SSC_CGL_DEO: ICON_MONITOR, HIGH_COURT: ICON_SCALES, DSSSB: ICON_BUILDING, JR_ASSISTANT: ICON_CLIPBOARD, STENO: ICON_PEN, RAJ_HC: ICON_SCALES };
   fetch('/api/exams').then(r => r.json()).then(exams => {
     const list = document.getElementById('exam-list');
     list.innerHTML = exams.map(e => `

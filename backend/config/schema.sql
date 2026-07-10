@@ -163,73 +163,6 @@ CREATE TABLE live_exam_attempts (
 );
 
 -- ============================================================
--- MCQ MOCK TEST SERIES (UPP written-exam practice)
--- ============================================================
-CREATE TABLE test_series (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    track_code  VARCHAR(30) NOT NULL COMMENT 'UPP_ASI_SI | UPP_CO',
-    title       VARCHAR(200) NOT NULL,
-    description TEXT,
-    is_active   TINYINT(1) DEFAULT 1,
-    sort_order  INT DEFAULT 0,
-    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_track_active (track_code, is_active)
-);
-
-CREATE TABLE mock_tests (
-    id               INT AUTO_INCREMENT PRIMARY KEY,
-    series_id        INT NOT NULL,
-    title            VARCHAR(200) NOT NULL,
-    test_number      INT NOT NULL DEFAULT 1,
-    duration_minutes INT NOT NULL DEFAULT 120,
-    marks_correct    DECIMAL(5,2) NOT NULL DEFAULT 1.00,
-    negative_marks   DECIMAL(5,2) NOT NULL DEFAULT 0.00,
-    is_active        TINYINT(1) DEFAULT 1,
-    created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (series_id) REFERENCES test_series(id) ON DELETE CASCADE,
-    INDEX idx_series (series_id, test_number)
-);
-
-CREATE TABLE mock_questions (
-    id             INT AUTO_INCREMENT PRIMARY KEY,
-    mock_test_id   INT NOT NULL,
-    question_order INT NOT NULL DEFAULT 0,
-    section        VARCHAR(60) DEFAULT NULL COMMENT 'e.g. General Hindi, GK, Reasoning, Computer',
-    question_en    TEXT,
-    question_hi    TEXT,
-    option_a_en TEXT, option_b_en TEXT, option_c_en TEXT, option_d_en TEXT,
-    option_a_hi TEXT, option_b_hi TEXT, option_c_hi TEXT, option_d_hi TEXT,
-    correct_option ENUM('A','B','C','D') NOT NULL,
-    explanation_en TEXT,
-    explanation_hi TEXT,
-    created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (mock_test_id) REFERENCES mock_tests(id) ON DELETE CASCADE,
-    INDEX idx_test_order (mock_test_id, question_order)
-);
-
-CREATE TABLE mock_attempts (
-    id            INT AUTO_INCREMENT PRIMARY KEY,
-    mock_test_id  INT NOT NULL,
-    user_id       INT NOT NULL,
-    attempt_token VARCHAR(64) NOT NULL,
-    status        ENUM('active','submitted','abandoned') DEFAULT 'active',
-    started_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-    submitted_at  DATETIME,
-    time_taken    INT DEFAULT 0 COMMENT 'seconds',
-    score         DECIMAL(8,2) DEFAULT 0,
-    total_marks   DECIMAL(8,2) DEFAULT 0,
-    correct_count INT DEFAULT 0,
-    wrong_count   INT DEFAULT 0,
-    skipped_count INT DEFAULT 0,
-    answers_json  LONGTEXT COMMENT '{question_id: "A"|"B"|"C"|"D"}',
-    sections_json TEXT COMMENT 'per-section {name:{correct,wrong,skipped,marks}}',
-    FOREIGN KEY (mock_test_id) REFERENCES mock_tests(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_test (user_id, mock_test_id, status),
-    INDEX idx_attempt_token (attempt_token)
-);
-
--- ============================================================
 -- LEADERBOARD VIEW
 -- ============================================================
 CREATE OR REPLACE VIEW leaderboard_view AS
@@ -251,30 +184,19 @@ ORDER BY best_wpm DESC;
 -- SAMPLE EXAM DATA
 -- ============================================================
 INSERT INTO exams (exam_name, exam_code, language, duration_minutes, word_limit, description, sort_order) VALUES
-('UP Police ASI', 'UP_POLICE_ASI', 'hindi', 15, 250, 'UP Police ASI Hindi typing test practice', 1),
-('SSC CHSL', 'SSC_CHSL', 'english', 15, 250, 'SSC CHSL English typing at 35 WPM', 2),
-('SSC CGL (DEO)', 'SSC_CGL_DEO', 'english', 15, 400, 'SSC CGL Data Entry Operator speed test', 3),
-('High Court', 'HIGH_COURT', 'hindi', 25, 500, 'High Court Hindi typing test practice', 4),
-('DSSSB', 'DSSSB', 'both', 15, 250, 'Delhi DSSSB typing test - Hindi & English', 5),
-('Junior Assistant', 'JR_ASSISTANT', 'hindi', 10, 200, 'Junior Assistant Hindi typing practice', 6),
-('Stenographer', 'STENO', 'english', 10, 300, 'Stenographer English typing speed test', 7),
-('Rajasthan HC', 'RAJ_HC', 'hindi', 20, 400, 'Rajasthan High Court Hindi typing', 8);
+('UPP ASI / SI Hindi Typing',            'UPP_ASI_SI_HINDI',   'hindi',   15, 250, 'Uttar Pradesh Police ASI/SI Hindi Mangal typing test practice',  1),
+('UPP ASI / SI English Typing',          'UPP_ASI_SI_ENGLISH', 'english', 15, 510, 'Uttar Pradesh Police ASI/SI English typing test practice',       2),
+('UPP Computer Operator Hindi Typing',   'UPP_CO_HINDI',       'hindi',   15, 250, 'UP Police Computer Operator Hindi Mangal typing test practice',  3),
+('UPP Computer Operator English Typing', 'UPP_CO_ENGLISH',     'english', 15, 510, 'UP Police Computer Operator English typing test practice',       4);
 
 -- ============================================================
 -- SAMPLE PASSAGES
 -- ============================================================
 INSERT INTO passages (exam_id, passage_text, language, difficulty, passage_date, word_count, title) VALUES
-(1, 'उत्तर प्रदेश पुलिस भर्ती एवं प्रोन्नति बोर्ड द्वारा आयोजित आशुलिपि एवं टंकण परीक्षा में सम्मिलित होने वाले अभ्यर्थियों को यह सुनिश्चित करना होगा कि वे निर्धारित गति एवं शुद्धता के मानकों को पूरा करते हैं। परीक्षा में सफलता प्राप्त करने के लिए नियमित अभ्यास अत्यंत आवश्यक है। प्रतिदिन कम से कम दो घंटे टंकण का अभ्यास करने से गति और शुद्धता दोनों में सुधार होता है।', 'hindi', 'M', '2024-01-15', 80, 'UP Police ASI Practice - Jan 2024'),
-(2, 'The Staff Selection Commission conducts various examinations to recruit candidates for different posts in Central Government departments and ministries. The typing test is an important component of the selection process for posts that require data entry skills. Candidates must practice regularly to achieve the required speed of thirty five words per minute with high accuracy.', 'english', 'E', '2024-01-15', 60, 'SSC CHSL English Practice - Jan 2024'),
-(4, 'न्यायालय की कार्यवाही में टंकण की महत्वपूर्ण भूमिका होती है। उच्च न्यायालय में कार्यरत टंकक को शुद्ध एवं तीव्र गति से टंकण करने में दक्ष होना चाहिए। हिंदी टंकण में मंगल फॉन्ट का प्रयोग किया जाता है जो यूनिकोड आधारित फॉन्ट है। इसमें इनस्क्रिप्ट कीबोर्ड लेआउट का प्रयोग होता है जिसे सीखना आवश्यक है।', 'hindi', 'H', '2024-01-15', 60, 'High Court Hindi Practice - Jan 2024');
+(1, 'उत्तर प्रदेश पुलिस भर्ती एवं प्रोन्नति बोर्ड द्वारा आयोजित आशुलिपि एवं टंकण परीक्षा में सम्मिलित होने वाले अभ्यर्थियों को यह सुनिश्चित करना होगा कि वे निर्धारित गति एवं शुद्धता के मानकों को पूरा करते हैं। परीक्षा में सफलता प्राप्त करने के लिए नियमित अभ्यास अत्यंत आवश्यक है। प्रतिदिन कम से कम दो घंटे टंकण का अभ्यास करने से गति और शुद्धता दोनों में सुधार होता है।', 'hindi', 'M', '2024-01-15', 80, 'UPP ASI/SI Hindi Practice Sample'),
+(2, 'The Uttar Pradesh Police Recruitment and Promotion Board conducts typing examinations to recruit candidates for various posts in the state police department. The typing test is an important component of the selection process for posts that require data entry skills. Candidates must practice regularly to achieve the required speed with high accuracy before appearing in the examination.', 'english', 'E', '2024-01-15', 60, 'UPP ASI/SI English Practice Sample'),
+(3, 'कम्प्यूटर ऑपरेटर पद की परीक्षा में टंकण की महत्वपूर्ण भूमिका होती है। अभ्यर्थी को शुद्ध एवं तीव्र गति से टंकण करने में दक्ष होना चाहिए। हिंदी टंकण में मंगल फॉन्ट का प्रयोग किया जाता है जो यूनिकोड आधारित फॉन्ट है। इसमें इनस्क्रिप्ट कीबोर्ड लेआउट का प्रयोग होता है जिसे सीखना आवश्यक है।', 'hindi', 'H', '2024-01-15', 60, 'UPP Computer Operator Hindi Practice Sample');
 
 -- Admin user (password: Admin@123)
 INSERT INTO users (name, email, password, role) VALUES
 ('ASI Sandeep', 'admin@toppertest.com', '$2b$10$rQZ8kHUqbGkQdGiHCi8mVOJSqIwnPb9LpIp5Q.AYqoFGxhbFV3nAe', 'admin');
-
--- ============================================================
--- SEED TEST SERIES (one per UPP track)
--- ============================================================
-INSERT INTO test_series (track_code, title, description, sort_order) VALUES
-('UPP_ASI_SI', 'UPP ASI / SI Mock Test Series', 'Full-length mock tests on the UPP ASI/SI written-exam pattern covering General Hindi, GK, Numerical Ability and Reasoning', 1),
-('UPP_CO', 'UPP Computer Operator Mock Test Series', 'Written-exam mock tests for UP Police Computer Operator covering the official computer science syllabus', 2);

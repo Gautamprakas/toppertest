@@ -59,24 +59,5 @@ router.post('/live-exams/:id/release-results',        adminAuth, liveCtrl.releas
 router.get('/live-exams/:id/results',                 auth,      liveCtrl.getLiveExamResults);
 router.patch('/live-exams/:id/mark-attempt-submitted',auth,      liveCtrl.markAttemptSubmitted);
 
-/* ── Mock Test Series (UPP written-exam MCQ mocks) ─────────────────────────── */
-const mockCtrl = require('../controllers/mockTestController');
-// Student
-router.get('/test-series',               mockCtrl.getSeriesList);
-router.get('/test-series/:id/scorecard', auth,         mockCtrl.getSeriesScorecard);
-router.get('/test-series/:id',           optionalAuth, mockCtrl.getSeriesDetail);
-router.post('/mock-tests/:id/start',     auth,         mockCtrl.startMockTest);
-router.post('/mock-tests/:id/submit',    auth,         mockCtrl.submitMockTest);
-router.get('/mock-attempts/:id/review',  auth,         mockCtrl.reviewAttempt);
-// Admin
-router.post('/admin/test-series',                    adminAuth, mockCtrl.adminCreateSeries);
-router.put('/admin/test-series/:id',                 adminAuth, mockCtrl.adminUpdateSeries);
-router.delete('/admin/test-series/:id',              adminAuth, mockCtrl.adminDeleteSeries);
-router.post('/admin/mock-tests',                     adminAuth, mockCtrl.adminCreateTest);
-router.put('/admin/mock-tests/:id',                  adminAuth, mockCtrl.adminUpdateTest);
-router.delete('/admin/mock-tests/:id',               adminAuth, mockCtrl.adminDeleteTest);
-router.get('/admin/mock-tests/:id/questions',        adminAuth, mockCtrl.adminGetQuestions);
-router.post('/admin/mock-tests/:id/questions',       adminAuth, mockCtrl.adminCreateQuestion);
-router.post('/admin/mock-tests/:id/questions/bulk',  adminAuth, mockCtrl.adminBulkImportQuestions);
-router.put('/admin/questions/:id',                   adminAuth, mockCtrl.adminUpdateQuestion);
-router.delete('/admin/questions/:id',                adminAuth, mockCtrl.adminDeleteQuestion);
+/* ── Daily Challenge ───────────────────────────────────────────────────────── */
+router.get('/daily-challenge', optionalAuth, typingCtrl.getDailyChallenge);

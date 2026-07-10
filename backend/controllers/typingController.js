@@ -167,7 +167,78 @@ exports.getAnalytics = async (req, res) => {
     [user_id]
   );
 
-  res.json({ summary: summary[0], trend });
+  // Personal bests (which exam/day the best WPM came from)
+  const [[bestWpm]] = await db.query(
+    `SELECT r.wpm, r.accuracy, e.exam_name, DATE(r.created_at) AS date
+     FROM typing_results r JOIN exams e ON r.exam_id = e.id
+     WHERE r.user_id = ? ORDER BY r.wpm DESC LIMIT 1`,
+    [user_id]
+  );
+
+  // Practice streak: consecutive days with >=1 test, ending today or yesterday
+  const [days] = await db.query(
+    `SELECT DISTINCT DATE(created_at) AS d FROM typing_results
+     WHERE user_id = ? ORDER BY d DESC LIMIT 60`,
+    [user_id]
+  );
+  let streak = 0;
+  if (days.length) {
+    const msDay = 86400000;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    let expect = today.getTime();
+    const first = new Date(days[0].d).setHours(0, 0, 0, 0);
+    if (first === expect - msDay) expect -= msDay; // streak alive but no test yet today
+    for (const row of days) {
+      const d = new Date(row.d).setHours(0, 0, 0, 0);
+      if (d !== expect) break;
+      streak++;
+      expect -= msDay;
+    }
+  }
+
+  // This week vs previous week average WPM
+  const [[weeks]] = await db.query(
+    `SELECT
+       ROUND(AVG(CASE WHEN created_at >= NOW() - INTERVAL 7 DAY THEN wpm END), 2)  AS this_week,
+       ROUND(AVG(CASE WHEN created_at <  NOW() - INTERVAL 7 DAY
+                       AND created_at >= NOW() - INTERVAL 14 DAY THEN wpm END), 2) AS prev_week
+     FROM typing_results WHERE user_id = ?`,
+    [user_id]
+  );
+
+  // Most frequently mistyped words across the last 10 tests (word-position
+  // compare, same scheme evaluateTyping scores with; capped for cheapness)
+  const [recent] = await db.query(
+    `SELECT r.typed_text, p.passage_text
+     FROM typing_results r JOIN passages p ON r.passage_id = p.id
+     WHERE r.user_id = ? AND r.typed_text IS NOT NULL
+     ORDER BY r.created_at DESC LIMIT 10`,
+    [user_id]
+  );
+  const missCounts = {};
+  for (const row of recent) {
+    const orig  = String(row.passage_text || '').trim().split(/\s+/).slice(0, 600);
+    const typed = String(row.typed_text  || '').trim().split(/\s+/).slice(0, 600);
+    typed.forEach((w, i) => {
+      if (i < orig.length && w !== orig[i]) {
+        missCounts[orig[i]] = (missCounts[orig[i]] || 0) + 1;
+      }
+    });
+  }
+  const weak_words = Object.entries(missCounts)
+    .filter(([, n]) => n >= 2)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([word, count]) => ({ word, count }));
+
+  res.json({
+    summary: summary[0],
+    trend,
+    personal_best: bestWpm || null,
+    streak,
+    week_compare: weeks,
+    weak_words,
+  });
 };
 
 /* ─── Leaderboard ──────────────────────────────────────────────────────────── */
@@ -181,6 +252,52 @@ exports.getLeaderboard = async (req, res) => {
   sql += ' GROUP BY r.user_id, r.exam_id ORDER BY best_wpm DESC LIMIT 50';
   const [rows] = await db.query(sql, params);
   res.json(rows);
+};
+
+/* ─── Daily Challenge ──────────────────────────────────────────────────────── */
+// One featured passage per day (row seeded by the daily scraper). Public for
+// browsing; adds the caller's own attempt status when a valid token is sent.
+exports.getDailyChallenge = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT dc.id AS challenge_id, dc.challenge_date,
+              p.id AS passage_id, p.title, p.language, p.word_count, p.difficulty,
+              e.id AS exam_id, e.exam_name, e.duration_minutes
+       FROM daily_challenges dc
+       JOIN passages p ON dc.passage_id = p.id AND p.is_active = 1
+       JOIN exams e    ON p.exam_id = e.id
+       WHERE dc.challenge_date = CURDATE() AND dc.is_active = 1
+       LIMIT 1`
+    );
+    if (!rows.length) return res.json({ challenge: null });
+    const challenge = rows[0];
+
+    // Today's top performers on this passage (never includes passage text)
+    const [leaders] = await db.query(
+      `SELECT u.name, r.wpm, r.accuracy
+       FROM typing_results r JOIN users u ON r.user_id = u.id
+       WHERE r.passage_id = ? AND DATE(r.created_at) = CURDATE()
+       ORDER BY r.wpm DESC, r.accuracy DESC
+       LIMIT 10`,
+      [challenge.passage_id]
+    );
+
+    let my_result = null;
+    if (req.user) {
+      const [mine] = await db.query(
+        `SELECT wpm, accuracy FROM typing_results
+         WHERE user_id = ? AND passage_id = ? AND DATE(created_at) = CURDATE()
+         ORDER BY wpm DESC LIMIT 1`,
+        [req.user.id, challenge.passage_id]
+      );
+      if (mine.length) my_result = mine[0];
+    }
+
+    res.json({ challenge, leaderboard: leaders, my_result });
+  } catch (err) {
+    console.error('getDailyChallenge error:', err);
+    res.status(500).json({ error: 'Failed to fetch daily challenge' });
+  }
 };
 
 /* ─── Dashboard Stats ──────────────────────────────────────────────────────── */
