@@ -26,6 +26,52 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/* ── Text cleaning ──────────────────────────────────────────────────────────
+ * Wikipedia's explaintext extracts contain content a typist cannot produce on
+ * an exam keyboard: "== section headings ==", IPA pronunciations, math like
+ * {\displaystyle}, URLs, curly quotes, degree/prime marks, and (for Hindi
+ * articles) embedded Latin-script asides. All of it must go — it breaks the
+ * word-match scoring and inflates word counts past the real typeable length.
+ */
+
+// Characters a typist can produce: per-language script + shared punctuation.
+const COMMON_CHARS = '0-9 \\t.,;:\'"!?()\\-%/';
+const DISALLOWED = {
+  english: new RegExp(`[^A-Za-z${COMMON_CHARS}]`, 'g'),
+  hindi:   new RegExp(`[^\\u0900-\\u097F${COMMON_CHARS}]`, 'g'), // Devanagari incl. ।॥ and ०-९
+};
+
+function cleanText(raw, language) {
+  let t = raw
+    .replace(/==+[^=\n]*==+/g, ' ')        // "== Section ==" heading markers
+    .replace(/\{[^{}]*\}/g, ' ')           // {\displaystyle ...} math fragments
+    .replace(/https?:\/\/\S+/g, ' ')       // bare URLs (reference sections)
+    .replace(/[“”«»„]/g, '"')              // normalize typographic quotes
+    .replace(/[‘’‚]/g, "'")
+    .replace(/[–—―]/g, '-')                // normalize dashes
+    .replace(/[′″]/g, "'");
+
+  // Strip anything the exam keyboard can't type (IPA, foreign script,
+  // symbols, zero-width joiners...). Replace with a space, then tidy up.
+  t = t.replace(DISALLOWED[language], ' ');
+
+  t = t
+    .replace(/\(\s*[.,;:'"!?%\/\-\s]*\)/g, ' ')  // parens left holding only punctuation
+    .replace(/\(([^()]*[:;])\s*\)/g, ' ')        // parens ending in a bare label, e.g. "(अंग्रेज़ी:)"
+    .replace(/"\s*"/g, ' ')                       // emptied quote pairs
+    .replace(/\s+([.,;:!?।])/g, '$1')             // no space before punctuation
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    .replace(/([.,;:!?।])\1+/g, '$1')             // collapse repeated punctuation
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Sentence-level pass: drop tiny fragments left over from heavy cleaning
+  // (e.g. an orphaned "s." after a stripped foreign phrase).
+  const sentences = t.split(/(?<=[।.!?])\s+/).filter(s => countWords(s) >= 4);
+  return sentences.join(' ');
+}
+
 function complexityScore(text) {
   const words = text.trim().split(/\s+/).filter(Boolean);
   const sentences = text.split(/[।.!?]+/).map(s => s.trim()).filter(Boolean);
@@ -110,10 +156,17 @@ async function collectCandidates(language, needed, minWords) {
         await sleep(REQUEST_DELAY_MS);
         if (!full) continue;
 
-        const cleaned = full.trim().replace(/\s+/g, ' ');
-        if (countWords(cleaned) < minWords) continue; // article too short even in full
+        // Articles that lose too much content to cleaning are math/table/
+        // list-heavy — the surviving text reads badly, so skip them entirely.
+        const cleaned = cleanText(full, language);
+        if (cleaned.length < full.length * 0.6) continue;
+
+        // Word counts are measured on CLEANED text only, so the stored
+        // word_count reflects genuinely typeable words.
+        if (countWords(cleaned) < minWords) continue;
 
         const { text, wordCount } = truncateAtSentence(cleaned, minWords);
+        if (wordCount < minWords) continue; // safety: never insert short passages
         candidates.push({ title, text, wordCount, score: complexityScore(text) });
       }
     } catch (err) {
@@ -176,8 +229,13 @@ async function main() {
   await db.end();
 }
 
-main().catch(async err => {
-  console.error('Fatal error in daily passage generation:', err);
-  await db.end();
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch(async err => {
+    console.error('Fatal error in daily passage generation:', err);
+    await db.end();
+    process.exit(1);
+  });
+} else {
+  // Exported for testing (cleanText quality checks) without running the job
+  module.exports = { cleanText, countWords, truncateAtSentence, complexityScore, fetchFullExtract, fetchRandomTitles };
+}
