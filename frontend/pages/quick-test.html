@@ -190,24 +190,29 @@ function typedWords() {
   return $('qt-input').value.trim().length ? $('qt-input').value.trim().split(/\s+/) : [];
 }
 
-function scoreTyped() {
+function scoreTyped(includeInProgress) {
+  const raw = $('qt-input').value;
   const typed = typedWords();
+  // A word only counts once the space after it is pressed; until then the
+  // highlight stays on it and it is not scored (except at finish time).
+  const inProgress = !includeInProgress && typed.length > 0 && !/\s$/.test(raw);
+  const done = inProgress ? typed.length - 1 : typed.length;
   let correct = 0;
   const statusMap = {};
-  typed.forEach((w, i) => {
-    const ok = i < passageWords.length && w === passageWords[i];
+  for (let i = 0; i < done; i++) {
+    const ok = i < passageWords.length && typed[i] === passageWords[i];
     statusMap[i] = ok;
     if (ok) correct++;
-  });
-  return { typed, correct, wrong: typed.length - correct, statusMap };
+  }
+  return { typed, done, correct, wrong: done - correct, statusMap };
 }
 
 function updateLiveStats() {
-  const { typed, correct } = scoreTyped();
+  const { done, correct } = scoreTyped();
   const minutes = Math.max((Date.now() - startTime) / 60000, 1 / 60);
-  $('qt-wpm').textContent = started ? Math.round(typed.length / minutes) : 0;
-  $('qt-acc').textContent = typed.length ? Math.round((correct / typed.length) * 100) : 100;
-  $('qt-words').textContent = typed.length;
+  $('qt-wpm').textContent = started ? Math.round(done / minutes) : 0;
+  $('qt-acc').textContent = done ? Math.round((correct / done) * 100) : 100;
+  $('qt-words').textContent = done;
 }
 
 $('qt-input').addEventListener('input', () => {
@@ -217,8 +222,8 @@ $('qt-input').addEventListener('input', () => {
     startTime = Date.now();
     timerHandle = setInterval(tick, 250);
   }
-  const { typed, statusMap } = scoreTyped();
-  renderPassage(typed.length, statusMap);
+  const { done, statusMap } = scoreTyped();
+  renderPassage(done, statusMap);
 });
 
 ['paste', 'copy', 'cut', 'drop'].forEach(ev =>
@@ -242,9 +247,10 @@ function finish() {
   $('qt-timer').textContent = '0:00';
   $('qt-timer').classList.remove('urgent');
 
-  const { typed, correct, wrong } = scoreTyped();
-  const wpm = Math.round(typed.length); // 1 minute → words typed == WPM
-  const acc = typed.length ? Math.round((correct / typed.length) * 100) : 0;
+  // At time-up the last word counts even without a trailing space
+  const { done, correct, wrong } = scoreTyped(true);
+  const wpm = Math.round(done); // 1 minute → words typed == WPM
+  const acc = done ? Math.round((correct / done) * 100) : 0;
 
   $('qt-results').style.display = 'block';
   animate('r-wpm', wpm);
