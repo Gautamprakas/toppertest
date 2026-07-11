@@ -3,26 +3,26 @@
    Government Exam Typing Practice Platform
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap');
 
 :root {
-  --primary:      #1a3c6e;
-  --primary-dark: #0f2448;
-  --accent:       #f59e0b;
-  --accent-dark:  #d97706;
+  --primary:      #1c1f26;
+  --primary-dark: #101317;
+  --accent:       #c9a227;
+  --accent-dark:  #a8861d;
   --success:      #10b981;
   --danger:       #ef4444;
   --warning:      #f59e0b;
   --info:         #3b82f6;
-  --bg:           #f0f4f8;
+  --bg:           #faf9f6;
   --card:         #ffffff;
-  --text:         #1e293b;
-  --muted:        #64748b;
-  --border:       #e2e8f0;
+  --text:         #23262b;
+  --muted:        #6e6a63;
+  --border:       #e8e5de;
   --sidebar-w:    260px;
   --radius:       12px;
   --shadow:       0 4px 20px rgba(0,0,0,.08);
-  --font-head:    'Baloo 2', sans-serif;
+  --font-head:    'Poppins', sans-serif;
   --font-body:    'Hind', sans-serif;
 }
 
@@ -51,9 +51,9 @@ a:hover { color: var(--accent); }
   transition: all .2s; text-decoration: none;
 }
 .btn-primary   { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-dark); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,60,110,.3); }
-.btn-accent    { background: var(--accent); color: #fff; }
-.btn-accent:hover { background: var(--accent-dark); color: #fff; transform: translateY(-1px); }
+.btn-primary:hover { background: var(--primary-dark); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,19,23,.35); }
+.btn-accent    { background: var(--accent); color: #16181d; }
+.btn-accent:hover { background: var(--accent-dark); color: #16181d; transform: translateY(-1px); }
 .btn-outline   { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
 .btn-outline:hover { background: var(--primary); color: #fff; }
 .btn-danger    { background: var(--danger); color: #fff; }
@@ -80,7 +80,7 @@ a:hover { color: var(--accent); }
   border-radius: 8px; font-family: var(--font-body); font-size: 14px;
   transition: border-color .2s, box-shadow .2s; background: #fff;
 }
-.form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,60,110,.12); }
+.form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,162,39,.22); }
 .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
 /* ── Navbar ──────────────────────────────────────────────── */
@@ -142,8 +142,8 @@ a:hover { color: var(--accent); }
 .badge-E { background: #d1fae5; color: #065f46; }
 .badge-M { background: #fef3c7; color: #92400e; }
 .badge-H { background: #fee2e2; color: #991b1b; }
-.badge-hindi   { background: #ede9fe; color: #5b21b6; }
-.badge-english { background: #dbeafe; color: #1e40af; }
+.badge-hindi   { background: #f5edcf; color: #8a6d14; }
+.badge-english { background: #eceef2; color: #3b4252; }
 .badge-success { background: #d1fae5; color: #065f46; }
 .badge-danger  { background: #fee2e2; color: #991b1b; }
 
@@ -168,7 +168,7 @@ tr:hover td { background: #f8fafc; }
 
 /* ── Hero (home) ─────────────────────────────────────────── */
 .hero {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #1e5ba8 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #33333a 100%);
   color: #fff; padding: 80px 32px; text-align: center; position: relative; overflow: hidden;
 }
 .hero::before {
@@ -205,7 +205,7 @@ tr:hover td { background: #f8fafc; }
 }
 .passage-box .word-correct  { background: #bbf7d0; border-radius: 3px; }
 .passage-box .word-wrong    { background: #fecaca; border-radius: 3px; text-decoration: underline; }
-.passage-box .word-current  { background: #bfdbfe; border-radius: 3px; }
+.passage-box .word-current  { background: #f2e6bd; border-radius: 3px; }
 
 .typing-input-wrap {
   border: 1px solid var(--border); border-top: none;

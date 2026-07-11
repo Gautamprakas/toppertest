@@ -100,7 +100,7 @@ function ttConfirm(title, text = '', confirmText = 'Yes, continue') {
     showCancelButton: true,
     confirmButtonText: confirmText,
     cancelButtonText: 'Cancel',
-    confirmButtonColor: '#1a3c6e',
+    confirmButtonColor: '#1c1f26',
     cancelButtonColor: '#94a3b8',
     reverseButtons: true,
   }).then(r => r.isConfirmed);

@@ -16,16 +16,16 @@
   <style>
     .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
     .exam-opt  { border: 2px solid var(--border); border-radius: 10px; padding: 16px 12px; cursor: pointer; transition: all .2s; background: #fff; text-align: center; }
-    .exam-opt:hover  { border-color: var(--primary); background: #eef4ff; transform: translateY(-2px); }
-    .exam-opt.selected { border-color: var(--primary); background: #eef4ff; box-shadow: 0 0 0 3px rgba(26,60,110,.15); }
+    .exam-opt:hover  { border-color: var(--accent); background: #faf5e4; transform: translateY(-2px); }
+    .exam-opt.selected { border-color: var(--accent); background: #faf5e4; box-shadow: 0 0 0 3px rgba(201,162,39,.25); }
     .exam-opt .eo-icon { font-size: 28px; margin-bottom: 8px; }
     .exam-opt h4 { font-size: 13px; font-weight: 700; color: var(--primary); }
     .exam-opt p  { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
     .lang-opts { display: flex; gap: 16px; }
     .lang-opt  { flex: 1; border: 2px solid var(--border); border-radius: 12px; padding: 24px 20px; cursor: pointer; transition: all .2s; background: #fff; text-align: center; }
-    .lang-opt:hover  { border-color: var(--primary); background: #eef4ff; }
-    .lang-opt.selected { border-color: var(--primary); background: #eef4ff; box-shadow: 0 0 0 3px rgba(26,60,110,.15); }
+    .lang-opt:hover  { border-color: var(--accent); background: #faf5e4; }
+    .lang-opt.selected { border-color: var(--accent); background: #faf5e4; box-shadow: 0 0 0 3px rgba(201,162,39,.25); }
     .lang-opt .lo-icon { font-size: 40px; margin-bottom: 10px; }
     .lang-opt h4 { font-size: 17px; font-weight: 700; color: var(--primary); }
     .lang-opt p  { font-size: 12px; color: var(--muted); margin-top: 4px; }
@@ -43,7 +43,7 @@
     .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; font-weight: 500; position: relative; transition: all .15s; user-select: none; }
     .cal-day.empty { visibility: hidden; }
     .cal-day.no-passage { color: #c0c0c0; }
-    .cal-day.has-passage { background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer; border: 2px solid #93c5fd; }
+    .cal-day.has-passage { background: #f5edcf; color: #8a6d14; font-weight: 700; cursor: pointer; border: 2px solid #dcc36a; }
     .cal-day.has-passage:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: scale(1.12); z-index: 1; }
     .cal-day.is-selected { background: var(--primary) !important; color: #fff !important; border-color: var(--primary-dark) !important; transform: scale(1.12); z-index: 1; }
     .cal-day.is-today::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
@@ -53,8 +53,8 @@
 
     .passage-list { display: flex; flex-direction: column; gap: 10px; }
     .passage-opt { border: 2px solid var(--border); border-radius: 10px; padding: 14px 18px; cursor: pointer; background: #fff; transition: all .2s; display: flex; align-items: center; justify-content: space-between; }
-    .passage-opt:hover  { border-color: var(--primary); background: #eef4ff; transform: translateX(3px); }
-    .passage-opt.selected { border-color: var(--primary); background: #eef4ff; }
+    .passage-opt:hover  { border-color: var(--accent); background: #faf5e4; transform: translateX(3px); }
+    .passage-opt.selected { border-color: var(--accent); background: #faf5e4; }
 
     .sel-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; }
     .sel-bar .sb-item { display: flex; align-items: center; gap: 5px; }
@@ -175,7 +175,7 @@
                   <div class="cal-days" id="cal-days"></div>
                 </div>
                 <div class="cal-legend">
-                  <div class="leg-item"><div class="leg-box" style="background:#dbeafe;border:2px solid #93c5fd;"></div> Has Passages</div>
+                  <div class="leg-item"><div class="leg-box" style="background:#f5edcf;border:2px solid #dcc36a;"></div> Has Passages</div>
                   <div class="leg-item"><div class="leg-box" style="background:var(--primary);"></div> Selected</div>
                   <div class="leg-item"><div class="leg-box" style="background:#f3f4f6;"></div> No Passage</div>
                 </div>
@@ -185,14 +185,14 @@
               <div style="background:#f8fafc;border-radius:10px;padding:20px;">
                 <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:8px;"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V6a1 1 0 011-1 2 2 0 000-4H8a2 2 0 000 4 1 1 0 011 1v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24z"/></svg> How to use</p>
                 <p style="font-size:13px;color:var(--muted);line-height:1.7;">
-                  Dates shown in <strong style="color:#1d4ed8;">blue</strong> have typing passages available.<br><br>
-                  Click any blue date to load its passages and continue to Step 4.
+                  Dates shown in <strong style="color:#8a6d14;">gold</strong> have typing passages available.<br><br>
+                  Click any gold date to load its passages and continue to Step 4.
                 </p>
                 <div id="cal-stats" style="margin-top:16px;background:#fff;border-radius:8px;padding:14px;border:1px solid var(--border);">
                   <div style="font-size:24px;font-weight:800;color:var(--primary);font-family:var(--font-head);" id="avail-total">0</div>
                   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;">Dates with Passages</div>
                 </div>
-                <div id="selected-date-info" style="display:none;margin-top:12px;background:#dbeafe;border-radius:8px;padding:12px;font-size:13px;">
+                <div id="selected-date-info" style="display:none;margin-top:12px;background:#f5edcf;border-radius:8px;padding:12px;font-size:13px;">
                   <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Selected: <strong id="sel-date-display"></strong>
                   <br><span id="sel-date-count" style="color:var(--primary);font-weight:700;"></span>
                 </div>

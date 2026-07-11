@@ -77,8 +77,8 @@
       </p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
         <div style="background:#f0fdf4;border-radius:8px;padding:16px;"><strong style="color:var(--success);">UPP SI / ASI Typing</strong><br><span style="font-size:13px;color:var(--muted);">Uttar Pradesh Police · Hindi Mangal · Inscript keyboard</span></div>
-        <div style="background:#eff6ff;border-radius:8px;padding:16px;"><strong style="color:#1e40af;">UP Police Computer Operator</strong><br><span style="font-size:13px;color:var(--muted);">Hindi & English · Government job typing test</span></div>
-        <div style="background:#f0f9ff;border-radius:8px;padding:16px;"><strong style="color:var(--primary);">SSC CHSL Typing</strong><br><span style="font-size:13px;color:var(--muted);">35 WPM required · English · 10+2 level</span></div>
+        <div style="background:#f6f4ed;border-radius:8px;padding:16px;"><strong style="color:var(--primary);">UP Police Computer Operator</strong><br><span style="font-size:13px;color:var(--muted);">Hindi & English · Government job typing test</span></div>
+        <div style="background:#faf5e4;border-radius:8px;padding:16px;"><strong style="color:#8a6d14;">SSC CHSL Typing</strong><br><span style="font-size:13px;color:var(--muted);">35 WPM required · English · 10+2 level</span></div>
         <div style="background:#fffbeb;border-radius:8px;padding:16px;"><strong style="color:var(--accent-dark);">High Court Typing</strong><br><span style="font-size:13px;color:var(--muted);">Hindi & English · High accuracy needed</span></div>
         <div style="background:#fdf4ff;border-radius:8px;padding:16px;"><strong style="color:#7c3aed;">DSSSB Typing</strong><br><span style="font-size:13px;color:var(--muted);">Delhi govt jobs · Hindi & English</span></div>
       </div>
@@ -125,7 +125,7 @@
           <div class="exam-meta-row">
             <span class="badge badge-${e.language === 'hindi' ? 'hindi' : 'english'}">${e.language === 'hindi' ? 'Hindi' : e.language === 'english' ? 'English' : 'Hindi + English'}</span>
             <span class="badge" style="background:#f0fdf4;color:#166534;">${e.duration_minutes} min</span>
-            <span class="badge" style="background:#f0f9ff;color:#1e40af;">${e.word_limit} words</span>
+            <span class="badge" style="background:#faf5e4;color:#8a6d14;">${e.word_limit} words</span>
           </div>
           <p>${e.description || 'Practice with real exam passages and improve your typing speed.'}</p>
           <a href="/pages/select-exam.html?exam=${e.id}" class="btn btn-primary btn-block">Start Practice →</a>
