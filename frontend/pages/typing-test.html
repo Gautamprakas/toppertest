@@ -15,6 +15,8 @@
   <title>Typing Test – TopperTest</title>
   <link rel="stylesheet" href="/css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html, body { min-height:100vh; background:#f0f0f0; font-family:'Hind',sans-serif; }
@@ -847,14 +849,17 @@ function updateHighlights() {
 
 // ── Submit ─────────────────────────────────────────────────
 function confirmCancel() {
-  if (confirm('Cancel this test? Progress will be lost.')) {
+  ttConfirm('Cancel this test?', 'Your progress will be lost.', 'Yes, cancel test').then(ok => {
+    if (!ok) return;
     submitted = true; clearInterval(timerHandle);
     sessionStorage.removeItem('tt_session');
     location.href = '/pages/select-exam.html';
-  }
+  });
 }
 function confirmSubmit() {
-  if (confirm('Submit test now?')) submitTest(false);
+  ttConfirm('Submit test now?', 'You cannot change your answer after submitting.', 'Submit Test').then(ok => {
+    if (ok) submitTest(false);
+  });
 }
 
 async function submitTest(autoSubmit) {
@@ -960,18 +965,27 @@ function showPerformanceDashboard(r, timeTaken, autoSubmit) {
     ? `${durationMin.toFixed(0)}:00 min.`
     : `${Math.floor(timeTaken/60).toString().padStart(2,'0')}:${(timeTaken%60).toString().padStart(2,'0')} min.`;
 
-  // Cards
-  document.getElementById('rd-typed').textContent = typedWords.length;
-  setTxt('rd-full-mistake', fullMistake);
-  setTxt('rd-half-mistake', halfMistake);
-  document.getElementById('rd-net-wrong').textContent = netWrongWords;
-  document.getElementById('rd-omissions').textContent = omissions;
-  setTxt('rd-extra-spaces', extraSpaces);
-  document.getElementById('rd-backspaces').textContent = backspaceCount;
-  document.getElementById('rd-correct').textContent = correctWordsDisplay;
-  document.getElementById('rd-gross-speed').textContent = grossSpeed;
-  document.getElementById('rd-net-speed').textContent = netSpeed;
-  document.getElementById('rd-accuracy').textContent = accuracy + ' %';
+  // Cards — numbers animate up when CountUp is available, else set instantly
+  function setNum(id, value, opts = {}) {
+    const el = document.getElementById(id);
+    const end = Number(value);
+    if (!Number.isNaN(end) && window.countUp?.CountUp) {
+      const c = new countUp.CountUp(el, end, { duration: 1.2, ...opts });
+      if (!c.error) { c.start(); return; }
+    }
+    el.textContent = value + (opts.suffix || '');
+  }
+  setNum('rd-typed', typedWords.length);
+  setNum('rd-full-mistake', fullMistake);
+  setNum('rd-half-mistake', halfMistake);
+  setNum('rd-net-wrong', netWrongWords);
+  setNum('rd-omissions', omissions);
+  setNum('rd-extra-spaces', extraSpaces);
+  setNum('rd-backspaces', backspaceCount);
+  setNum('rd-correct', correctWordsDisplay);
+  setNum('rd-gross-speed', grossSpeed, { decimalPlaces: 2 });
+  setNum('rd-net-speed', netSpeed, { decimalPlaces: 2 });
+  setNum('rd-accuracy', accuracy, { decimalPlaces: 2, suffix: ' %' });
 
   setTxt('rd-status', qualified ? 'Qualified' : 'Not Qualified');
   setCls('rd-status', 'card-value ' + (qualified ? 'qualified' : 'not-qualified'));

@@ -61,3 +61,6 @@ router.patch('/live-exams/:id/mark-attempt-submitted',auth,      liveCtrl.markAt
 
 /* ── Daily Challenge ───────────────────────────────────────────────────────── */
 router.get('/daily-challenge', optionalAuth, typingCtrl.getDailyChallenge);
+
+/* ── Guest Quick Test (public, results never saved) ────────────────────────── */
+router.get('/quick-test', typingCtrl.getQuickTestPassage);

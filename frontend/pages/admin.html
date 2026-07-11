@@ -13,6 +13,7 @@
 </script>
   <title>Admin Panel – TopperTest</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .tab-btns  { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:24px; flex-wrap:wrap; }
     .tab-btn   { padding:10px 18px; border:none; background:none; font-weight:600; font-size:14px; cursor:pointer; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .2s; }
@@ -791,7 +792,7 @@ async function loadAdminLiveExams() {
 }
 
 async function releaseResults(id) {
-  if (!confirm('Release results for this live exam? Students will be able to see the leaderboard.')) return;
+  if (!await ttConfirm('Release results?', 'Students will be able to see the leaderboard for this live exam.', 'Release')) return;
   try {
     await apiFetch(`/live-exams/${id}/release-results`, { method: 'POST' });
     showToast('Results released!', 'success');
@@ -802,7 +803,7 @@ async function releaseResults(id) {
 }
 
 async function deleteLiveExam(id, title) {
-  if (!confirm(`Delete live exam "${title}"? This cannot be undone.`)) return;
+  if (!await ttConfirm(`Delete live exam "${title}"?`, 'This cannot be undone.', 'Delete')) return;
   try {
     await apiFetch(`/live-exams/${id}`, { method: 'DELETE' });
     showToast('Deleted.', 'success');
@@ -978,7 +979,7 @@ async function saveExam() {
 }
 
 async function deleteExam(id, name) {
-  if (!confirm(`Are you sure you want to deactivate exam:\n"${name}"?\n\nExisting passages will still be accessible.`)) return;
+  if (!await ttConfirm(`Deactivate exam "${name}"?`, 'Existing passages will still be accessible.', 'Deactivate')) return;
   try {
     await apiFetch(`/exams/${id}`, { method: 'DELETE' });
     showToast('Exam deactivated', 'success');
@@ -1111,7 +1112,7 @@ async function savePassage() {
 }
 
 async function deletePassage(id) {
-  if (!confirm(`Delete passage #${id}? This cannot be undone.`)) return;
+  if (!await ttConfirm(`Delete passage #${id}?`, 'This cannot be undone.', 'Delete')) return;
   try {
     await apiFetch(`/passages/${id}`, { method: 'DELETE' });
     showToast('Passage deleted', 'success');

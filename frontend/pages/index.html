@@ -40,6 +40,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
   <style>
     .exam-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
     .exam-card  { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border-top: 4px solid var(--primary); transition: transform .2s, box-shadow .2s; cursor: pointer; }
@@ -90,6 +91,7 @@
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/pages/exams.html">Exams</a></li>
+    <li><a href="/pages/quick-test.html">1-Min Test</a></li>
     <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
     <li id="nav-right"></li>
   </ul>
@@ -100,7 +102,8 @@
   <h1>TopperTest – <span>Free Government Exam</span><br>Typing Practice by ASI Sandeep</h1>
   <p>Practice Hindi Mangal &amp; English Typing Tests for SSC, UP Police, High Court and Other Government Exams. Real exam passages, timer-based tests, instant WPM &amp; accuracy.</p>
   <div class="hero-btns">
-    <a href="/pages/exams.html" class="btn btn-accent btn-lg"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> Start Free Typing Test</a>
+    <a href="/pages/quick-test.html" class="btn btn-accent btn-lg"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg> Try 1-Minute Test — No Login</a>
+    <a href="/pages/exams.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:#fff;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg> Full Typing Tests</a>
     <a href="#upp-tracks" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:#fff;">Explore UPP Exams</a>
   </div>
   <div style="margin-top:40px; display:flex; gap:40px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;">
@@ -257,17 +260,26 @@
 <script>
   document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-  // Load stats
+  // Load stats — animated count-up when the library is available
+  function setStat(id, value, fallback) {
+    const el = document.getElementById(id);
+    const end = Number(value);
+    if (value != null && !Number.isNaN(end) && window.countUp?.CountUp) {
+      const c = new countUp.CountUp(el, end, { duration: 2 });
+      if (!c.error) { c.start(); return; }
+    }
+    el.textContent = value != null ? Number(value).toLocaleString() : fallback;
+  }
   fetch('/api/stats').then(r => r.json()).then(d => {
-    document.getElementById('stat-passages').textContent = d.total_passages?.toLocaleString() || '500+';
-    document.getElementById('stat-exams').textContent    = d.exams_covered?.toLocaleString()  || '8+';
-    document.getElementById('stat-students').textContent = d.students?.toLocaleString()        || '10,000+';
-    document.getElementById('stat-tests').textContent    = d.tests_taken?.toLocaleString()     || '50,000+';
+    setStat('stat-passages', d.total_passages, '500+');
+    setStat('stat-exams',    d.exams_covered,  '4');
+    setStat('stat-students', d.students,       '10,000+');
+    setStat('stat-tests',    d.tests_taken,    '50,000+');
   }).catch(() => {
-    document.getElementById('stat-passages').textContent = '500+';
-    document.getElementById('stat-exams').textContent    = '8+';
-    document.getElementById('stat-students').textContent = '10,000+';
-    document.getElementById('stat-tests').textContent    = '50,000+';
+    setStat('stat-passages', null, '500+');
+    setStat('stat-exams',    null, '4');
+    setStat('stat-students', null, '10,000+');
+    setStat('stat-tests',    null, '50,000+');
   });
 
   // Load exams

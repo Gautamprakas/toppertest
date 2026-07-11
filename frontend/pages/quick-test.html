@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V3DLNRTMY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V3DLNRTMY6');
+</script>
+  <title>Free 1-Minute Typing Test – Hindi &amp; English, No Login | TopperTest</title>
+  <meta name="description" content="Check your typing speed in 1 minute — free, no registration. Hindi Mangal & English typing test with instant WPM and accuracy, by ASI Sandeep. Practice for UPP ASI/SI and Computer Operator exams." />
+  <meta name="keywords" content="1 minute typing test, free typing test no login, hindi typing test online, english typing speed test, WPM test, ASI Sandeep, UPP typing practice" />
+  <link rel="canonical" href="https://toppertest.com/pages/quick-test.html" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
+  <style>
+    .qt-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+    .qt-head { text-align: center; margin-bottom: 24px; }
+    .qt-head h1 { font-size: clamp(22px, 4vw, 32px); color: var(--primary); font-weight: 800; }
+    .qt-head p { color: var(--muted); margin-top: 6px; font-size: 14px; }
+
+    .qt-controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+    .lang-pill { display: inline-flex; border: 2px solid var(--primary); border-radius: 999px; overflow: hidden; }
+    .lang-pill button { border: none; background: #fff; color: var(--primary); font-weight: 700; font-size: 14px; padding: 8px 22px; cursor: pointer; font-family: var(--font-body); }
+    .lang-pill button.active { background: var(--primary); color: #fff; }
+
+    .qt-stats { display: flex; gap: 22px; align-items: center; }
+    .qt-stat { text-align: center; }
+    .qt-stat .v { font-size: 22px; font-weight: 800; font-family: var(--font-head); color: var(--primary); line-height: 1.1; }
+    .qt-stat .l { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+    #qt-timer.urgent { color: #d32f2f; animation: qtblink 1s infinite; }
+    @keyframes qtblink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .qt-passage {
+      background: #fff; border: 2px solid #b0b0b0; padding: 18px 16px;
+      font-size: 1.15rem; line-height: 2; text-align: justify;
+      max-height: 260px; overflow-y: auto; user-select: none; -webkit-user-select: none;
+      border-radius: 8px 8px 0 0;
+    }
+    .qt-passage.english { font-family: "Times New Roman", Times, serif; }
+    .qt-passage.hindi   { font-family: 'Hind', 'Mangal', sans-serif; }
+    .qt-passage .w.ok   { background: #c8e6c9; border-radius: 2px; }
+    .qt-passage .w.bad  { background: #ffcdd2; border-radius: 2px; }
+    .qt-passage .w.cur  { background: #bbdefb; border-radius: 2px; outline: 2px solid #1976d2; }
+
+    #qt-input {
+      width: 100%; min-height: 120px; border: 2px solid #b0b0b0; border-top: none;
+      border-radius: 0 0 8px 8px; padding: 14px 16px; font-size: 1.1rem; line-height: 1.9;
+      resize: none; outline: none; background: #fdfde7;
+    }
+    #qt-input.english { font-family: "Times New Roman", Times, serif; }
+    #qt-input.hindi   { font-family: 'Hind', 'Mangal', sans-serif; }
+    #qt-input:disabled { background: #f1f5f9; color: #94a3b8; }
+
+    .qt-hint { text-align: center; font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+    /* Results */
+    #qt-results { display: none; margin-top: 28px; }
+    .qt-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .qt-result-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 20px; text-align: center; border-top: 4px solid var(--primary); }
+    .qt-result-card.accent  { border-color: var(--accent); }
+    .qt-result-card.success { border-color: var(--success); }
+    .qt-result-card.danger  { border-color: var(--danger); }
+    .qt-result-card .rv { font-size: 34px; font-weight: 800; font-family: var(--font-head); color: var(--primary); }
+    .qt-result-card .rl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-top: 4px; }
+
+    .qt-cta { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); border-radius: 14px; color: #fff; padding: 28px 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .qt-cta h3 { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
+    .qt-cta p { font-size: 13px; opacity: .85; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand"><a href="/" style="color:#fff;display:flex;align-items:center;gap:10px;"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg><div class="brand-text">TopperTest</div></a></div>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/pages/exams.html">Exams</a></li>
+    <li><a href="/pages/quick-test.html" class="active">1-Min Test</a></li>
+    <li><a href="/pages/leaderboard.html">Leaderboard</a></li>
+    <li id="nav-right"></li>
+  </ul>
+</nav>
+
+<div style="background:var(--bg);min-height:calc(100vh - 64px);">
+  <div class="qt-wrap">
+    <div class="qt-head">
+      <h1>Free 1-Minute Typing Test</h1>
+      <p>No login needed. The timer starts with your first keystroke — type as much as you can in 60 seconds.</p>
+    </div>
+
+    <div class="qt-controls">
+      <div class="lang-pill">
+        <button id="lang-en" class="active" onclick="setLanguage('english')">English</button>
+        <button id="lang-hi" onclick="setLanguage('hindi')">हिंदी</button>
+      </div>
+      <div class="qt-stats">
+        <div class="qt-stat"><div class="v" id="qt-timer">1:00</div><div class="l">Time Left</div></div>
+        <div class="qt-stat"><div class="v" id="qt-wpm">0</div><div class="l">WPM</div></div>
+        <div class="qt-stat"><div class="v" id="qt-acc">100</div><div class="l">Accuracy %</div></div>
+        <div class="qt-stat"><div class="v" id="qt-words">0</div><div class="l">Words</div></div>
+      </div>
+    </div>
+
+    <div id="qt-test-area">
+      <div class="qt-passage english" id="qt-passage"><span class="text-muted">Loading passage…</span></div>
+      <textarea id="qt-input" class="english" placeholder="Start typing here — the 60-second timer begins on your first key…" spellcheck="false"></textarea>
+      <p class="qt-hint">Copy-paste is disabled — type honestly to know your real speed.</p>
+    </div>
+
+    <div id="qt-results">
+      <div class="qt-result-grid">
+        <div class="qt-result-card accent"><div class="rv" id="r-wpm">0</div><div class="rl">Words / Minute</div></div>
+        <div class="qt-result-card success"><div class="rv" id="r-acc">0</div><div class="rl">Accuracy %</div></div>
+        <div class="qt-result-card"><div class="rv" id="r-correct">0</div><div class="rl">Correct Words</div></div>
+        <div class="qt-result-card danger"><div class="rv" id="r-wrong">0</div><div class="rl">Wrong Words</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-bottom:26px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="restart()">Try Again</button>
+        <button class="btn btn-outline" onclick="switchAndRestart()">Switch Language</button>
+      </div>
+      <div class="qt-cta">
+        <div>
+          <h3>Want the full exam experience?</h3>
+          <p>Create a free account to save your results, practice full-length UPP ASI/SI &amp; Computer Operator passages, take the Daily Challenge and rank on the all-India leaderboard.</p>
+        </div>
+        <a href="/pages/register.html" class="btn btn-accent btn-lg" style="flex-shrink:0;">Register Free</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+let language = 'english';
+let passageWords = [];
+let started = false, finished = false;
+let startTime = 0, timerHandle = null;
+const DURATION = 60;
+
+const $ = id => document.getElementById(id);
+
+function setLanguage(lang) {
+  if (started && !finished) return; // no switching mid-test
+  language = lang;
+  $('lang-en').classList.toggle('active', lang === 'english');
+  $('lang-hi').classList.toggle('active', lang === 'hindi');
+  $('qt-passage').className = 'qt-passage ' + lang;
+  $('qt-input').className = lang;
+  loadPassage();
+}
+
+async function loadPassage() {
+  $('qt-passage').innerHTML = '<span class="text-muted">Loading passage…</span>';
+  try {
+    const p = await apiFetch(`/quick-test?language=${language}`);
+    passageWords = p.passage_text.trim().split(/\s+/);
+    renderPassage(0, {});
+  } catch (err) {
+    $('qt-passage').innerHTML = '<span class="text-muted">Could not load a passage — please refresh.</span>';
+  }
+}
+
+// Render with per-word status colouring; only re-renders a window for speed
+function renderPassage(currentIdx, statusMap) {
+  $('qt-passage').innerHTML = passageWords.map((w, i) => {
+    const cls = i === currentIdx ? 'w cur' : statusMap[i] === true ? 'w ok' : statusMap[i] === false ? 'w bad' : 'w';
+    return `<span class="${cls}">${escHtml(w)}</span>`;
+  }).join(' ');
+  const cur = $('qt-passage').querySelector('.cur');
+  if (cur) cur.scrollIntoView({ block: 'nearest' });
+}
+
+function tick() {
+  const elapsed = (Date.now() - startTime) / 1000;
+  const left = Math.max(0, DURATION - elapsed);
+  const m = Math.floor(left / 60), s = Math.floor(left % 60);
+  const timerEl = $('qt-timer');
+  timerEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
+  timerEl.classList.toggle('urgent', left <= 10 && left > 0);
+  updateLiveStats();
+  if (left <= 0) finish();
+}
+
+function typedWords() {
+  return $('qt-input').value.trim().length ? $('qt-input').value.trim().split(/\s+/) : [];
+}
+
+function scoreTyped() {
+  const typed = typedWords();
+  let correct = 0;
+  const statusMap = {};
+  typed.forEach((w, i) => {
+    const ok = i < passageWords.length && w === passageWords[i];
+    statusMap[i] = ok;
+    if (ok) correct++;
+  });
+  return { typed, correct, wrong: typed.length - correct, statusMap };
+}
+
+function updateLiveStats() {
+  const { typed, correct } = scoreTyped();
+  const minutes = Math.max((Date.now() - startTime) / 60000, 1 / 60);
+  $('qt-wpm').textContent = started ? Math.round(typed.length / minutes) : 0;
+  $('qt-acc').textContent = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+  $('qt-words').textContent = typed.length;
+}
+
+$('qt-input').addEventListener('input', () => {
+  if (finished) return;
+  if (!started) {
+    started = true;
+    startTime = Date.now();
+    timerHandle = setInterval(tick, 250);
+  }
+  const { typed, statusMap } = scoreTyped();
+  renderPassage(typed.length, statusMap);
+});
+
+['paste', 'copy', 'cut', 'drop'].forEach(ev =>
+  $('qt-input').addEventListener(ev, e => e.preventDefault()));
+$('qt-passage').addEventListener('contextmenu', e => e.preventDefault());
+
+function animate(id, endVal, suffix = '') {
+  const el = $(id);
+  if (window.countUp?.CountUp) {
+    const c = new countUp.CountUp(el, endVal, { duration: 1.4, suffix });
+    if (!c.error) { c.start(); return; }
+  }
+  el.textContent = endVal + suffix;
+}
+
+function finish() {
+  if (finished) return;
+  finished = true;
+  clearInterval(timerHandle);
+  $('qt-input').disabled = true;
+  $('qt-timer').textContent = '0:00';
+  $('qt-timer').classList.remove('urgent');
+
+  const { typed, correct, wrong } = scoreTyped();
+  const wpm = Math.round(typed.length); // 1 minute → words typed == WPM
+  const acc = typed.length ? Math.round((correct / typed.length) * 100) : 0;
+
+  $('qt-results').style.display = 'block';
+  animate('r-wpm', wpm);
+  animate('r-acc', acc);
+  animate('r-correct', correct);
+  animate('r-wrong', wrong);
+  $('qt-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function restart(skipLoad) {
+  started = false; finished = false;
+  clearInterval(timerHandle);
+  $('qt-input').disabled = false;
+  $('qt-input').value = '';
+  $('qt-timer').textContent = '1:00';
+  $('qt-wpm').textContent = '0';
+  $('qt-acc').textContent = '100';
+  $('qt-words').textContent = '0';
+  $('qt-results').style.display = 'none';
+  if (!skipLoad) loadPassage();
+  $('qt-input').focus();
+}
+
+function switchAndRestart() {
+  const next = language === 'english' ? 'hindi' : 'english';
+  started = false; finished = false;   // allow setLanguage mid-reset
+  restart(true);                       // reset UI without fetching...
+  setLanguage(next);                   // ...setLanguage loads the new passage
+}
+
+loadPassage();
+</script>
+</body>
+</html>

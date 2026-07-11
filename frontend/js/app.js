@@ -85,3 +85,23 @@ document.addEventListener('DOMContentLoaded', initNavbar);
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+/* ── Branded confirm dialog ──────────────────────────
+   Uses SweetAlert2 when the page has loaded its CDN script; falls back to
+   the native confirm() on pages that haven't. Always returns a Promise. */
+function ttConfirm(title, text = '', confirmText = 'Yes, continue') {
+  if (typeof Swal === 'undefined') {
+    return Promise.resolve(window.confirm(text ? `${title}\n\n${text}` : title));
+  }
+  return Swal.fire({
+    title,
+    text,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: confirmText,
+    cancelButtonText: 'Cancel',
+    confirmButtonColor: '#1a3c6e',
+    cancelButtonColor: '#94a3b8',
+    reverseButtons: true,
+  }).then(r => r.isConfirmed);
+}

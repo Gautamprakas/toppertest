@@ -254,6 +254,28 @@ exports.getLeaderboard = async (req, res) => {
   res.json(rows);
 };
 
+/* ─── Guest Quick Test ─────────────────────────────────────────────────────── */
+// Public: one random passage for the no-login 1-minute test. Returning the
+// text is intentional — guest results are never saved, so there is no
+// session-integrity concern here (auth on the real flow protects result
+// recording, not passage secrecy).
+exports.getQuickTestPassage = async (req, res) => {
+  try {
+    const language = ['hindi', 'english'].includes(req.query.language) ? req.query.language : 'english';
+    const [rows] = await db.query(
+      `SELECT id, title, language, word_count, passage_text
+       FROM passages WHERE is_active = 1 AND language = ?
+       ORDER BY RAND() LIMIT 1`,
+      [language]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'No passages available for this language yet' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error('getQuickTestPassage error:', err);
+    res.status(500).json({ error: 'Failed to fetch quick test passage' });
+  }
+};
+
 /* ─── Daily Challenge ──────────────────────────────────────────────────────── */
 // One featured passage per day (row seeded by the daily scraper). Public for
 // browsing; adds the caller's own attempt status when a valid token is sent.
