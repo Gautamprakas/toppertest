@@ -263,8 +263,10 @@ exports.getQuickTestPassage = async (req, res) => {
   try {
     const language = ['hindi', 'english'].includes(req.query.language) ? req.query.language : 'english';
     const [rows] = await db.query(
-      `SELECT id, title, language, word_count, passage_text
-       FROM passages WHERE is_active = 1 AND language = ?
+      `SELECT p.id, p.title, p.language, p.word_count, p.passage_text
+       FROM passages p
+       JOIN exams e ON p.exam_id = e.id AND e.is_active = 1
+       WHERE p.is_active = 1 AND p.language = ?
        ORDER BY RAND() LIMIT 1`,
       [language]
     );
