@@ -64,7 +64,7 @@ exports.createExam = async (req, res) => {
         parseInt(word_limit) || 250,
         description || '',
         parseInt(sort_order) || 10,
-        enable_highlighting !== undefined ? (enable_highlighting ? 1 : 0) : 1
+        enable_highlighting !== undefined ? (enable_highlighting ? 1 : 0) : 0
       ]
     );
     cache.clear(EXAMS_CACHE_KEY);
@@ -91,7 +91,7 @@ exports.updateExam = async (req, res) => {
       [
         exam_name, language, duration_minutes, word_limit,
         description, is_active ?? 1, sort_order || 0,
-        enable_highlighting !== undefined ? (enable_highlighting ? 1 : 0) : 1,
+        enable_highlighting !== undefined ? (enable_highlighting ? 1 : 0) : 0,
         req.params.id
       ]
     );
