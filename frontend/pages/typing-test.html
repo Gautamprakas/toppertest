@@ -1011,9 +1011,11 @@ function showPerformanceDashboard(r, timeTaken, autoSubmit) {
 
 // Strip surrounding punctuation/quotes for matching only
 function normWord(w) {
-  return String(w||'').replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g,'').toLowerCase();
+  // Comparison normaliser: trim punctuation/symbols at the word edges only.
+  // Must be Unicode-aware — an ASCII-only class would erase Devanagari words
+  // entirely (Hindi passages rendered blank / all words "equal").
+  return String(w||'').replace(/^[\p{P}\p{S}]+|[\p{P}\p{S}]+$/gu,'').toLowerCase();
 }
-function normaliseWord(w) { return normWord(w); }
 
 // Levenshtein distance (used for similarity scoring in NW matrix)
 function levenshtein(a, b) {
