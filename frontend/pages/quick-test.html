@@ -62,7 +62,11 @@
     /* Results */
     #qt-results { display: none; margin-top: 28px; }
     .qt-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 22px; }
-    .qt-result-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 20px; text-align: center; border-top: 4px solid var(--primary); }
+    .qt-result-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow); padding: 20px; text-align: center; border-top: 4px solid var(--primary); animation: anim-pop .45s cubic-bezier(.34,1.56,.64,1) both; }
+    .qt-result-card:nth-child(2) { animation-delay: .07s; }
+    .qt-result-card:nth-child(3) { animation-delay: .14s; }
+    .qt-result-card:nth-child(4) { animation-delay: .21s; }
+    @media (prefers-reduced-motion: reduce) { .qt-result-card { animation: none; } }
     .qt-result-card.accent  { border-color: var(--accent); }
     .qt-result-card.success { border-color: var(--success); }
     .qt-result-card.danger  { border-color: var(--danger); }

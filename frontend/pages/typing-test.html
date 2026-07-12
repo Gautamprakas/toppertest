@@ -225,7 +225,14 @@
     .rd-stats { padding:20px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px; }
     @media(max-width:900px){ .rd-stats{grid-template-columns:repeat(2,1fr);} }
     @media(max-width:500px){ .rd-stats{grid-template-columns:1fr;} }
-    .rd-card { border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .rd-card { border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05);animation:anim-pop .45s cubic-bezier(.34,1.56,.64,1) both; }
+    .rd-card:nth-child(2)  { animation-delay:.05s; } .rd-card:nth-child(3)  { animation-delay:.10s; }
+    .rd-card:nth-child(4)  { animation-delay:.15s; } .rd-card:nth-child(5)  { animation-delay:.20s; }
+    .rd-card:nth-child(6)  { animation-delay:.25s; } .rd-card:nth-child(7)  { animation-delay:.30s; }
+    .rd-card:nth-child(8)  { animation-delay:.35s; } .rd-card:nth-child(9)  { animation-delay:.40s; }
+    .rd-card:nth-child(10) { animation-delay:.45s; } .rd-card:nth-child(11) { animation-delay:.50s; }
+    .rd-card:nth-child(12) { animation-delay:.55s; }
+    @media (prefers-reduced-motion: reduce) { .rd-card { animation: none; } }
     .rd-card .card-label { font-size:12px;color:#64748b;font-weight:500;margin-bottom:4px; }
     .rd-card .card-value { font-size:26px;font-weight:800;font-family:'Poppins',sans-serif;color:#111827; }
     .rd-card .card-value.green { color:#059669; }

@@ -255,6 +255,35 @@ tr:hover td { background: #f8fafc; }
 .exam-icon svg, .fi-icon svg { width: 32px; height: 32px; color: var(--primary); }
 .yt-icon { width: 22px; height: 22px; }
 
+/* ── Micro-animations ────────────────────────────────────── */
+@keyframes anim-pop    { 0% { transform: scale(.5); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes anim-float  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes anim-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+
+/* button icons nudge on hover */
+.btn .icon { transition: transform .25s ease; }
+.btn:hover .icon { transform: scale(1.2) rotate(-8deg); }
+
+/* navbar keyboard logo wiggles on hover */
+.navbar-brand a:hover .brand-icon { animation: anim-wiggle .5s ease; }
+
+/* card icons lift toward gold when their card is hovered */
+.fi-icon svg, .tc-icon svg, .exam-card-top .icon svg, .eo-icon svg { transition: transform .25s ease, color .25s ease; }
+.feature-item:hover .fi-icon svg { transform: translateY(-3px) scale(1.12); color: var(--accent-dark); }
+.track-card:hover .tc-icon svg   { transform: translateY(-3px) scale(1.12); color: var(--accent-dark); }
+.exam-card:hover .exam-card-top .icon svg { transform: translateY(-3px) scale(1.1) rotate(-5deg); }
+
+/* scroll-reveal: app.js adds .anim-ready on load, .anim-in when visible */
+.anim-ready { opacity: 0; }
+.anim-in    { animation: anim-pop .55s cubic-bezier(.34,1.56,.64,1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-ready, .anim-in { opacity: 1 !important; animation: none !important; }
+  .btn:hover .icon, .feature-item:hover .fi-icon svg, .track-card:hover .tc-icon svg,
+  .exam-card:hover .exam-card-top .icon svg { transform: none !important; }
+  .navbar-brand a:hover .brand-icon { animation: none !important; }
+}
+
 /* ── Footer ──────────────────────────────────────────────── */
 footer { background: var(--primary-dark); color: rgba(255,255,255,.7); font-size: 13px; }
 footer a { color: rgba(255,255,255,.75); transition: color .2s; }

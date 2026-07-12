@@ -81,6 +81,29 @@ document.head.appendChild(styleEl);
 
 document.addEventListener('DOMContentLoaded', initNavbar);
 
+/* ── Scroll-reveal icons ─────────────────────────────
+   Pops section icons in as they scroll into view, staggered per group
+   (see .anim-ready / .anim-in in style.css). */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!('IntersectionObserver' in window)) return;
+  const targets = document.querySelectorAll('.fi-icon, .tc-icon, .how-step .num');
+  if (!targets.length) return;
+  const groups = new Map();
+  targets.forEach(el => {
+    const group = el.closest('.features-grid, .track-cards, .how-steps') || document.body;
+    const idx = groups.get(group) || 0;
+    groups.set(group, idx + 1);
+    el.style.animationDelay = (idx * 90) + 'ms';
+    el.classList.add('anim-ready');
+  });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('anim-in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.35 });
+  targets.forEach(el => io.observe(el));
+});
+
 /* ── HTML escape ───────────────────────────────────── */
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
