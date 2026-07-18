@@ -1011,11 +1011,11 @@ function showPerformanceDashboard(r, timeTaken, autoSubmit) {
   setNum('rd-typed', typedWords.length);
   setNum('rd-full-mistake', fullMistake);
   setNum('rd-half-mistake', halfMistake);
-  setNum('rd-net-wrong', netWrongWords);
+  setNum('rd-net-wrong', netWrongWords, { decimalPlaces: Number.isInteger(netWrongWords) ? 0 : 1 });
   setNum('rd-omissions', omissions);
   setNum('rd-extra-spaces', extraSpaces);
   setNum('rd-backspaces', backspaceCount);
-  setNum('rd-correct', correctWordsDisplay);
+  setNum('rd-correct', correctWordsDisplay, { decimalPlaces: Number.isInteger(correctWordsDisplay) ? 0 : 1 });
   setNum('rd-gross-speed', grossSpeed, { decimalPlaces: 2 });
   setNum('rd-net-speed', netSpeed, { decimalPlaces: 2 });
   setNum('rd-accuracy', accuracy, { decimalPlaces: 2, suffix: ' %' });
@@ -1119,6 +1119,27 @@ function doAlignWords(origWords, typedWords) {
     }
   }
   alignment.reverse();
+
+  // ── Step 2b: Merge adjacent gaps into substitution pairs ──
+  // LCS only pairs equal words, so a typo ("legall" for "legally") comes out
+  // as a missed original PLUS an extra typed word — double-counted. Exam
+  // rules treat a mistyped word as ONE full mistake, so pair up unmatched
+  // originals with unmatched typed words inside the same gap, in order.
+  const merged = [];
+  let gapO = [], gapT = [];
+  const flushGaps = () => {
+    while (gapO.length && gapT.length) merged.push({ oi: gapO.shift(), ti: gapT.shift() });
+    while (gapO.length) merged.push({ oi: gapO.shift(), ti: null });
+    while (gapT.length) merged.push({ oi: null, ti: gapT.shift() });
+  };
+  for (const a of alignment) {
+    if (a.oi !== null && a.ti !== null) { flushGaps(); merged.push(a); }
+    else if (a.oi !== null) gapO.push(a.oi);
+    else gapT.push(a.ti);
+  }
+  flushGaps();
+  alignment.length = 0;
+  alignment.push(...merged);
 
   // ── Step 3: Build result slots ───────────────────────────
   const slots = origWords.map(w => ({ orig: w, typed: null, status: 'omitted' }));
