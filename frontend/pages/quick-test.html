@@ -139,6 +139,7 @@
 </div>
 
 <script src="/js/app.js"></script>
+<script src="/js/typing-align.js"></script>
 <script>
 let language = 'english';
 let passageWords = [];
@@ -201,14 +202,20 @@ function scoreTyped(includeInProgress) {
   // highlight stays on it and it is not scored (except at finish time).
   const inProgress = !includeInProgress && typed.length > 0 && !/\s$/.test(raw);
   const done = inProgress ? typed.length - 1 : typed.length;
-  let correct = 0;
+  // Same alignment engine as the full test (typing-align.js): skipped words
+  // don't cascade errors, typos count once, case errors are half mistakes.
+  const { slots, extra, lastPi } = doAlignWords(passageWords, typed.slice(0, done));
+  let correct = 0, half = 0, full = 0, missed = 0;
   const statusMap = {};
-  for (let i = 0; i < done; i++) {
-    const ok = i < passageWords.length && typed[i] === passageWords[i];
-    statusMap[i] = ok;
-    if (ok) correct++;
-  }
-  return { typed, done, correct, wrong: done - correct, statusMap };
+  slots.forEach((s, oi) => {
+    if      (s.status === 'correct')     { statusMap[oi] = true;  correct++; }
+    else if (s.status === 'halfmistake') { statusMap[oi] = false; half++; }
+    else if (s.status === 'wrong')       { statusMap[oi] = false; full++; }
+    else if (s.status === 'missed')      { statusMap[oi] = false; missed++; }
+  });
+  const correctDisp = correct + half * 0.5;
+  const wrong = parseFloat((full + half * 0.5 + extra.length).toFixed(1));
+  return { typed, done, correct: correctDisp, wrong, missed, statusMap, cursor: lastPi };
 }
 
 function updateLiveStats() {
@@ -226,8 +233,8 @@ $('qt-input').addEventListener('input', () => {
     startTime = Date.now();
     timerHandle = setInterval(tick, 250);
   }
-  const { done, statusMap } = scoreTyped();
-  renderPassage(done, statusMap);
+  const { done, statusMap, cursor } = scoreTyped();
+  renderPassage(done === 0 ? 0 : cursor, statusMap);
 });
 
 ['paste', 'copy', 'cut', 'drop'].forEach(ev =>
@@ -237,7 +244,8 @@ $('qt-passage').addEventListener('contextmenu', e => e.preventDefault());
 function animate(id, endVal, suffix = '') {
   const el = $(id);
   if (window.countUp?.CountUp) {
-    const c = new countUp.CountUp(el, endVal, { duration: 1.4, suffix });
+    const c = new countUp.CountUp(el, endVal,
+      { duration: 1.4, suffix, decimalPlaces: Number.isInteger(endVal) ? 0 : 1 });
     if (!c.error) { c.start(); return; }
   }
   el.textContent = endVal + suffix;
