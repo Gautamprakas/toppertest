@@ -49,7 +49,11 @@ function cleanText(raw, language) {
     .replace(/[“”«»„]/g, '"')              // normalize typographic quotes
     .replace(/[‘’‚]/g, "'")
     .replace(/[–—―]/g, '-')                // normalize dashes
-    .replace(/[′″]/g, "'");
+    .replace(/[′″]/g, "'")
+    // Devanagari numerals -> ASCII digits (१९९२ -> 1992) so Hindi passages
+    // never require the Devanagari number row; most typists enter numbers
+    // with the English layout or numpad.
+    .replace(/[०-९]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x0966 + 48));
 
   // Strip anything the exam keyboard can't type (IPA, foreign script,
   // symbols, zero-width joiners...). Replace with a space, then tidy up.
