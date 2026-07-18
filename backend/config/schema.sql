@@ -184,9 +184,9 @@ ORDER BY best_wpm DESC;
 -- SAMPLE EXAM DATA
 -- ============================================================
 INSERT INTO exams (exam_name, exam_code, language, duration_minutes, word_limit, description, sort_order) VALUES
-('UPP ASI / SI Hindi Typing',            'UPP_ASI_SI_HINDI',   'hindi',   15, 250, 'Uttar Pradesh Police ASI/SI Hindi Mangal typing test practice',  1),
+('UPP ASI / SI Hindi Typing',            'UPP_ASI_SI_HINDI',   'hindi',   15, 410, 'Uttar Pradesh Police ASI/SI Hindi Mangal typing test practice',  1),
 ('UPP ASI / SI English Typing',          'UPP_ASI_SI_ENGLISH', 'english', 15, 510, 'Uttar Pradesh Police ASI/SI English typing test practice',       2),
-('UPP Computer Operator Hindi Typing',   'UPP_CO_HINDI',       'hindi',   15, 250, 'UP Police Computer Operator Hindi Mangal typing test practice',  3),
+('UPP Computer Operator Hindi Typing',   'UPP_CO_HINDI',       'hindi',   15, 410, 'UP Police Computer Operator Hindi Mangal typing test practice',  3),
 ('UPP Computer Operator English Typing', 'UPP_CO_ENGLISH',     'english', 15, 510, 'UP Police Computer Operator English typing test practice',       4);
 
 -- ============================================================
