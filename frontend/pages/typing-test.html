@@ -579,15 +579,35 @@ function escHtml(s) {
 
 function toggleMute() { /* sound stub */ }
 
-// ── Fullscreen overlay ─────────────────────────────────────
+// ── Test start (no fullscreen prompt) ──────────────────────
+// Browsers only allow entering fullscreen from inside a user gesture, so a
+// silent auto-fullscreen on page load is impossible. Instead: the test UI
+// shows immediately, the browser goes fullscreen on the user's FIRST
+// gesture (any click or key press), and the countdown starts with the
+// first keystroke — nothing is asked.
 function showFsOverlay() {
-  setStyle('fs-overlay', 'display', 'flex');
-}
-function dismissFsOverlay() {
-  setStyle('fs-overlay', 'display', 'none');
   setStyle('test-ui', 'display', 'block');
+  inputEl.placeholder = 'Start typing here — the timer begins with your first keystroke...';
   inputEl.focus();
-  startTimer();
+
+  const goFs = () => {
+    document.removeEventListener('pointerdown', goFs, true);
+    document.removeEventListener('keydown', goFs, true);
+    if (!document.fullscreenElement) { try { enterFullscreen(); } catch (e) {} }
+  };
+  document.addEventListener('pointerdown', goFs, true);
+  document.addEventListener('keydown', goFs, true);
+
+  const beginTimer = () => {
+    inputEl.removeEventListener('input', beginTimer);
+    inputEl.placeholder = '';
+    if (!timerHandle) startTimer();
+  };
+  inputEl.addEventListener('input', beginTimer);
+}
+function dismissFsOverlay() { // legacy (old overlay buttons); starts instantly now
+  setStyle('fs-overlay', 'display', 'none');
+  showFsOverlay();
 }
 function startFullscreenAndTest() {
   const el = document.documentElement;
