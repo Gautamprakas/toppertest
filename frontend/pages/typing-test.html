@@ -453,7 +453,7 @@
     </div>
     <div class="rd-card">
       <div class="rd-card-left">
-        <div class="card-label">Gross Speed (min. 30)</div>
+        <div class="card-label">Gross Speed (wpm)</div>
         <div class="card-value blue" id="rd-gross-speed">0.00</div>
       </div>
       <div class="rd-card-icon"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
@@ -947,20 +947,26 @@ function showPerformanceDashboard(r, timeTaken, autoSubmit) {
   });
 
   const extraWordCount = extraWords.length;
-  const omissions = missedWords + Math.max(0, origWords.length - lastPi);
+  // Omissions = words skipped inside the attempted portion only. The tail of
+  // the passage the typist never reached is unattempted, not a mistake — the
+  // speed requirement already penalises typing too little.
+  const omissions = missedWords;
   const correctWordsDisplay = parseFloat((correctWords + halfMistake * 0.5).toFixed(1));
-  const netWrongWords = parseFloat((fullMistake + halfMistake * 0.5).toFixed(1));
+  // Extra words typed that are not in the passage count as mistakes (exam rule)
+  const netWrongWords = parseFloat((fullMistake + halfMistake * 0.5 + extraWordCount).toFixed(1));
   const grossSpeed = timeTakenMin > 0
     ? parseFloat((typedWords.length / timeTakenMin).toFixed(2)) : 0;
   const netSpeed = timeTakenMin > 0
-    ? parseFloat((Math.max(0, typedWords.length - netWrongWords) / timeTakenMin).toFixed(2)) : 0;
+    ? parseFloat((Math.max(0, typedWords.length - netWrongWords - omissions - extraSpaces) / timeTakenMin).toFixed(2)) : 0;
 
-  // ACCURACY: correct / word_limit (total passage length) * 100
-  const accuracy = origWords.length > 0
-    ? parseFloat(((correctWords / origWords.length) * 100).toFixed(2)) : 0;
+  // ACCURACY (exam rule): correct out of what was TYPED, not the whole passage
+  const accuracy = typedWords.length > 0
+    ? parseFloat(((correctWordsDisplay / typedWords.length) * 100).toFixed(2)) : 0;
 
-  const minWords = Math.round(origWords.length * 0.85);
-  const qualified = typedWords.length >= minWords && accuracy >= 80;
+  // QUALIFICATION (UPP rules): two independent checks —
+  //   speed: net WPM >= 30 English / 25 Hindi;  accuracy: >= 85%
+  const minWpm = (passageData?.language === 'hindi') ? 25 : 30;
+  const qualified = typedWords.length > 0 && netSpeed >= minWpm && accuracy >= 85;
 
   // Meta
   document.getElementById('rd-exam-title').textContent = passageData?.exam_name || 'Typing Test';
@@ -998,8 +1004,9 @@ function showPerformanceDashboard(r, timeTaken, autoSubmit) {
   setCls('rd-status', 'card-value ' + (qualified ? 'qualified' : 'not-qualified'));
 
   setHtml('rd-qualify-msg',
-    'Minimum <b>' + minWords + '</b> words required to qualify. &nbsp;|&nbsp; ' +
-    'Accuracy = Correct (<b>' + correctWords + '</b>) &divide; Word Limit (<b>' + origWords.length + '</b>) &times; 100 = <b>' + accuracy + '%</b>');
+    'To qualify: Net Speed &ge; <b>' + minWpm + ' WPM</b> (' +
+    (passageData?.language === 'hindi' ? 'Hindi' : 'English') + ') and Accuracy &ge; <b>85%</b>. &nbsp;|&nbsp; ' +
+    'Accuracy = Correct (<b>' + correctWordsDisplay + '</b>) &divide; Words Typed (<b>' + typedWords.length + '</b>) &times; 100 = <b>' + accuracy + '%</b>');
 
   buildComparison(origWords, typedWords);
 }
@@ -1071,7 +1078,16 @@ function doAlignWords(origWords, typedWords) {
   const alignment = [];
   let i = O, j = T;
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && normWord(origWords[i-1]) === normWord(typedWords[j-1])) {
+    if (i > 0 && lcs[idx(i-1,j)] === lcs[idx(i,j)]) {
+      // Skipping this original word loses no matches — prefer the skip.
+      // Traceback runs from the END of the passage, so greedily pairing
+      // equal words here would match typed words against far-away repeats
+      // of common words ("the", "is", "of"), scattering the alignment and
+      // inflating omissions. Skipping-when-free pushes every match to its
+      // EARLIEST occurrence, keeping the alignment near what was typed.
+      alignment.push({ oi: i-1, ti: null }); // unmatched orig word
+      i--;
+    } else if (i > 0 && j > 0 && normWord(origWords[i-1]) === normWord(typedWords[j-1])) {
       alignment.push({ oi: i-1, ti: j-1 });
       i--; j--;
     } else if (j > 0 && (i === 0 || lcs[idx(i,j-1)] >= lcs[idx(i-1,j)])) {
