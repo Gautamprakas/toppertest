@@ -68,6 +68,12 @@
 <script>
   if (Auth.isLoggedIn()) window.location.href = '/pages/dashboard.html';
 
+  // Arrived here because a stored login expired (see apiFetch 401 handling)
+  if (new URLSearchParams(location.search).get('session') === 'expired') {
+    document.getElementById('alert-box').innerHTML =
+      '<div class="alert alert-warning"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg> Your session expired — please log in again to continue.</div>';
+  }
+
   async function doLogin() {
     const btn   = document.getElementById('login-btn');
     const email = document.getElementById('email').value.trim();

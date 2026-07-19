@@ -21,6 +21,15 @@ async function apiFetch(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
   const res  = await fetch(`${API_BASE}${path}`, { ...options, headers: { ...headers, ...options.headers } });
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401 && token && !location.pathname.includes('login')) {
+    // The stored login is expired or invalid (tokens last 7 days). Clear it
+    // and send the user to sign in again instead of letting every page fail
+    // with a cryptic "failed to load" error.
+    localStorage.removeItem('tt_token');
+    localStorage.removeItem('tt_user');
+    window.location.href = '/pages/login.html?session=expired';
+    return new Promise(() => {}); // page is navigating away — halt the caller
+  }
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
 }
