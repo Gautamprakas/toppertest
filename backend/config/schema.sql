@@ -15,7 +15,7 @@ CREATE TABLE users (
     email       VARCHAR(150) NOT NULL UNIQUE,
     password    VARCHAR(255) NOT NULL,
     role        ENUM('student','admin') DEFAULT 'student',
-    phone       VARCHAR(15),
+    phone       VARCHAR(15) UNIQUE,
     avatar_url  VARCHAR(255),
     is_active   TINYINT(1) DEFAULT 1,
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
