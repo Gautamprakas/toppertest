@@ -41,19 +41,22 @@ exports.getPassages = async (req, res) => {
 
 exports.getPassageDates = async (req, res) => {
   const { exam_id, language } = req.query;
-  if (!exam_id || !language) return res.status(400).json({ error: 'exam_id and language required' });
+  if (!language) return res.status(400).json({ error: 'language required' });
   try {
-    const cacheKey = `${PASSAGE_DATES_PREFIX}${exam_id}:${language}`;
+    // exam_id is optional: the guest Quick Test has no exam context and asks
+    // for dates across every active exam of a language; select-exam.html
+    // still passes exam_id to scope dates to one specific exam.
+    const cacheKey = `${PASSAGE_DATES_PREFIX}${exam_id || 'all'}:${language}`;
     const cached = cache.get(cacheKey);
     if (cached) return res.json(cached);
 
-    const [rows] = await db.query(
-      `SELECT DISTINCT DATE_FORMAT(passage_date, '%Y-%m-%d') AS passage_date
-       FROM passages
-       WHERE exam_id = ? AND language = ? AND is_active = 1 AND passage_date IS NOT NULL
-       ORDER BY passage_date DESC`,
-      [exam_id, language]
-    );
+    let sql = `SELECT DISTINCT DATE_FORMAT(passage_date, '%Y-%m-%d') AS passage_date
+               FROM passages WHERE language = ? AND is_active = 1 AND passage_date IS NOT NULL`;
+    const params = [language];
+    if (exam_id) { sql += ' AND exam_id = ?'; params.push(exam_id); }
+    sql += ' ORDER BY passage_date DESC';
+
+    const [rows] = await db.query(sql, params);
     // Return plain array of date strings e.g. ["2024-01-15", "2024-01-16"]
     const dates = rows.map(r => r.passage_date);
     cache.set(cacheKey, dates, PASSAGE_DATES_TTL);

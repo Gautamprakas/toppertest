@@ -272,15 +272,30 @@ exports.getLeaderboard = async (req, res) => {
 exports.getQuickTestPassage = async (req, res) => {
   try {
     const language = ['hindi', 'english'].includes(req.query.language) ? req.query.language : 'english';
-    const [rows] = await db.query(
-      `SELECT p.id, p.title, p.language, p.word_count, p.passage_text
-       FROM passages p
-       JOIN exams e ON p.exam_id = e.id AND e.is_active = 1
-       WHERE p.is_active = 1 AND p.language = ?
-       ORDER BY RAND() LIMIT 1`,
-      [language]
-    );
-    if (!rows.length) return res.status(404).json({ error: 'No passages available for this language yet' });
+    const { passage_id, date } = req.query;
+
+    let sql = `SELECT p.id, p.title, p.language, p.word_count, p.passage_text
+               FROM passages p
+               JOIN exams e ON p.exam_id = e.id AND e.is_active = 1
+               WHERE p.is_active = 1 AND p.language = ?`;
+    const params = [language];
+
+    if (passage_id) {
+      // User picked a specific passage from the date/passage list — exact
+      // lookup, still constrained to active + matching language so a stale
+      // or foreign-language id can't be requested.
+      sql += ' AND p.id = ? LIMIT 1';
+      params.push(passage_id);
+    } else if (date) {
+      // User picked a date but let us choose which passage from that day
+      sql += ' AND DATE_FORMAT(p.passage_date, \'%Y-%m-%d\') = ? ORDER BY RAND() LIMIT 1';
+      params.push(date);
+    } else {
+      sql += ' ORDER BY RAND() LIMIT 1';
+    }
+
+    const [rows] = await db.query(sql, params);
+    if (!rows.length) return res.status(404).json({ error: 'No passages available for this selection' });
     res.json(rows[0]);
   } catch (err) {
     console.error('getQuickTestPassage error:', err);

@@ -25,10 +25,20 @@
     .qt-head h1 { font-size: clamp(22px, 4vw, 32px); color: var(--primary); font-weight: 800; }
     .qt-head p { color: var(--muted); margin-top: 6px; font-size: 14px; }
 
-    .qt-controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+    .qt-controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
     .lang-pill { display: inline-flex; border: 2px solid var(--primary); border-radius: 999px; overflow: hidden; }
     .lang-pill button { border: none; background: #fff; color: var(--primary); font-weight: 700; font-size: 14px; padding: 8px 22px; cursor: pointer; font-family: var(--font-body); }
     .lang-pill button.active { background: var(--primary); color: #fff; }
+
+    .qt-picker-toggle { text-align: left; margin-bottom: 14px; }
+    .qt-picker-toggle a { font-size: 13px; font-weight: 600; color: var(--accent-dark); cursor: pointer; }
+    .qt-picker-toggle a:hover { text-decoration: underline; }
+    .qt-picker { display: none; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+    .qt-picker.open { display: flex; }
+    .qt-picker { flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+    .qt-picker-field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+    .qt-picker-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+    .qt-picker-field select { padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: var(--font-body); background: #fff; }
 
     .qt-stats { display: flex; gap: 22px; align-items: center; }
     .qt-stat { text-align: center; }
@@ -111,6 +121,22 @@
       </div>
     </div>
 
+    <div class="qt-picker-toggle">
+      <a onclick="togglePicker()" id="qt-picker-link">📅 Choose a specific date &amp; passage</a>
+    </div>
+    <div class="qt-picker" id="qt-picker">
+      <div class="qt-picker-field">
+        <label for="qt-date-select">Date</label>
+        <select id="qt-date-select" onchange="onDateChange()"><option value="">Loading dates…</option></select>
+      </div>
+      <div class="qt-picker-field">
+        <label for="qt-passage-select">Passage</label>
+        <select id="qt-passage-select" disabled><option value="">Select a date first</option></select>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="loadChosenPassage()">Load Passage</button>
+      <button class="btn btn-outline btn-sm" onclick="loadRandomFromPicker()">🎲 Random Instead</button>
+    </div>
+
     <div id="qt-test-area">
       <div class="qt-passage english" id="qt-passage"><span class="text-muted">Loading passage…</span></div>
       <textarea id="qt-input" class="english" placeholder="Start typing here — the 60-second timer begins on your first key…" spellcheck="false"></textarea>
@@ -158,17 +184,77 @@ function setLanguage(lang) {
   $('qt-passage').className = 'qt-passage ' + lang;
   $('qt-input').className = lang;
   loadPassage();
+  // Dates/passages differ per language — refresh the picker if it's open
+  if ($('qt-picker').classList.contains('open')) loadDateOptions();
 }
 
-async function loadPassage() {
+async function loadPassage(passageId) {
   $('qt-passage').innerHTML = '<span class="text-muted">Loading passage…</span>';
   try {
-    const p = await apiFetch(`/quick-test?language=${language}`);
+    const url = passageId ? `/quick-test?language=${language}&passage_id=${passageId}` : `/quick-test?language=${language}`;
+    const p = await apiFetch(url);
     passageWords = p.passage_text.trim().split(/\s+/);
     renderPassage(0, {});
   } catch (err) {
     $('qt-passage').innerHTML = '<span class="text-muted">Could not load a passage — please refresh.</span>';
   }
+}
+
+// ── Date / passage picker (guest can pick a specific day instead of random) ──
+function togglePicker() {
+  if (started && !finished) return; // no switching mid-test
+  const picker = $('qt-picker');
+  const opening = !picker.classList.contains('open');
+  picker.classList.toggle('open', opening);
+  $('qt-picker-link').textContent = opening ? '🎲 Back to random passage' : '📅 Choose a specific date & passage';
+  if (opening) loadDateOptions();
+}
+
+async function loadDateOptions() {
+  const dateSel = $('qt-date-select');
+  const passSel = $('qt-passage-select');
+  dateSel.innerHTML = '<option value="">Loading dates…</option>';
+  passSel.innerHTML = '<option value="">Select a date first</option>';
+  passSel.disabled = true;
+  try {
+    const dates = await apiFetch(`/passages/dates?language=${language}`);
+    dateSel.innerHTML = dates.length
+      ? '<option value="">Choose a date…</option>' + dates.map(d => `<option value="${d}">${fmtDate(d)}</option>`).join('')
+      : '<option value="">No dated passages yet</option>';
+  } catch (err) {
+    dateSel.innerHTML = '<option value="">Could not load dates</option>';
+  }
+}
+
+async function onDateChange() {
+  const date = $('qt-date-select').value;
+  const passSel = $('qt-passage-select');
+  if (!date) { passSel.innerHTML = '<option value="">Select a date first</option>'; passSel.disabled = true; return; }
+  passSel.innerHTML = '<option value="">Loading passages…</option>';
+  passSel.disabled = true;
+  try {
+    const passages = await apiFetch(`/passages?language=${language}&date=${date}`);
+    passSel.innerHTML = passages.length
+      ? passages.map(p => `<option value="${p.id}">${escHtml(p.title)} · ${p.word_count}w · ${p.difficulty}</option>`).join('')
+      : '<option value="">No passages for this date</option>';
+    passSel.disabled = !passages.length;
+  } catch (err) {
+    passSel.innerHTML = '<option value="">Could not load passages</option>';
+  }
+}
+
+function loadChosenPassage() {
+  if (started && !finished) return; // no switching mid-test
+  const id = $('qt-passage-select').value;
+  if (!id) { showToast('Pick a date and passage first', 'warning'); return; }
+  restart(true);
+  loadPassage(id);
+}
+
+function loadRandomFromPicker() {
+  if (started && !finished) return; // no switching mid-test
+  restart(true);
+  loadPassage();
 }
 
 // Render with per-word status colouring; only re-renders a window for speed
