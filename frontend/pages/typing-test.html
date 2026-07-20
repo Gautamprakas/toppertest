@@ -676,6 +676,15 @@ function setFontSize(action) {
   }
 }
 
+// Split hyphenated words, keeping the hyphen on the trailing part
+// ("non-violence" -> ["non", "-violence"]) — reference-platform tokenization,
+// applied to BOTH the passage and the typed text so a correctly typed
+// hyphenated word still matches part for part.
+function hyphenTokens(words) {
+  return words.flatMap(w =>
+    w.length > 1 && w.includes('-') ? w.split(/(?=-)/).filter(Boolean) : [w]);
+}
+
 // ── Load Passage ───────────────────────────────────────────
 (async () => {
   try {
@@ -685,12 +694,11 @@ function setFontSize(action) {
     totalSecs   = (session.duration_minutes || p.duration_minutes) * 60;
     timeLeft    = totalSecs;
 
-    // Build word array — normalise for matching. Hyphenated words split into
-    // parts ("non-violence" -> "non-" + "violence", like the reference
-    // platform) so typing them with a space costs a half mistake, not a full
-    // wrong word plus a cascade.
-    passageWords = rawPassage.trim().split(/\s+/).filter(Boolean)
-      .flatMap(w => w.length > 1 && w.includes('-') ? w.split(/(?<=-)(?=.)/) : [w]);
+    // Build word array — hyphenated words split with the hyphen attached to
+    // the SECOND part ("non-violence" -> "non" + "-violence"), exactly like
+    // the reference platform: typing "non" alone is a correct word, and the
+    // remainder scores as one mistake. Typed text gets the same split.
+    passageWords = hyphenTokens(rawPassage.trim().split(/\s+/).filter(Boolean));
     const rawPassageAllWords = passageWords.length; // store before truncation
 
     // ── Populate new ARTyping theme elements ──────────────
@@ -813,7 +821,7 @@ function updateHighlights() {
   const raw        = inputEl.value;
   const typedParts = raw.split(' ');           // includes current partial word
   const curTypedIdx= typedParts.length - 1;    // index being typed right now
-  const completed  = typedParts.slice(0, curTypedIdx); // space-confirmed words
+  const completed  = hyphenTokens(typedParts.slice(0, curTypedIdx).filter(Boolean)); // space-confirmed words
 
   let correct = 0, wrong = 0, missed = 0;
   let currentPassageIdx = 0;
@@ -946,7 +954,7 @@ function showPerformanceDashboard(r, timeTaken, autoSubmit) {
   window.scrollTo(0, 0);
 
   const typedText   = inputEl.value || '';
-  const typedWords  = typedText.trim().split(/\s+/).filter(Boolean);
+  const typedWords  = hyphenTokens(typedText.trim().split(/\s+/).filter(Boolean));
   const origWords   = passageWords;
   const totalGiven  = origWords.length;
   const durationMin = totalSecs / 60;
