@@ -37,7 +37,12 @@ router.delete('/passages/:id',  adminAuth, passCtrl.deletePassage);
 router.post('/start-test',  auth, typingCtrl.startTest);
 router.post('/submit-test', auth, typingCtrl.submitTest);
 router.get('/history',      auth, typingCtrl.getHistory);
-router.get('/analytics',    auth, typingCtrl.getAnalytics);
+// Named "performance-stats", not "analytics" — many ad-blockers /
+// privacy extensions blanket-block any URL containing "analytics" as a
+// tracker pattern, which silently broke this first-party endpoint for
+// users with those extensions. Old path kept as an alias.
+router.get('/performance-stats', auth, typingCtrl.getAnalytics);
+router.get('/analytics',         auth, typingCtrl.getAnalytics);
 
 /* ── Admin ─────────────────────────────────────────────────────────────────── */
 router.get('/admin/users',       adminAuth, adminCtrl.getUsers);

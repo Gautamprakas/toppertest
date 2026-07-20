@@ -63,12 +63,21 @@ describe('Daily challenge', () => {
 });
 
 describe('Analytics extensions', () => {
-  test('returns streak, personal best, week compare and weak words fields', async () => {
-    const res = await request(app).get('/api/analytics').set('Authorization', `Bearer ${token}`);
+  // Route renamed to /performance-stats — many ad-blockers blanket-block
+  // any URL containing "analytics" as a tracker pattern. /analytics kept
+  // as a compatibility alias and checked here too.
+  test('performance-stats returns streak, personal best, week compare and weak words fields', async () => {
+    const res = await request(app).get('/api/performance-stats').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.streak).toBeGreaterThanOrEqual(1); // result inserted today
     expect(Number(res.body.personal_best.wpm)).toBe(42.5);
     expect(res.body).toHaveProperty('week_compare');
     expect(Array.isArray(res.body.weak_words)).toBe(true);
+  });
+
+  test('/analytics alias still works', async () => {
+    const res = await request(app).get('/api/analytics').set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('summary');
   });
 });

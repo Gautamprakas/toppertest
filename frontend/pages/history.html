@@ -87,12 +87,17 @@
 
   let page = 0; const limit = 20;
 
-  apiFetch('/analytics').then(d => {
+  apiFetch('/performance-stats').then(d => {
     const s = d.summary;
     document.getElementById('sh-total').textContent = s.total_tests || 0;
     document.getElementById('sh-best').textContent  = s.best_wpm   || 0;
     document.getElementById('sh-acc').textContent   = (s.avg_accuracy||0) + '%';
     document.getElementById('sh-avg').textContent   = s.avg_wpm    || 0;
+  }).catch(err => {
+    console.error('Failed to load performance stats:', err);
+    ['sh-total', 'sh-best', 'sh-acc', 'sh-avg'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
   });
 
   function loadHistory() {

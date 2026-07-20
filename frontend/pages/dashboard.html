@@ -179,7 +179,7 @@
   }
 
   // Load analytics
-  apiFetch('/analytics').then(data => {
+  apiFetch('/performance-stats').then(data => {
     const s = data.summary;
     document.getElementById('s-tests').textContent = s.total_tests || 0;
     document.getElementById('s-best').textContent  = s.best_wpm   || 0;
