@@ -311,6 +311,11 @@
           <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
         </svg>
       </button>
+      <button class="ctrl-icon-btn" id="fs-btn" onclick="toggleFullscreen()" title="Enter Fullscreen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+      </button>
       <button class="ctrl-icon-btn" title="Menu">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -643,13 +648,17 @@ function toggleFullscreen() {
   const isFull = document.fullscreenElement || document.webkitFullscreenElement;
   isFull ? exitFullscreen() : enterFullscreen();
 }
-document.addEventListener('fullscreenchange', () => {
-  const isFull = !!document.fullscreenElement;
+const ICON_FS_ENTER = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>';
+const ICON_FS_EXIT   = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>';
+function updateFsBtn() {
+  const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
   const btn    = document.getElementById('fs-btn');
   const prompt = document.getElementById('fs-prompt');
-  if (btn)    { btn.title = isFull ? 'Exit Fullscreen' : 'Enter Fullscreen'; btn.textContent = isFull ? '⊡' : '⛶'; }
+  if (btn)    { btn.title = isFull ? 'Exit Fullscreen' : 'Enter Fullscreen'; btn.innerHTML = isFull ? ICON_FS_EXIT : ICON_FS_ENTER; }
   if (prompt) prompt.style.display = isFull ? 'none' : 'flex'; // hide banner when in fullscreen
-});
+}
+document.addEventListener('fullscreenchange', updateFsBtn);
+document.addEventListener('webkitfullscreenchange', updateFsBtn);
 
 // ── Font Size ──────────────────────────────────────────────
 // Default font size in px (matches 1.125rem at 16px root = 18px)
