@@ -222,6 +222,11 @@
       document.getElementById('wpm-chart').style.display = 'none';
       document.getElementById('chart-empty').style.display = 'block';
     }
+  }).catch(err => {
+    console.error('Failed to load analytics:', err);
+    ['s-tests', 's-best', 's-acc', 's-avg', 's-streak', 's-week'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
   });
 
   // Recent history
@@ -241,13 +246,17 @@
         <td><strong style="color:${r.accuracy >= 90 ? 'var(--success)' : r.accuracy >= 70 ? 'var(--warning)' : 'var(--danger)'};">${r.accuracy}%</strong></td>
         <td style="color:var(--danger);">${r.errors}</td>
       </tr>`).join('');
+  }).catch(err => {
+    console.error('Failed to load history:', err);
+    document.getElementById('recent-tbody').innerHTML =
+      '<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--muted);">Could not load your history — please refresh.</td></tr>';
   });
 
   // Quick exam links
   apiFetch('/exams').then(exams => {
     document.getElementById('quick-exams').innerHTML = exams.slice(0, 6).map(e => `
       <a href="/pages/select-exam.html?exam=${e.id}" class="btn btn-outline btn-sm" style="justify-content:flex-start;"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg> ${e.exam_name}</a>`).join('');
-  });
+  }).catch(err => console.error('Failed to load quick exam links:', err));
 </script>
 </body>
 </html>

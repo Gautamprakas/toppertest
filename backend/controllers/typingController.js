@@ -121,124 +121,134 @@ exports.submitTest = async (req, res) => {
 
 /* ─── History ──────────────────────────────────────────────────────────────── */
 exports.getHistory = async (req, res) => {
-  const user_id = req.user.id;
-  const limit   = parseInt(req.query.limit) || 20;
-  const offset  = parseInt(req.query.offset) || 0;
+  try {
+    const user_id = req.user.id;
+    const limit   = parseInt(req.query.limit) || 20;
+    const offset  = parseInt(req.query.offset) || 0;
 
-  const [rows] = await db.query(
-    `SELECT r.id, e.exam_name, p.language, p.difficulty, p.passage_date,
-            r.wpm, r.accuracy, r.errors, r.total_words, r.correct_words,
-            r.time_taken, r.created_at
-     FROM typing_results r
-     JOIN exams e ON r.exam_id = e.id
-     JOIN passages p ON r.passage_id = p.id
-     WHERE r.user_id = ?
-     ORDER BY r.created_at DESC
-     LIMIT ? OFFSET ?`,
-    [user_id, limit, offset]
-  );
+    const [rows] = await db.query(
+      `SELECT r.id, e.exam_name, p.language, p.difficulty, p.passage_date,
+              r.wpm, r.accuracy, r.errors, r.total_words, r.correct_words,
+              r.time_taken, r.created_at
+       FROM typing_results r
+       JOIN exams e ON r.exam_id = e.id
+       JOIN passages p ON r.passage_id = p.id
+       WHERE r.user_id = ?
+       ORDER BY r.created_at DESC
+       LIMIT ? OFFSET ?`,
+      [user_id, limit, offset]
+    );
 
-  const [countRow] = await db.query(
-    'SELECT COUNT(*) AS total FROM typing_results WHERE user_id = ?', [user_id]
-  );
+    const [countRow] = await db.query(
+      'SELECT COUNT(*) AS total FROM typing_results WHERE user_id = ?', [user_id]
+    );
 
-  res.json({ results: rows, total: countRow[0].total });
+    res.json({ results: rows, total: countRow[0].total });
+  } catch (err) {
+    console.error('getHistory error:', err);
+    res.status(500).json({ error: 'Failed to load history' });
+  }
 };
 
 /* ─── Stats / Analytics ────────────────────────────────────────────────────── */
 exports.getAnalytics = async (req, res) => {
-  const user_id = req.user.id;
+  try {
+    const user_id = req.user.id;
 
-  const [summary] = await db.query(
-    `SELECT COUNT(*) AS total_tests,
-            ROUND(AVG(wpm),2) AS avg_wpm,
-            MAX(wpm) AS best_wpm,
-            ROUND(AVG(accuracy),2) AS avg_accuracy
-     FROM typing_results WHERE user_id = ?`,
-    [user_id]
-  );
+    const [summary] = await db.query(
+      `SELECT COUNT(*) AS total_tests,
+              ROUND(AVG(wpm),2) AS avg_wpm,
+              MAX(wpm) AS best_wpm,
+              ROUND(AVG(accuracy),2) AS avg_accuracy
+       FROM typing_results WHERE user_id = ?`,
+      [user_id]
+    );
 
-  const [trend] = await db.query(
-    `SELECT DATE(created_at) AS date, ROUND(AVG(wpm),2) AS avg_wpm, ROUND(AVG(accuracy),2) AS avg_accuracy
-     FROM typing_results WHERE user_id = ?
-     GROUP BY DATE(created_at)
-     ORDER BY date ASC
-     LIMIT 30`,
-    [user_id]
-  );
+    const [trend] = await db.query(
+      `SELECT DATE(created_at) AS date, ROUND(AVG(wpm),2) AS avg_wpm, ROUND(AVG(accuracy),2) AS avg_accuracy
+       FROM typing_results WHERE user_id = ?
+       GROUP BY DATE(created_at)
+       ORDER BY date ASC
+       LIMIT 30`,
+      [user_id]
+    );
 
-  // Personal bests (which exam/day the best WPM came from)
-  const [[bestWpm]] = await db.query(
-    `SELECT r.wpm, r.accuracy, e.exam_name, DATE(r.created_at) AS date
-     FROM typing_results r JOIN exams e ON r.exam_id = e.id
-     WHERE r.user_id = ? ORDER BY r.wpm DESC LIMIT 1`,
-    [user_id]
-  );
+    // Personal bests (which exam/day the best WPM came from)
+    const [[bestWpm]] = await db.query(
+      `SELECT r.wpm, r.accuracy, e.exam_name, DATE(r.created_at) AS date
+       FROM typing_results r JOIN exams e ON r.exam_id = e.id
+       WHERE r.user_id = ? ORDER BY r.wpm DESC LIMIT 1`,
+      [user_id]
+    );
 
-  // Practice streak: consecutive days with >=1 test, ending today or yesterday
-  const [days] = await db.query(
-    `SELECT DISTINCT DATE(created_at) AS d FROM typing_results
-     WHERE user_id = ? ORDER BY d DESC LIMIT 60`,
-    [user_id]
-  );
-  let streak = 0;
-  if (days.length) {
-    const msDay = 86400000;
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    let expect = today.getTime();
-    const first = new Date(days[0].d).setHours(0, 0, 0, 0);
-    if (first === expect - msDay) expect -= msDay; // streak alive but no test yet today
-    for (const row of days) {
-      const d = new Date(row.d).setHours(0, 0, 0, 0);
-      if (d !== expect) break;
-      streak++;
-      expect -= msDay;
-    }
-  }
-
-  // This week vs previous week average WPM
-  const [[weeks]] = await db.query(
-    `SELECT
-       ROUND(AVG(CASE WHEN created_at >= NOW() - INTERVAL 7 DAY THEN wpm END), 2)  AS this_week,
-       ROUND(AVG(CASE WHEN created_at <  NOW() - INTERVAL 7 DAY
-                       AND created_at >= NOW() - INTERVAL 14 DAY THEN wpm END), 2) AS prev_week
-     FROM typing_results WHERE user_id = ?`,
-    [user_id]
-  );
-
-  // Most frequently mistyped words across the last 10 tests (word-position
-  // compare, same scheme evaluateTyping scores with; capped for cheapness)
-  const [recent] = await db.query(
-    `SELECT r.typed_text, p.passage_text
-     FROM typing_results r JOIN passages p ON r.passage_id = p.id
-     WHERE r.user_id = ? AND r.typed_text IS NOT NULL
-     ORDER BY r.created_at DESC LIMIT 10`,
-    [user_id]
-  );
-  const missCounts = {};
-  for (const row of recent) {
-    const orig  = String(row.passage_text || '').trim().split(/\s+/).slice(0, 600);
-    const typed = String(row.typed_text  || '').trim().split(/\s+/).slice(0, 600);
-    typed.forEach((w, i) => {
-      if (i < orig.length && w !== orig[i]) {
-        missCounts[orig[i]] = (missCounts[orig[i]] || 0) + 1;
+    // Practice streak: consecutive days with >=1 test, ending today or yesterday
+    const [days] = await db.query(
+      `SELECT DISTINCT DATE(created_at) AS d FROM typing_results
+       WHERE user_id = ? ORDER BY d DESC LIMIT 60`,
+      [user_id]
+    );
+    let streak = 0;
+    if (days.length) {
+      const msDay = 86400000;
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      let expect = today.getTime();
+      const first = new Date(days[0].d).setHours(0, 0, 0, 0);
+      if (first === expect - msDay) expect -= msDay; // streak alive but no test yet today
+      for (const row of days) {
+        const d = new Date(row.d).setHours(0, 0, 0, 0);
+        if (d !== expect) break;
+        streak++;
+        expect -= msDay;
       }
-    });
-  }
-  const weak_words = Object.entries(missCounts)
-    .filter(([, n]) => n >= 2)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([word, count]) => ({ word, count }));
+    }
 
-  res.json({
-    summary: summary[0],
-    trend,
-    personal_best: bestWpm || null,
-    streak,
-    week_compare: weeks,
-    weak_words,
-  });
+    // This week vs previous week average WPM
+    const [[weeks]] = await db.query(
+      `SELECT
+         ROUND(AVG(CASE WHEN created_at >= NOW() - INTERVAL 7 DAY THEN wpm END), 2)  AS this_week,
+         ROUND(AVG(CASE WHEN created_at <  NOW() - INTERVAL 7 DAY
+                         AND created_at >= NOW() - INTERVAL 14 DAY THEN wpm END), 2) AS prev_week
+       FROM typing_results WHERE user_id = ?`,
+      [user_id]
+    );
+
+    // Most frequently mistyped words across the last 10 tests (word-position
+    // compare, same scheme evaluateTyping scores with; capped for cheapness)
+    const [recent] = await db.query(
+      `SELECT r.typed_text, p.passage_text
+       FROM typing_results r JOIN passages p ON r.passage_id = p.id
+       WHERE r.user_id = ? AND r.typed_text IS NOT NULL
+       ORDER BY r.created_at DESC LIMIT 10`,
+      [user_id]
+    );
+    const missCounts = {};
+    for (const row of recent) {
+      const orig  = String(row.passage_text || '').trim().split(/\s+/).slice(0, 600);
+      const typed = String(row.typed_text  || '').trim().split(/\s+/).slice(0, 600);
+      typed.forEach((w, i) => {
+        if (i < orig.length && w !== orig[i]) {
+          missCounts[orig[i]] = (missCounts[orig[i]] || 0) + 1;
+        }
+      });
+    }
+    const weak_words = Object.entries(missCounts)
+      .filter(([, n]) => n >= 2)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([word, count]) => ({ word, count }));
+
+    res.json({
+      summary: summary[0],
+      trend,
+      personal_best: bestWpm || null,
+      streak,
+      week_compare: weeks,
+      weak_words,
+    });
+  } catch (err) {
+    console.error('getAnalytics error:', err);
+    res.status(500).json({ error: 'Failed to load analytics' });
+  }
 };
 
 /* ─── Leaderboard ──────────────────────────────────────────────────────────── */
