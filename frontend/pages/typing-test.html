@@ -101,25 +101,30 @@
 
     /* ── 4. MAIN CONTAINER ────────────────────────────────── */
     .test-body {
-      max-width:100%; padding:10px 8px 0;
+      max-width:100%; padding:10px 8px 14px;
       background:#f0f0f0;
     }
 
-    /* The bordered container wrapping passage + typing */
-    .test-container {
-      border:2px solid #b0b0b0;
-      border-radius:0;
-      overflow:hidden;
-      background:#fff;
-      width:100%;
+    /* Passage and typing area now live in their own separated cards
+       (rounded border, gap, labelled header) instead of one fused box. */
+    .exam-panel {
+      border:1px solid #d5d5d5; border-radius:10px;
+      overflow:hidden; background:#fff; width:100%;
+      box-shadow:0 1px 3px rgba(0,0,0,.05);
+    }
+    .exam-panel + .exam-panel { margin-top:14px; }
+    .exam-panel-head {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:7px 14px; font-size:11px; font-weight:700;
+      text-transform:uppercase; letter-spacing:.6px; color:#6b7280;
+      background:#f7f7f8; border-bottom:1px solid #e5e5e5;
     }
 
     /* ── 5. PASSAGE BOX ───────────────────────────────────── */
     .passage-text {
       padding-left:8px; padding-right:8px;
       padding-top:10px; padding-bottom:10px;
-      height:370px; width:100%;
-      border-width:0 0 1px 0; border-style:solid; border-color:#b0b0b0;
+      height:340px; width:100%;
       overflow-y:auto;
       user-select:none; -webkit-user-select:none;
       white-space:pre-wrap;
@@ -150,8 +155,7 @@
       padding-left:8px; padding-right:8px;
       padding-top:10px; padding-bottom:10px;
       width:100%; min-height:140px;
-      border-width:1px; border-style:solid; border-color:rgb(0,0,0);
-      border-top:none;
+      border:none;
       outline:none; background:transparent;
       overflow-y:auto;
       white-space:pre-wrap;
@@ -171,7 +175,7 @@
     .action-row {
       display:flex; align-items:center; justify-content:space-between;
       padding:10px 14px; background:#f5f5f5;
-      border-top:1px solid #ddd;
+      border:1px solid #e5e5e5; border-radius:10px; margin-top:14px;
     }
     .btn-cancel {
       background:#e53935; color:#fff; border:none;
@@ -334,14 +338,18 @@
     </div>
   </div>
 
-  <!-- 4. Main test container: bordered box containing passage + typing -->
+  <!-- 4. Main test area: passage and typing area as two separate cards -->
   <div class="test-body">
-    <div class="test-container">
 
-      <!-- Passage: white bg, black serif text, justified -->
+    <!-- Passage card: white bg, black serif text, justified -->
+    <div class="exam-panel">
+      <div class="exam-panel-head"><span>Passage</span><span id="passage-wc"></span></div>
       <div class="passage-text" id="passage-text">Loading...</div>
+    </div>
 
-      <!-- Typing area: lime green bg, black text -->
+    <!-- Typing card: lime green bg, black text -->
+    <div class="exam-panel">
+      <div class="exam-panel-head"><span>Type Here</span></div>
       <div class="typing-box" id="typing-wrap">
         <textarea id="typing-input"
           placeholder=""
@@ -349,8 +357,7 @@
         </textarea>
         <div class="typing-footer" id="ks-label">Keystrokes: 0</div>
       </div>
-
-    </div><!-- .test-container -->
+    </div>
 
     <!-- Action row -->
     <div class="action-row">
@@ -732,11 +739,12 @@ function hyphenTokens(words) {
       rawPassage   = passageWords.join(' ');
     }
 
-    // Show word limit clearly
+    // Show word limit clearly, in the passage card's header
     const limitLabel = session.word_limit && session.word_limit < rawPassageAllWords
       ? `Word Limit: ${passageWords.length}`
       : `${passageWords.length} words`;
-    // word count shown in title (no passage-wc element in new theme)
+    const wcEl = document.getElementById('passage-wc');
+    if (wcEl) wcEl.textContent = limitLabel;
 
     // Render passage — if highlighting OFF, render as plain text
     if (highlightingEnabled) {
